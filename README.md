@@ -1,16 +1,28 @@
-# protestory
+# Protestory
 
-A new Flutter project.
+> Protestory is a convenient and user-friendly app for searching and creating protests around the world.
+> Do you have a topic that matters to you? Organize your own protests or find and join protests matching your views, and join them to make a change!
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
+## Motivation
 
-A few resources to get you started if this is your first Flutter project:
+* *Nowadays organising a protest is a nightmare. You need to choose some platform for it. Facebook? Whatsapp? Instagram? Something else? Maybe all of them? But then how do you connect it all together? How will people find you and won't get lost? And what happens if something changed? Protestory is a one convenient platform to create, organise, search and advertise protests for everyone!*
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Core Features
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+* [ ] Create new protests.
+* [ ] Add protest information such as location, time, description, topics and more.
+* [ ] Join protests created by others.
+* [ ] Explore a variety of protests.
+* [ ] View the protest you follow or joined.
+* [ ] Creating user accounts.
+
+## Complementary features
+
+* [ ] Signup and login via Google and Facebook.
+* [ ] Send and get notifications about followed protests.
+* [ ] Filter and sort protests by distance, popularity and keywords.
+* [ ] Posting your reasons to join the protest - *aka stories* - to be seen by others.
+* [ ] View the upcoming protests on a calendar.
+* [ ] Share your protest on other platforms.
+* [ ] Invite another organisers to help you with a protest.
