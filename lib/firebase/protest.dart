@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Protest {
-  final String id;
+  String? id;
   final String name;
   final Timestamp date;
   final String creator;
@@ -13,7 +13,7 @@ class Protest {
   final List<String> tags;
 
   Protest(
-      {required this.id,
+      {this.id,
       required this.name,
       required this.date,
       required this.creator,
