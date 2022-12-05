@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "583482726520",
+    "project_id": "protestory",
+    "storage_bucket": "protestory.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:583482726520:android:caec777b534916248d758d",
+        "android_client_info": {
+          "package_name": "com.technion.android.protestory.protestory"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "583482726520-8k4r7jnba7lgfbc2uk7srkr2pe9mifvl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVC0LYd4y4Ncw4CvdLbRnBS-K3PVHyIGE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "583482726520-8k4r7jnba7lgfbc2uk7srkr2pe9mifvl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
