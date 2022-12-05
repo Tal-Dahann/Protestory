@@ -4,7 +4,6 @@
 
 * User: (User ID is the name of the document)
   * **username** string
-  * **attending protests** subcollection
 
 
 #### Protest Collection:
@@ -14,7 +13,7 @@
   * **date** timestamp
   * **creator** string
   * **creation_time** timestamp
-  * **attenders_amount** integer
+  * **participants_amount** integer
   * **contant_info** string
   * **description** string
   * **location** string
@@ -28,7 +27,7 @@
   * **tags** array
 
 
-#### Followers Collection:
+#### Participants Collection:
 
 * Each document:
   * **user_id** string (id of user doc)
