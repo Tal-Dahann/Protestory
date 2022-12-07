@@ -25,11 +25,6 @@ class AuthNotifier extends ChangeNotifier {
 
   User? get user => _user;
 
-  set status(AuthStatus status) {
-    _status = status;
-    notifyListeners();
-  }
-
   /// A [FirebaseAuthException] maybe thrown with the following error code:
   /// - **invalid-email**:
   ///  - Thrown if the email address is not valid.
@@ -63,12 +58,15 @@ class AuthNotifier extends ChangeNotifier {
   ///    email/password accounts in the Firebase Console, under the Auth tab.
   /// - **weak-password**:
   ///  - Thrown if the password is not strong enough.
-  Future<UserCredential> signUp(String email, String password) async {
+  Future<UserCredential> signUp(
+      String email, String password, String username) async {
     try {
       _status = AuthStatus.authenticating;
       notifyListeners();
-      return await _auth.createUserWithEmailAndPassword(
+      var userCredential = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
+      await userCredential.user?.updateDisplayName(username);
+      return userCredential;
     } catch (e) {
       _status = AuthStatus.unauthenticated;
       notifyListeners();
