@@ -49,13 +49,18 @@ class DataProvider {
     return newProtest;
   }
 
-  Future<User> addUser(
-      {required String userId, required String username}) async {
-    User newUser = User(id: userId, username: username);
+  Future<List<Protest>> getNRecentProtests({required n}) async {
+    List<Protest> protestList = [];
 
-    //creating new doc to the user
-    await userCollectionRef.doc(userId).set(newUser);
+    var query = await protestCollectionRef
+        .orderBy("creationTime", descending: true)
+        .limit(n)
+        .get();
 
-    return newUser;
+    for (var element in query.docs) {
+      protestList.add(element.data());
+    }
+
+    return protestList;
   }
 }
