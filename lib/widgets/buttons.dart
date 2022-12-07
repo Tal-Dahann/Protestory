@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CustomButton extends StatefulWidget {
-  final String label;
+  final String text;
   final double? width;
   final double? height;
   final Color? color;
@@ -10,7 +10,7 @@ class CustomButton extends StatefulWidget {
 
   const CustomButton(
       {Key? key,
-      required this.label,
+      required this.text,
       this.width,
       this.height,
       required this.onPressed,
@@ -35,7 +35,7 @@ class _LoginButtonState extends State<CustomButton> {
           ),
         ),
         onPressed: widget.onPressed,
-        child: Text(widget.label,
+        child: Text(widget.text,
             style: TextStyle(color: widget.textColor ?? Colors.white, fontSize: 23)),
       ),
     );
