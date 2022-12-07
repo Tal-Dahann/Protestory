@@ -2,9 +2,12 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:protestory/constants/colors.dart';
 import 'package:protestory/utils/add_spaces.dart';
+
 //import 'package:protestory/constants/colors.dart';
 import 'package:protestory/widgets/buttons.dart';
+import 'package:protestory/widgets/text_fields.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -17,19 +20,14 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         body: Stack(
           children: <Widget>[
             SizedBox(
-              width: MediaQuery
-                  .of(context)
-                  .size
-                  .width,
-              height: 2 * MediaQuery
-                  .of(context)
-                  .size
-                  .height / 5,
-              child:
-              SvgPicture.asset('assets/background/login_screen_background.svg',
+              width: MediaQuery.of(context).size.width,
+              height: 2 * MediaQuery.of(context).size.height / 5,
+              child: SvgPicture.asset(
+                  'assets/background/login_screen_background.svg',
                   alignment: Alignment.topCenter,
                   // width: MediaQuery.of(context).size.width,
                   // height: MediaQuery.of(context).size.height,
@@ -38,12 +36,11 @@ class _LoginPageState extends State<LoginPage> {
             Column(
               children: [
                 Flexible(
-                  flex: 2,
-                  child: addVerticalSpace(
-                    height: 100),
+                  flex: 1,
+                  child: addVerticalSpace(height: 100),
                 ),
                 const Flexible(
-                  flex: 1,
+                  flex: 2,
                   child: Padding(
                     padding: EdgeInsets.only(left: 25.0),
                     child: Align(
@@ -58,27 +55,76 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 Flexible(
                   flex: 1,
+                  child: addVerticalSpace(height: 20),
+                ),
+                const Flexible(
+                    flex: 1,
+                    child: CustomTextFormField(
+                      label: 'Email',
+                    )),
+                Flexible(flex: 1, child: addVerticalSpace(height: 20)),
+                const Flexible(
+                    flex: 1,
+                    child: CustomTextFormField(
+                      label: 'Password',
+                    )),
+                Flexible(flex: 1, child: addVerticalSpace(height: 40)),
+                Flexible(
+                  flex: 1,
                   child: CustomButton(
-                    label: 'Login',
                     onPressed: () {
                       log('Pressed Login Button');
                     },
+                    text: 'Login',
                   ),
                 ),
                 Flexible(
-                  flex: 2,
-                  child: addVerticalSpace(
-                    height: 10),
+                  flex: 1,
+                  child: addVerticalSpace(height: 10),
                 ),
                 Flexible(
                   flex: 1,
                   child: CustomButton(
-                    label: 'Sign Up',
+                    text: 'Sign Up',
                     onPressed: () {
                       log('Pressed Sign Up Button');
                     },
                   ),
                 ),
+                Flexible(
+                  flex: 1,
+                  child: addVerticalSpace(height: 40),
+                ),
+                Flexible(
+                  flex: 1,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Expanded(
+                        child: Divider(
+                          color: lightGray,
+                          thickness: 2.0,
+                          height: 20,
+                          indent: 40,
+                          endIndent: 8,
+                        ),
+                      ),
+                      Text(
+                        'sign up via',
+                        style: TextStyle(color: darkGray, fontSize: 18),
+                      ),
+                      Expanded(
+                        child: Divider(
+                          color: lightGray,
+                          thickness: 2.0,
+                          height: 20,
+                          indent: 8,
+                          endIndent: 40,
+                        ),
+                      ),
+                    ],
+                  ),
+                )
               ],
             ),
           ],
