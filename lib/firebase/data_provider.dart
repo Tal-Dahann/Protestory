@@ -49,11 +49,15 @@ class DataProvider {
     return newProtest;
   }
 
-  Future<List<Protest>> getNRecentProtests({required n}) async {
+  //paramater is the name of the field we sorting by
+  Future<List<Protest>> getNProtests(
+      {required n,
+      required String parameter,
+      required bool isDescending}) async {
     List<Protest> protestList = [];
 
     var query = await protestCollectionRef
-        .orderBy("creationTime", descending: true)
+        .orderBy(parameter, descending: isDescending)
         .limit(n)
         .get();
 
@@ -62,5 +66,18 @@ class DataProvider {
     }
 
     return protestList;
+  }
+
+  Future<List<Protest>> getMostRecentProtests({
+    required n,
+  }) async {
+    return getNProtests(n: n, parameter: "creationTime", isDescending: true);
+  }
+
+  Future<List<Protest>> getMostPopularProtests({
+    required n,
+  }) async {
+    return getNProtests(
+        n: n, parameter: "participantsAmount", isDescending: true);
   }
 }
