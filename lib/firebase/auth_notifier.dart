@@ -8,6 +8,8 @@ class AuthNotifier extends ChangeNotifier {
   var _status = AuthStatus.unauthenticated;
   User? _user;
 
+  bool _disposed = false;
+
   AuthNotifier() {
     _auth.authStateChanges().listen((User? firebaseUser) async {
       if (firebaseUser == null) {
@@ -24,6 +26,10 @@ class AuthNotifier extends ChangeNotifier {
   AuthStatus get status => _status;
 
   User? get user => _user;
+
+  bool isAuthenticated() {
+    return status == AuthStatus.authenticated;
+  }
 
   /// A [FirebaseAuthException] maybe thrown with the following error code:
   /// - **invalid-email**:
@@ -53,9 +59,6 @@ class AuthNotifier extends ChangeNotifier {
   ///  - Thrown if there already exists an account with the given email address.
   /// - **invalid-email**:
   ///  - Thrown if the email address is not valid.
-  /// - **operation-not-allowed**:
-  ///  - Thrown if email/password accounts are not enabled. Enable
-  ///    email/password accounts in the Firebase Console, under the Auth tab.
   /// - **weak-password**:
   ///  - Thrown if the password is not strong enough.
   Future<UserCredential> signUp(
@@ -76,5 +79,18 @@ class AuthNotifier extends ChangeNotifier {
 
   Future<void> signOut() async {
     await _auth.signOut();
+  }
+
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
+  }
+
+  @override
+  void notifyListeners() {
+    if (!_disposed) {
+      super.notifyListeners();
+    }
   }
 }
