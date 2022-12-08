@@ -1,55 +1,46 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:protestory/firebase/data_provider.dart';
-
-import 'firebase/protest.dart';
+import 'package:protestory/firebase/auth_notifier.dart';
+import 'package:protestory/screens/login_dummy.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const App());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class PreMainScreen extends StatelessWidget {
+  const PreMainScreen({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-      ),
-      home: App(),
-    );
+    if (context.watch<AuthNotifier>().isAuthenticated()) {
+      return Scaffold(
+        body: ElevatedButton(
+            onPressed: context.read<AuthNotifier>().signOut,
+            child: const Text("Logout")),
+      ); // TODO replace
+    } else {
+      return const LoginScreen();
+    }
   }
 }
 
 class App extends StatelessWidget {
+  const App({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: FirebaseInit(),
+    );
+  }
+}
+
+class FirebaseInit extends StatelessWidget {
   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
 
-  Protest test_protest = Protest(
-    name: "data['name']",
-    date: Timestamp.now(),
-    creator: "data['creator']",
-    creationTime: Timestamp.now(),
-    participantsAmount: 3,
-    contactInfo: "data['contact_info']",
-    description: "data['description']",
-    location: "data['location']",
-    tags: ["dd"],
-  );
-
-  App({super.key});
+  FirebaseInit({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -63,9 +54,12 @@ class App extends StatelessWidget {
                       textDirection: TextDirection.ltr)));
         }
         if (snapshot.connectionState == ConnectionState.done) {
-          return const MyApp();
+          return ChangeNotifierProvider(
+              create: (_) => AuthNotifier(), child: const PreMainScreen());
         }
-        return const Center(child: CircularProgressIndicator());
+
+        //TODO replace with splash screen
+        return Container();
       },
     );
   }
