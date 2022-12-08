@@ -36,7 +36,7 @@ class _LoginPageState extends State<LoginPage> {
             Column(
               children: [
                 Flexible(
-                  flex: 1,
+                  flex: 2,
                   child: addVerticalSpace(height: 100),
                 ),
                 const Flexible(
@@ -57,17 +57,15 @@ class _LoginPageState extends State<LoginPage> {
                   flex: 1,
                   child: addVerticalSpace(height: 20),
                 ),
-                const Flexible(
-                    flex: 1,
-                    child: CustomTextFormField(
-                      label: 'Email',
-                    )),
+                const CustomTextFormField(
+                  label: 'Email',
+                  keyboardType: TextInputType.emailAddress,
+                ),
                 Flexible(flex: 1, child: addVerticalSpace(height: 20)),
-                const Flexible(
-                    flex: 1,
-                    child: CustomTextFormField(
-                      label: 'Password',
-                    )),
+                const CustomTextFormField(
+                  label: 'Password',
+                  obscureText: true,
+                ),
                 Flexible(flex: 1, child: addVerticalSpace(height: 40)),
                 Flexible(
                   flex: 1,
@@ -124,7 +122,23 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ],
                   ),
-                )
+                ),
+                Flexible(
+                  flex: 1,
+                  child: addVerticalSpace(height: 50),
+                ),
+                Flexible(
+                  flex: 2,
+                  child: CustomButtonWithLogo(
+                    text: 'Google',
+                    color: white,
+                    textColor: black,
+                    svgLogoPath: 'assets/icons/google_icon.svg',
+                    onPressed: () {
+                      log('Clicked sign in with google');
+                    },
+                  ),
+                ),
               ],
             ),
           ],
