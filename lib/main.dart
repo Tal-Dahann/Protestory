@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:protestory/firebase/auth_notifier.dart';
-import 'package:protestory/screens/login_dummy.dart';
+import 'package:protestory/screens/login_page.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -21,7 +21,7 @@ class PreMainScreen extends StatelessWidget {
             child: const Text("Logout")),
       ); // TODO replace
     } else {
-      return const LoginScreen();
+      return const LoginPage();
     }
   }
 }
@@ -32,6 +32,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: FirebaseInit(),
     );
   }
