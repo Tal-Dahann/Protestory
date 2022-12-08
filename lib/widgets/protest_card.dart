@@ -1,41 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:protestory/firebase/protest.dart';
-
-class TestApp extends StatelessWidget {
-  const TestApp({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    //protest just for testing
-
-    var protesTest = Protest(
-        id: "2",
-        name: "name of protest",
-        date: Timestamp.now(),
-        creator: "creator",
-        creationTime: Timestamp.now(),
-        participantsAmount: 0,
-        contactInfo: "contactInfo",
-        description: "description",
-        location: "location",
-        tags: []);
-
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.4,
-      child: ListView.separated(
-        itemCount: 5,
-        scrollDirection: Axis.horizontal,
-        separatorBuilder: (BuildContext context, int index) => Divider(
-          color: Colors.white60,
-        ),
-        itemBuilder: (BuildContext context, int index) {
-          return ProtestCard(protest: protesTest);
-        },
-      ),
-    );
-  }
-}
 
 class ProtestCard extends StatelessWidget {
   Protest protest;
@@ -78,11 +42,14 @@ class ProtestCard extends StatelessWidget {
               ),
               Flexible(
                 flex: 3,
-                child: Text(
-                  protest.name,
-                  style: const TextStyle(
-                    fontSize: 25.0,
-                    color: Colors.black,
+                child: Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: Text(
+                    protest.name,
+                    style: const TextStyle(
+                      fontSize: 25.0,
+                      color: Colors.black,
+                    ),
                   ),
                 ),
               ),
@@ -119,6 +86,7 @@ class ProtestCard extends StatelessWidget {
                         color: Colors.grey,
                       )),
                   Icon(Icons.people),
+                  Padding(padding: EdgeInsets.all(5.0))
                 ]),
               ),
             ],
