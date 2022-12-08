@@ -7,17 +7,21 @@ class CustomTextFormField extends StatefulWidget {
   final double? height;
   final Color? color;
   final TextEditingController? controller;
+  final TextInputType? keyboardType;
   final FormFieldValidator<String>? validator;
+  final bool obscureText;
 
-  const CustomTextFormField(
-      {Key? key,
-      this.label,
-      this.width,
-      this.height,
-      this.color,
-      this.controller,
-      this.validator})
-      : super(key: key);
+  const CustomTextFormField({
+    Key? key,
+    this.label,
+    this.width,
+    this.height,
+    this.color,
+    this.controller,
+    this.validator,
+    this.keyboardType,
+    this.obscureText = false,
+  }) : super(key: key);
 
   @override
   State<CustomTextFormField> createState() => _CustomTextFormFieldState();
@@ -30,6 +34,8 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
         width: widget.width ?? 360,
         height: widget.height ?? 55,
         child: TextFormField(
+          obscureText: widget.obscureText,
+          keyboardType: widget.keyboardType,
           validator: widget.validator,
           controller: widget.controller,
           decoration: InputDecoration(
