@@ -83,6 +83,27 @@ class DataProvider {
         n: n, parameter: "participantsAmount", isDescending: true);
   }
 
+  //TODO: exception handling
+  Future<Protest> getProtestById({
+    required String protestId,
+  }) async {
+    final docSnap = await protestCollectionRef.doc(protestId).get();
+
+    Protest? protest = docSnap.data(); // Convert to Protest object
+    if (protest != null) {
+      return protest;
+    } else {
+      throw Exception('getProtestById error- no protest with the requested id');
+    }
+  }
+
+  // Future<Protest> getNextProtestByIndex({
+  //   required int startIndex,
+  //   required CollectionReference<Protest> collectionRF
+  // }) async {
+  //
+  // }
+
   //UP to 10 tags!!
   Future<List<Protest>> get10ProtestsByTags(
       {required n, required List<String> tagsList}) async {
