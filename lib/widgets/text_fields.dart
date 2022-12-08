@@ -58,11 +58,11 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
               filled: true,
               fillColor: white,
               border: OutlineInputBorder(
-                  borderSide: BorderSide(color: darkGray),
+                  borderSide: const BorderSide(color: darkGray),
                   borderRadius: BorderRadius.circular(8)),
               labelText: widget.label,
               focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: blue),
+                  borderSide: const BorderSide(color: blue),
                   borderRadius: BorderRadius.circular(8)),
               floatingLabelBehavior: FloatingLabelBehavior.never,
               hintText: widget.hintText,
