@@ -1,8 +1,8 @@
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:protestory/firebase/protest.dart';
-import 'package:protestory/firebase/user.dart';
 
 class DataProvider {
   static const version = "1.0.0";
@@ -11,24 +11,18 @@ class DataProvider {
 
   late final CollectionReference<Protest> protestCollectionRef;
 
-  late final CollectionReference<User> userCollectionRef;
+  User user;
 
-  DataProvider() {
+  DataProvider({required this.user}) {
     protestCollectionRef = _firestore.collection("protests").withConverter(
           fromFirestore: Protest.fromFirestore,
           toFirestore: (Protest protest, _) => protest.toFirestore(),
-        );
-
-    userCollectionRef = _firestore.collection("users").withConverter(
-          fromFirestore: User.fromFirestore,
-          toFirestore: (User user, _) => user.toFirestore(),
         );
   }
 
   Future<Protest> addProtest(
       {required String name,
       required DateTime date,
-      required User userCreator,
       required String contactInfo,
       required String description,
       required String location,
@@ -39,7 +33,7 @@ class DataProvider {
         id: docRef.id,
         name: name,
         date: Timestamp.fromDate(date),
-        creator: userCreator.id,
+        creator: user.uid,
         creationTime: Timestamp.fromDate(DateTime.now()),
         participantsAmount: 0,
         contactInfo: contactInfo,
@@ -128,4 +122,8 @@ class DataProvider {
     }
     return protestList;
   }
+
+  updateUser(User? user) {
+
+    this.user = user ?? this.user;
 }

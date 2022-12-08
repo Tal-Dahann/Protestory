@@ -1,7 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:protestory/firebase/auth_notifier.dart';
+import 'package:protestory/firebase/data_provider.dart';
 import 'package:protestory/screens/login_page.dart';
+import 'package:protestory/widgets/test_app_dana.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -15,16 +17,28 @@ class PreMainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (context.watch<AuthNotifier>().isAuthenticated()) {
-      return Scaffold(
-        body: ElevatedButton(
-            onPressed: context.read<AuthNotifier>().signOut,
-            child: const Text("Logout")),
+      return ProxyProvider<AuthNotifier, DataProvider>(
+        create: (ctx) => DataProvider(user: ctx.read<AuthNotifier>().user!),
+        update: (_, myAuthNotifier, myDataProvider) =>
+        (myDataProvider?..updateUser(myAuthNotifier.user)) ??
+            DataProvider(user: myAuthNotifier.user!),
+
+        child: Scaffold(
+          body: Column(children: [
+            TestAppDana(),
+            ElevatedButton(
+                onPressed: context.read<AuthNotifier>().signOut,
+                child: const Text("Logout")),
+          ]),
+        ),)
       ); // TODO replace
     } else {
       return const LoginPage();
     }
   }
 }
+
+
 
 class App extends StatelessWidget {
   const App({super.key});
