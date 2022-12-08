@@ -20,9 +20,8 @@ class PreMainScreen extends StatelessWidget {
       return ProxyProvider<AuthNotifier, DataProvider>(
         create: (ctx) => DataProvider(user: ctx.read<AuthNotifier>().user!),
         update: (_, myAuthNotifier, myDataProvider) =>
-        (myDataProvider?..updateUser(myAuthNotifier.user)) ??
+            (myDataProvider?..updateUser(myAuthNotifier.user)) ??
             DataProvider(user: myAuthNotifier.user!),
-
         child: Scaffold(
           body: Column(children: [
             TestAppDana(),
@@ -30,15 +29,13 @@ class PreMainScreen extends StatelessWidget {
                 onPressed: context.read<AuthNotifier>().signOut,
                 child: const Text("Logout")),
           ]),
-        ),)
+        ),
       ); // TODO replace
     } else {
       return const LoginPage();
     }
   }
 }
-
-
 
 class App extends StatelessWidget {
   const App({super.key});

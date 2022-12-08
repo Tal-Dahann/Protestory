@@ -1,27 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:protestory/widgets/protest_list_home.dart';
+import 'package:provider/provider.dart';
+
+import '../firebase/data_provider.dart';
 
 class TestAppDana extends StatelessWidget {
   const TestAppDana({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // DataProvider dp = DataProvider();
-    //
-    // List<Protest> pl = [];
-    // User newUser = User(id: "123", username: "username");
-    // await dp.userCollectionRef.doc("123").set(newUser);
-    // for (int i = 0; i < 5; i++) {
-    //   dp.addProtest(
-    //       name: "Protest Name" + "${i}",
-    //       date: DateTime.now(),
-    //       userCreator: newUser,
-    //       contactInfo: "",
-    //       description: "",
-    //       location: "location",
-    //       tags: []);
-    // }
+    return FutureBuilder(
+      future: context.read<DataProvider>().getMostRecentProtests(n: 5),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Center(
+              child: Text(snapshot.error.toString(),
+                  textDirection: TextDirection.ltr));
+        }
+        if (snapshot.hasData) {
+          return ProtestListHome(
+              protestList: snapshot.requireData, maxLengthList: 5);
+        }
 
-    return ProtestListHome(protestList: [], maxLengthList: 5);
+        //TODO: replace with waiting to list to load
+        return const CircularProgressIndicator();
+      },
+    );
+
+    //ProtestListHome(protestList: pl, maxLengthList: 5);
   }
 }

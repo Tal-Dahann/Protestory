@@ -51,7 +51,7 @@ class DataProvider {
       required String parameter,
       required bool isDescending}) async {
     List<Protest> protestList = [];
-
+    // print("entered getNprotests" + "\n");
     var query = await protestCollectionRef
         .orderBy(parameter, descending: isDescending)
         .limit(n)
@@ -59,6 +59,7 @@ class DataProvider {
 
     for (var element in query.docs) {
       protestList.add(element.data());
+      // print("added protest :" + "${element.data().name}" + "\n");
     }
 
     return protestList;
@@ -67,14 +68,14 @@ class DataProvider {
   Future<List<Protest>> getMostRecentProtests({
     required n,
   }) async {
-    return getNProtests(n: n, parameter: "creationTime", isDescending: true);
+    return getNProtests(n: n, parameter: "creation_time", isDescending: true);
   }
 
   Future<List<Protest>> getMostPopularProtests({
     required n,
   }) async {
     return getNProtests(
-        n: n, parameter: "participantsAmount", isDescending: true);
+        n: n, parameter: "participants_amount", isDescending: true);
   }
 
   //TODO: exception handling
@@ -124,6 +125,6 @@ class DataProvider {
   }
 
   updateUser(User? user) {
-
     this.user = user ?? this.user;
+  }
 }
