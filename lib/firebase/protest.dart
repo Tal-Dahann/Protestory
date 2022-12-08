@@ -61,4 +61,17 @@ class Protest {
       "tags": tags,
     };
   }
+
+  String dateAndTime() {
+    DateTime dateTime = this.date.toDate();
+    return "${dateTime.day.toString()}" +
+        "/" +
+        "${dateTime.month.toString()}" +
+        "/" +
+        "${dateTime.year.toString()}" +
+        " , " +
+        "${dateTime.hour.toString()}" +
+        ":" +
+        "${dateTime.minute.toString()}";
+  }
 }
