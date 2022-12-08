@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:protestory/firebase/protest.dart';
 import 'package:protestory/firebase/user.dart';
@@ -49,7 +51,7 @@ class DataProvider {
     return newProtest;
   }
 
-  //paramater is the name of the field we sorting by
+  //parameter is the name of the field we sorting by
   Future<List<Protest>> getNProtests(
       {required n,
       required String parameter,
@@ -79,5 +81,30 @@ class DataProvider {
   }) async {
     return getNProtests(
         n: n, parameter: "participantsAmount", isDescending: true);
+  }
+
+  //UP to 10 tags!!
+  Future<List<Protest>> get10ProtestsByTags(
+      {required n, required List<String> tagsList}) async {
+    int numOfElements = min(10, tagsList.length);
+
+    List<Protest> protestList = [];
+
+    Iterable<String> tagsListCopy = tagsList.take(numOfElements);
+
+    var query = protestCollectionRef.orderBy("creationTime", descending: true);
+
+    //filtering for every tag
+    for (String tag in tagsListCopy) {
+      query = query.where("tags", arrayContains: tag);
+    }
+
+    //get 10 that match
+    var matchDocs = await query.limit(10).get();
+
+    for (var element in matchDocs.docs) {
+      protestList.add(element.data());
+    }
+    return protestList;
   }
 }
