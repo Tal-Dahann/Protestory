@@ -108,7 +108,7 @@ class DataProvider {
 
     Iterable<String> tagsListCopy = tagsList.take(numOfElements);
 
-    var query = protestCollectionRef.orderBy("creationTime", descending: true);
+    var query = protestCollectionRef.orderBy("creation_time", descending: true);
 
     //filtering for every tag
     for (String tag in tagsListCopy) {

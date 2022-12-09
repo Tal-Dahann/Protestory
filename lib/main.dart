@@ -24,7 +24,7 @@ class PreMainScreen extends StatelessWidget {
             DataProvider(user: myAuthNotifier.user!),
         child: Scaffold(
           body: Column(children: [
-            TestAppDana(),
+            const TestAppDana(),
             ElevatedButton(
                 onPressed: context.read<AuthNotifier>().signOut,
                 child: const Text("Logout")),
