@@ -7,8 +7,6 @@ import 'package:protestory/widgets/buttons.dart';
 import 'package:protestory/widgets/text_fields.dart';
 import 'package:protestory/utils/add_spaces.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
-import 'package:markdown_editable_textinput/format_markdown.dart';
-import 'package:markdown_editable_textinput/markdown_text_input.dart';
 
 class NewProtestScreen extends StatefulWidget {
   const NewProtestScreen({Key? key}) : super(key: key);
@@ -18,7 +16,7 @@ class NewProtestScreen extends StatefulWidget {
 }
 
 class _NewProtestScreenState extends State<NewProtestScreen> {
-  int currentFormPage = 1;
+  int currentFormPage = 4;
   final titleController = TextEditingController();
   final locationController = TextEditingController();
   final dateController = TextEditingController();
@@ -45,7 +43,6 @@ class _NewProtestScreenState extends State<NewProtestScreen> {
   final tagsColors = <Color>[];
   final selectedTags = <String>[];
 
-  late FocusNode titleFocusNode;
   late FocusNode locationFocusNode;
   late FocusNode dateFocusNode;
 
@@ -55,7 +52,6 @@ class _NewProtestScreenState extends State<NewProtestScreen> {
     titleController.text = '';
     locationController.text = '';
     descriptionController.text = '';
-    titleFocusNode = FocusNode();
     locationFocusNode = FocusNode();
     dateFocusNode = FocusNode();
     super.initState();
@@ -67,7 +63,6 @@ class _NewProtestScreenState extends State<NewProtestScreen> {
     locationController.dispose();
     dateController.dispose();
     descriptionController.dispose();
-    titleFocusNode.dispose();
     locationFocusNode.dispose();
     dateFocusNode.dispose();
     super.dispose();
@@ -113,7 +108,6 @@ class _NewProtestScreenState extends State<NewProtestScreen> {
                   right: MediaQuery.of(context).size.width * 0.1),
               child: CustomTextFormField(
                 controller: titleController,
-                focusNode: titleFocusNode,
                 onFieldSubmitted: (String value) {
                   locationFocusNode.requestFocus();
                 },
@@ -227,120 +221,320 @@ class _NewProtestScreenState extends State<NewProtestScreen> {
         ),
       );
     } else if (currentFormPage == 2) {
-      return Scaffold(
-        resizeToAvoidBottomInset: false,
-        appBar: AppBar(
-          title: Text('New Protest',
-              style: TextStyle(color: blue, fontWeight: FontWeight.bold)),
-          backgroundColor: white,
-        ),
-        body: Column(
-          children: [
-            StepProgressIndicator(
-              totalSteps: 4,
-              selectedColor: purple,
-              currentStep: currentFormPage,
-              size: 7,
-            ),
-            addVerticalSpace(height: 30),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Padding(
+      return WillPopScope(
+        onWillPop: () {
+          setState(() {
+            currentFormPage--;
+          });
+          return Future.value(false);
+        },
+        child: Scaffold(
+          resizeToAvoidBottomInset: false,
+          appBar: AppBar(
+            title: Text('New Protest',
+                style: TextStyle(color: blue, fontWeight: FontWeight.bold)),
+            backgroundColor: white,
+          ),
+          body: Column(
+            children: [
+              StepProgressIndicator(
+                totalSteps: 4,
+                selectedColor: purple,
+                currentStep: currentFormPage,
+                size: 7,
+              ),
+              addVerticalSpace(height: 30),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: EdgeInsets.only(
+                      left: MediaQuery.of(context).size.width * 0.1,
+                      right: MediaQuery.of(context).size.width * 0.1),
+                  child: Text(
+                    'What\'s the topic that best describes your protest?',
+                    style: TextStyle(
+                        color: blue, fontWeight: FontWeight.bold, fontSize: 24),
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+              ),
+              addVerticalSpace(height: 15),
+              Padding(
                 padding: EdgeInsets.only(
                     left: MediaQuery.of(context).size.width * 0.1,
                     right: MediaQuery.of(context).size.width * 0.1),
-                child: Text(
-                  'What\'s the topic that best describes your protest?',
-                  style: TextStyle(
-                      color: blue, fontWeight: FontWeight.bold, fontSize: 24),
-                  textAlign: TextAlign.left,
-                ),
-              ),
-            ),
-            addVerticalSpace(height: 15),
-            Padding(
-              padding: EdgeInsets.only(
-                  left: MediaQuery.of(context).size.width * 0.1,
-                  right: MediaQuery.of(context).size.width * 0.1),
-              child: Wrap(
-                spacing: 7,
-                children: List<Widget>.generate(
-                  tags.length,
-                  (int index) {
-                    bool currSelected = selectedTags.contains(tags[index]);
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 4.0),
-                      child: ChoiceChip(
-                        // shape: const StadiumBorder(
-                        //   side: BorderSide(),
-                        // ),
-                        side: BorderSide(
-                            color: currSelected ? darkPurple : lightGray),
-                        labelPadding: const EdgeInsets.all(5.0),
-                        label: Text(
-                          tags[index],
-                          style: TextStyle(
-                              color: currSelected ? darkPurple : black,
-                              fontSize: 18),
+                child: Wrap(
+                  spacing: 7,
+                  children: List<Widget>.generate(
+                    tags.length,
+                    (int index) {
+                      bool currSelected = selectedTags.contains(tags[index]);
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 4.0),
+                        child: ChoiceChip(
+                          // shape: const StadiumBorder(
+                          //   side: BorderSide(),
+                          // ),
+                          side: BorderSide(
+                              color: currSelected ? darkPurple : lightGray),
+                          labelPadding: const EdgeInsets.all(5.0),
+                          label: Text(
+                            tags[index],
+                            style: TextStyle(
+                                color: currSelected ? darkPurple : black,
+                                fontSize: 18),
+                          ),
+                          selected: currSelected,
+                          selectedColor: transparentPurple,
+                          backgroundColor: currSelected ? purple : white,
+                          elevation: 2,
+                          onSelected: (bool selected) {
+                            setState(() {
+                              selected
+                                  ? selectedTags.add(tags[index])
+                                  : selectedTags.remove(tags[index]);
+                              log(selectedTags.toString());
+                            });
+                          },
                         ),
-                        selected: currSelected,
-                        selectedColor: transparentPurple,
-                        backgroundColor: currSelected ? purple : white,
-                        elevation: 2,
-                        onSelected: (bool selected) {
-                          setState(() {
-                            selected
-                                ? selectedTags.add(tags[index])
-                                : selectedTags.remove(tags[index]);
-                            log(selectedTags.toString());
-                          });
-                        },
-                      ),
-                    );
-                  },
-                ).toList(),
-              ),
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Align(
-                      alignment: Alignment.bottomLeft,
-                      child: CustomButton(
-                          text: 'Previous',
-                          textColor: purple,
-                          color: white,
-                          width: MediaQuery.of(context).size.width * 0.35,
-                          onPressed: () {
-                            setState(() {
-                              currentFormPage--;
-                            });
-                          }),
-                    ),
-                    Align(
-                      alignment: Alignment.bottomRight,
-                      child: CustomButton(
-                          text: 'Continue',
-                          color: darkPurple,
-                          width: MediaQuery.of(context).size.width * 0.4,
-                          onPressed: () {
-                            setState(() {
-                              currentFormPage++;
-                            });
-                          }),
-                    ),
-                  ],
+                      );
+                    },
+                  ).toList(),
                 ),
               ),
-            )
-          ],
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Align(
+                        alignment: Alignment.bottomLeft,
+                        child: CustomButton(
+                            text: 'Previous',
+                            textColor: purple,
+                            color: white,
+                            width: MediaQuery.of(context).size.width * 0.35,
+                            onPressed: () {
+                              setState(() {
+                                currentFormPage--;
+                              });
+                            }),
+                      ),
+                      Align(
+                        alignment: Alignment.bottomRight,
+                        child: CustomButton(
+                            text: 'Continue',
+                            color: darkPurple,
+                            width: MediaQuery.of(context).size.width * 0.4,
+                            onPressed: () {
+                              setState(() {
+                                currentFormPage++;
+                              });
+                            }),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
         ),
       );
-    }  else {
-      return Scaffold();
+    } else if (currentFormPage == 3) {
+      return WillPopScope(
+        onWillPop: () {
+          setState(() {
+            currentFormPage--;
+          });
+          return Future.value(false);
+        },
+        child: Scaffold(
+          resizeToAvoidBottomInset: false,
+          appBar: AppBar(
+            title: Text('New Protest',
+                style: TextStyle(color: blue, fontWeight: FontWeight.bold)),
+            backgroundColor: white,
+          ),
+          body: Column(
+            children: [
+              StepProgressIndicator(
+                totalSteps: 4,
+                selectedColor: purple,
+                currentStep: currentFormPage,
+                size: 7,
+              ),
+              addVerticalSpace(height: 30),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: EdgeInsets.only(
+                      left: MediaQuery.of(context).size.width * 0.1,
+                      right: MediaQuery.of(context).size.width * 0.1),
+                  child: Text(
+                    'Protest Description',
+                    style: TextStyle(
+                        color: blue, fontWeight: FontWeight.bold, fontSize: 32),
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+              ),
+              addVerticalSpace(height: 15),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: EdgeInsets.only(
+                      left: MediaQuery.of(context).size.width * 0.1,
+                      right: MediaQuery.of(context).size.width * 0.1),
+                  child: Text(
+                    'Give a description to your protest.',
+                    style: TextStyle(
+                        color: blue, fontWeight: FontWeight.w500, fontSize: 20),
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+              ),
+              addVerticalSpace(height: 15),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: EdgeInsets.only(
+                      left: MediaQuery.of(context).size.width * 0.1,
+                      right: MediaQuery.of(context).size.width * 0.1),
+                  child: Text(
+                    'Tip: a more detailed description is more likely to get more people to support your protest.',
+                    style: TextStyle(
+                        color: darkGray,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 14),
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+              ),
+              addVerticalSpace(height: 20),
+              Expanded(
+                child: CustomTextFormField(
+                  height: MediaQuery.of(context).size.height * 0.4,
+                  keyboardType: TextInputType.multiline,
+                  maxLines: 12,
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Align(
+                        alignment: Alignment.bottomLeft,
+                        child: CustomButton(
+                            text: 'Previous',
+                            textColor: purple,
+                            color: white,
+                            width: MediaQuery.of(context).size.width * 0.35,
+                            onPressed: () {
+                              setState(() {
+                                currentFormPage--;
+                              });
+                            }),
+                      ),
+                      Align(
+                        alignment: Alignment.bottomRight,
+                        child: CustomButton(
+                            text: 'Continue',
+                            color: darkPurple,
+                            width: MediaQuery.of(context).size.width * 0.4,
+                            onPressed: () {
+                              setState(() {
+                                currentFormPage++;
+                              });
+                            }),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+      );
+    } else {
+      return WillPopScope(
+        onWillPop: () {
+          setState(() {
+            currentFormPage--;
+          });
+          return Future.value(false);
+        },
+        child: Scaffold(
+          resizeToAvoidBottomInset: false,
+          appBar: AppBar(
+            title: Text('New Protest',
+                style: TextStyle(color: blue, fontWeight: FontWeight.bold)),
+            backgroundColor: white,
+          ),
+          body: Column(
+            children: [
+              StepProgressIndicator(
+                totalSteps: 4,
+                selectedColor: purple,
+                currentStep: currentFormPage,
+                size: 7,
+              ),
+              addVerticalSpace(height: 30),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: EdgeInsets.only(
+                      left: MediaQuery.of(context).size.width * 0.1,
+                      right: MediaQuery.of(context).size.width * 0.1),
+                  child: Text(
+                    'Choose A Protest Thumbnail',
+                    style: TextStyle(
+                        color: blue, fontWeight: FontWeight.bold, fontSize: 32),
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Align(
+                        alignment: Alignment.bottomLeft,
+                        child: CustomButton(
+                            text: 'Previous',
+                            textColor: purple,
+                            color: white,
+                            width: MediaQuery.of(context).size.width * 0.35,
+                            onPressed: () {
+                              setState(() {
+                                currentFormPage--;
+                              });
+                            }),
+                      ),
+                      Align(
+                        alignment: Alignment.bottomRight,
+                        child: CustomButton(
+                            text: 'Finish',
+                            color: darkPurple,
+                            width: MediaQuery.of(context).size.width * 0.3,
+                            onPressed: () {
+                              setState(() {
+                                currentFormPage++;
+                              });
+                            }),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+      );
     }
   }
 }

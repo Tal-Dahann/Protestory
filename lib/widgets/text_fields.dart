@@ -21,6 +21,7 @@ class CustomTextFormField extends StatefulWidget {
   final bool readOnly;
   final AsyncValueGetter? onTap;
   final FocusNode? focusNode;
+  final int? maxLines;
 
   const CustomTextFormField({
     Key? key,
@@ -42,6 +43,7 @@ class CustomTextFormField extends StatefulWidget {
     this.readOnly = false,
     this.onTap,
     this.focusNode,
+    this.maxLines = 1,
   }) : super(key: key);
 
   @override
@@ -55,6 +57,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
         width: widget.width,
         height: widget.height,
         child: TextFormField(
+          maxLines: widget.maxLines,
           focusNode: widget.focusNode,
           onTap: widget.onTap,
           readOnly: widget.readOnly,
