@@ -8,6 +8,7 @@ import 'package:protestory/widgets/text_fields.dart';
 import 'package:protestory/utils/add_spaces.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 
+
 class NewProtestScreen extends StatefulWidget {
   const NewProtestScreen({Key? key}) : super(key: key);
 
@@ -40,6 +41,8 @@ class _NewProtestScreenState extends State<NewProtestScreen> {
     'Women\'s rights',
     'Other',
   ];
+  final tagsColors = <Color>[];
+  final selectedTags = <String>[];
 
   late FocusNode titleFocusNode;
   late FocusNode locationFocusNode;
@@ -189,11 +192,13 @@ class _NewProtestScreenState extends State<NewProtestScreen> {
                         DateFormat('dd/MM/yyyy').format(pickedDate);
                     //String formattedDate = DateFormat.yMMMEd().format(pickedDate);
                     log('$formattedDate, ${pickedTime.format(context)}');
-                    setState(() {
-                      //dateController.text = '$formattedDate - ${pickedTime.format(context)}';
-                      dateController.text =
-                          '$formattedDate, ${pickedTime.format(context)}';
-                    },);
+                    setState(
+                      () {
+                        //dateController.text = '$formattedDate - ${pickedTime.format(context)}';
+                        dateController.text =
+                            '$formattedDate, ${pickedTime.format(context)}';
+                      },
+                    );
                   } else {
                     //TODO: SHOW ERROR maybe?
                   }
@@ -208,6 +213,7 @@ class _NewProtestScreenState extends State<NewProtestScreen> {
                   child: CustomButton(
                       text: 'Continue',
                       color: darkPurple,
+                      width: MediaQuery.of(context).size.width * 0.4,
                       onPressed: () {
                         setState(() {
                           currentFormPage++;
