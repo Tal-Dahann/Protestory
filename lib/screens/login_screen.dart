@@ -4,6 +4,7 @@ import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:protestory/constants/colors.dart';
 import 'package:protestory/screens/signup_screen.dart';
 import 'package:protestory/utils/add_spaces.dart';
@@ -247,9 +248,13 @@ class _LoginPageState extends State<LoginPage> {
                                     child: CustomButton(
                                         text: 'Sign Up',
                                         onPressed: () => Navigator.of(context)
-                                            .push(MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const SignUpPage()))),
+                                            .push(PageTransition(
+                                                type: PageTransitionType.fade,
+                                                duration: const Duration(
+                                                    milliseconds: 400),
+                                                reverseDuration: const Duration(
+                                                    milliseconds: 300),
+                                                child: const SignUpPage()))),
                                   ),
                                 ],
                               ),
