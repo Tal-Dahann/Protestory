@@ -13,3 +13,5 @@ Color white = const Color(0xffffffff);
 Color lightGray = const Color(0xffAAAAAA);
 Color darkGray = const Color(0xff707070);
 Color black = const Color(0xff000000);
+
+Color transparentPurple = const Color(0x448d08bd);
