@@ -3,19 +3,17 @@ import 'package:image_picker/image_picker.dart';
 
 class NewProtestFormNotifier extends ChangeNotifier {
   int currentFormPage = 1;
-  final currentFormPageController = TextEditingController();
   final titleController = TextEditingController();
   final locationController = TextEditingController();
   final dateController = TextEditingController();
   final timeController = TextEditingController();
   final descriptionController = TextEditingController();
-  final titleFormKey = GlobalKey<FormState>();
+  final formKey = GlobalKey<FormState>();
   final protestTags = <String>[];
   DateTime selectedTime = DateTime(0);
-
-  final tagsColors = <Color>[];
   final selectedTags = <String>[];
   XFile? protestThumbnail;
+  bool showTagsError = false;
 
   bool finishButtonClicked = false;
 
@@ -44,6 +42,16 @@ class NewProtestFormNotifier extends ChangeNotifier {
 
   void clickFinishButton() {
     finishButtonClicked = true;
+    notifyListeners();
+  }
+
+  void displayTagsError() {
+    showTagsError = true;
+    notifyListeners();
+  }
+
+  void hideTagsError() {
+    showTagsError = false;
     notifyListeners();
   }
 }

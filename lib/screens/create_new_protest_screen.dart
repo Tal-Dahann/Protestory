@@ -7,6 +7,8 @@ import 'package:protestory/screens/new_protest_forms_screens/form_page_2.dart';
 import 'package:protestory/screens/new_protest_forms_screens/form_page_3.dart';
 import 'package:protestory/screens/new_protest_forms_screens/form_page_4.dart';
 import 'package:provider/provider.dart';
+import 'package:step_progress_indicator/step_progress_indicator.dart';
+import 'package:protestory/widgets/buttons.dart';
 
 ////////////////////////////////////////
 // Example usage of a form page:
@@ -30,10 +32,9 @@ class _NewProtestScreenState extends State<NewProtestScreen> {
     //TODO: Upload image to firestore storage
 
     //Upload Protest
-   await processDataAndUploadNewProtest();
+    await processDataAndUploadNewProtest();
 
     // TODO: Return to protest view after uploading protest
-
   }
 
   Future<void> processDataAndUploadNewProtest() async {
@@ -60,9 +61,9 @@ class _NewProtestScreenState extends State<NewProtestScreen> {
     if (context.watch<NewProtestFormNotifier>().finishButtonClicked == true) {
       _handleFinishButton();
     }
-    int currNum = context.watch<NewProtestFormNotifier>().currentFormPage;
+    int currPageNum = context.watch<NewProtestFormNotifier>().currentFormPage;
     Widget? currPageToDisplay;
-    switch (currNum) {
+    switch (currPageNum) {
       case 1:
         currPageToDisplay = const FormPageOne();
         break;
@@ -84,10 +85,100 @@ class _NewProtestScreenState extends State<NewProtestScreen> {
             style: TextStyle(color: blue, fontWeight: FontWeight.bold)),
         backgroundColor: white,
       ),
-      body: currPageToDisplay,
+      body: Column(
+        children: [
+          StepProgressIndicator(
+            totalSteps: 4,
+            selectedColor: purple,
+            currentStep: context.read<NewProtestFormNotifier>().currentFormPage,
+            size: 7,
+          ),
+          Expanded(
+              flex: 4,
+              child: Form(
+                  key: context.read<NewProtestFormNotifier>().formKey,
+                  child: currPageToDisplay)),
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: SingleChildScrollView(
+              physics: NeverScrollableScrollPhysics(),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  context.read<NewProtestFormNotifier>().currentFormPage > 1
+                      ? Align(
+                          alignment: Alignment.bottomLeft,
+                          child: CustomButton(
+                              text: 'Previous',
+                              textColor: purple,
+                              color: white,
+                              width: MediaQuery.of(context).size.width * 0.35,
+                              onPressed: () {
+                                setState(() {
+                                  context
+                                      .read<NewProtestFormNotifier>()
+                                      .prevPage();
+                                });
+                              }),
+                        )
+                      : const SizedBox(),
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: CustomButton(
+                        text: currPageNum != 4 ? 'Continue' : 'Finish',
+                        color: darkPurple,
+                        width: MediaQuery.of(context).size.width * 0.4,
+                        onPressed: () async {
+                          FocusManager.instance.primaryFocus?.unfocus();
+                          GlobalKey<FormState> formKey =
+                              context.read<NewProtestFormNotifier>().formKey;
+                          bool valid = false;
+                          switch (currPageNum) {
+                            case 1:
+                              valid = formKey.currentState!.validate();
+                              break;
+                            case 2:
+                              if (context
+                                  .read<NewProtestFormNotifier>()
+                                  .selectedTags
+                                  .isNotEmpty) {
+                                valid = true;
+                              } else {
+                                context
+                                    .read<NewProtestFormNotifier>()
+                                    .displayTagsError();
+                              }
+                              break;
+                            case 3:
+                              valid = formKey.currentState!.validate();
+                              break;
+                            case 4:
+                              if (context
+                                      .read<NewProtestFormNotifier>()
+                                      .protestThumbnail !=
+                                  null) {
+                                valid = true;
+                              }
+                              break;
+                          }
+                          if (valid) {
+                            setState(() {
+                              context.read<NewProtestFormNotifier>().nextPage();
+                            });
+                          } else {
+                            //TODO: display validation error
+                          }
+                        }),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
 
-    if (currNum != 1) {
+    if (currPageNum != 1) {
       //WillPopScope makes it so when you click the "back" button (in the phone toolbar)- it will go to the previous form page :)
       return WillPopScope(
           onWillPop: () {
