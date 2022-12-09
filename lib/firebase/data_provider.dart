@@ -20,6 +20,9 @@ class DataProvider {
         );
   }
 
+  CollectionReference<Protest> get getProtestCollectionRef =>
+      protestCollectionRef;
+
   Future<Protest> addProtest(
       {required String name,
       required DateTime date,

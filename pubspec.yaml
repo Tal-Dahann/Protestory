@@ -42,6 +42,9 @@ dependencies:
   flutter_svg: ^1.1.6
   email_validator: ^2.1.17
   google_sign_in: ^5.4.2
+  paginate_firestore:
+    git:
+      url: https://github.com/waqadArshad/paginate_firestore.git
 
 dev_dependencies:
   flutter_test:

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:protestory/firebase/auth_notifier.dart';
 import 'package:protestory/firebase/data_provider.dart';
 import 'package:protestory/screens/login_page.dart';
+import 'package:protestory/widgets/search_bar.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -17,19 +18,21 @@ class PreMainScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     if (context.watch<AuthNotifier>().isAuthenticated()) {
       return ProxyProvider<AuthNotifier, DataProvider>(
-        create: (ctx) => DataProvider(user: ctx.read<AuthNotifier>().user!),
-        update: (_, myAuthNotifier, myDataProvider) =>
-            (myDataProvider?..updateUser(myAuthNotifier.user)) ??
-            DataProvider(user: myAuthNotifier.user!),
-        child: Scaffold(
-          body: Column(children: [
-            // const TestAppDana(),
-            ElevatedButton(
-                onPressed: context.read<AuthNotifier>().signOut,
-                child: const Text("Logout")),
-          ]),
-        ),
-      ); // TODO replace
+          create: (ctx) => DataProvider(user: ctx.read<AuthNotifier>().user!),
+          update: (_, myAuthNotifier, myDataProvider) =>
+              (myDataProvider?..updateUser(myAuthNotifier.user)) ??
+              DataProvider(user: myAuthNotifier.user!),
+          child: Scaffold(
+            body: SearchBar(),
+            // child: Scaffold(
+            //   body: Column(children: [
+            //     // const TestAppDana(),
+            //     ElevatedButton(
+            //         onPressed: context.read<AuthNotifier>().signOut,
+            //         child: const Text("Logout")),
+            //   ]),
+            // ),
+          )); // TODO replace
     } else {
       return const LoginPage();
     }
