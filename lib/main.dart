@@ -2,49 +2,44 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:protestory/firebase/auth_notifier.dart';
 import 'package:protestory/firebase/data_provider.dart';
-import 'package:protestory/screens/login_page.dart';
+import 'package:protestory/screens/login_screen.dart';
 import 'package:provider/provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const App());
+  runApp(FirebaseInit());
 }
 
-class PreMainScreen extends StatelessWidget {
-  const PreMainScreen({Key? key}) : super(key: key);
+class App extends StatelessWidget {
+  const App({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    if (context.watch<AuthNotifier>().isAuthenticated()) {
+    var app = MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: (context.watch<AuthNotifier>().isAuthenticated())
+          ? Scaffold(
+              body: Column(children: [
+                // const TestAppDana(),
+                ElevatedButton(
+                    onPressed: context.read<AuthNotifier>().signOut,
+                    child: Text(
+                        "Logout from ${context.read<AuthNotifier>().user?.displayName}")),
+              ]),
+            )
+          : const LoginPage(),
+    );
+    if (context.read<AuthNotifier>().isAuthenticated()) {
       return ProxyProvider<AuthNotifier, DataProvider>(
         create: (ctx) => DataProvider(user: ctx.read<AuthNotifier>().user!),
         update: (_, myAuthNotifier, myDataProvider) =>
             (myDataProvider?..updateUser(myAuthNotifier.user)) ??
             DataProvider(user: myAuthNotifier.user!),
-        child: Scaffold(
-          body: Column(children: [
-            // const TestAppDana(),
-            ElevatedButton(
-                onPressed: context.read<AuthNotifier>().signOut,
-                child: const Text("Logout")),
-          ]),
-        ),
+        child: app,
       ); // TODO replace
     } else {
-      return const LoginPage();
+      return app;
     }
-  }
-}
-
-class App extends StatelessWidget {
-  const App({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: FirebaseInit(),
-    );
   }
 }
 
@@ -66,7 +61,7 @@ class FirebaseInit extends StatelessWidget {
         }
         if (snapshot.connectionState == ConnectionState.done) {
           return ChangeNotifierProvider(
-              create: (_) => AuthNotifier(), child: const PreMainScreen());
+              create: (_) => AuthNotifier(), child: const App());
         }
 
         //TODO replace with splash screen
