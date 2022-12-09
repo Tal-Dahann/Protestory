@@ -7,7 +7,8 @@ import 'package:protestory/widgets/buttons.dart';
 import 'package:protestory/widgets/text_fields.dart';
 import 'package:protestory/utils/add_spaces.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
-
+import 'package:markdown_editable_textinput/format_markdown.dart';
+import 'package:markdown_editable_textinput/markdown_text_input.dart';
 
 class NewProtestScreen extends StatefulWidget {
   const NewProtestScreen({Key? key}) : super(key: key);
@@ -225,7 +226,120 @@ class _NewProtestScreenState extends State<NewProtestScreen> {
           ],
         ),
       );
-    } else {
+    } else if (currentFormPage == 2) {
+      return Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          title: Text('New Protest',
+              style: TextStyle(color: blue, fontWeight: FontWeight.bold)),
+          backgroundColor: white,
+        ),
+        body: Column(
+          children: [
+            StepProgressIndicator(
+              totalSteps: 4,
+              selectedColor: purple,
+              currentStep: currentFormPage,
+              size: 7,
+            ),
+            addVerticalSpace(height: 30),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: EdgeInsets.only(
+                    left: MediaQuery.of(context).size.width * 0.1,
+                    right: MediaQuery.of(context).size.width * 0.1),
+                child: Text(
+                  'What\'s the topic that best describes your protest?',
+                  style: TextStyle(
+                      color: blue, fontWeight: FontWeight.bold, fontSize: 24),
+                  textAlign: TextAlign.left,
+                ),
+              ),
+            ),
+            addVerticalSpace(height: 15),
+            Padding(
+              padding: EdgeInsets.only(
+                  left: MediaQuery.of(context).size.width * 0.1,
+                  right: MediaQuery.of(context).size.width * 0.1),
+              child: Wrap(
+                spacing: 7,
+                children: List<Widget>.generate(
+                  tags.length,
+                  (int index) {
+                    bool currSelected = selectedTags.contains(tags[index]);
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 4.0),
+                      child: ChoiceChip(
+                        // shape: const StadiumBorder(
+                        //   side: BorderSide(),
+                        // ),
+                        side: BorderSide(
+                            color: currSelected ? darkPurple : lightGray),
+                        labelPadding: const EdgeInsets.all(5.0),
+                        label: Text(
+                          tags[index],
+                          style: TextStyle(
+                              color: currSelected ? darkPurple : black,
+                              fontSize: 18),
+                        ),
+                        selected: currSelected,
+                        selectedColor: transparentPurple,
+                        backgroundColor: currSelected ? purple : white,
+                        elevation: 2,
+                        onSelected: (bool selected) {
+                          setState(() {
+                            selected
+                                ? selectedTags.add(tags[index])
+                                : selectedTags.remove(tags[index]);
+                            log(selectedTags.toString());
+                          });
+                        },
+                      ),
+                    );
+                  },
+                ).toList(),
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Align(
+                      alignment: Alignment.bottomLeft,
+                      child: CustomButton(
+                          text: 'Previous',
+                          textColor: purple,
+                          color: white,
+                          width: MediaQuery.of(context).size.width * 0.35,
+                          onPressed: () {
+                            setState(() {
+                              currentFormPage--;
+                            });
+                          }),
+                    ),
+                    Align(
+                      alignment: Alignment.bottomRight,
+                      child: CustomButton(
+                          text: 'Continue',
+                          color: darkPurple,
+                          width: MediaQuery.of(context).size.width * 0.4,
+                          onPressed: () {
+                            setState(() {
+                              currentFormPage++;
+                            });
+                          }),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          ],
+        ),
+      );
+    }  else {
       return Scaffold();
     }
   }
