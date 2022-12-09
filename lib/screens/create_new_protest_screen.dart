@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:protestory/constants/colors.dart';
+import 'package:protestory/firebase/data_provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:protestory/widgets/buttons.dart';
 import 'package:protestory/widgets/text_fields.dart';
 import 'package:protestory/utils/add_spaces.dart';
@@ -21,8 +23,11 @@ class _NewProtestScreenState extends State<NewProtestScreen> {
   final titleController = TextEditingController();
   final locationController = TextEditingController();
   final dateController = TextEditingController();
+  final timeController = TextEditingController();
   final descriptionController = TextEditingController();
+  final _titleFormKey = GlobalKey<FormState>();
   final protestTags = <String>[];
+  DateTime selectedTime = DateTime(0);
   final tags = [
     'Animals',
     'Business and Brands',
@@ -43,13 +48,14 @@ class _NewProtestScreenState extends State<NewProtestScreen> {
   ];
   final tagsColors = <Color>[];
   final selectedTags = <String>[];
-  XFile? protestThumbnail = null;
+  XFile? protestThumbnail;
 
   late FocusNode locationFocusNode;
   late FocusNode dateFocusNode;
 
   @override
   void initState() {
+    timeController.text = '';
     dateController.text = '';
     titleController.text = '';
     locationController.text = '';
@@ -61,6 +67,7 @@ class _NewProtestScreenState extends State<NewProtestScreen> {
 
   @override
   void dispose() {
+    timeController.dispose();
     titleController.dispose();
     locationController.dispose();
     dateController.dispose();
@@ -68,6 +75,24 @@ class _NewProtestScreenState extends State<NewProtestScreen> {
     locationFocusNode.dispose();
     dateFocusNode.dispose();
     super.dispose();
+  }
+
+  void processDataAndUploadNewProtest() async {
+    //creator = context.read<AuthProvider>.user or something like that
+    String name = titleController.text;
+    Timestamp date = Timestamp.fromDate(selectedTime);
+    String description = descriptionController.text;
+    String location = locationController.text;
+    //Tag list = tags
+    //TODO: add addProtest() once the ProxyProvider is merged.
+    //await context.read<DataProvider>().addProtest();
+  }
+
+  void _handleFinishButton() {
+    //TODO: Upload image
+
+    //Upload Protest
+    processDataAndUploadNewProtest();
   }
 
   @override
@@ -110,6 +135,19 @@ class _NewProtestScreenState extends State<NewProtestScreen> {
                   right: MediaQuery.of(context).size.width * 0.1),
               child: CustomTextFormField(
                 controller: titleController,
+                key: _titleFormKey,
+                validator: (value) {
+                  if (value == null || value.length > 25) {
+                    return 'The title must be 1-25 characters long.';
+                  }
+                  if (value.contains(RegExp(r'^[a-zA-Z]+$'))) {
+                    return null;
+                  } else {
+                    return 'The title can only contain letters';
+                  }
+                },
+                onChanged: (_) {},
+                autovalidateMode: AutovalidateMode.onUserInteraction,
                 onFieldSubmitted: (String value) {
                   locationFocusNode.requestFocus();
                 },
@@ -185,12 +223,15 @@ class _NewProtestScreenState extends State<NewProtestScreen> {
                     initialTime: TimeOfDay.now(),
                   );
                   if (pickedDate != null && pickedTime != null) {
+                    selectedTime = DateTime(pickedDate.year, pickedDate.month,
+                        pickedDate.day, pickedTime.hour, pickedTime.minute);
                     String formattedDate =
                         DateFormat('dd/MM/yyyy').format(pickedDate);
                     //String formattedDate = DateFormat.yMMMEd().format(pickedDate);
-                    log('$formattedDate, ${pickedTime.format(context)}');
+                    //log('$formattedDate, ${pickedTime.format(context)}');
                     setState(
                       () {
+                        timeController.text = pickedTime.format(context);
                         //dateController.text = '$formattedDate - ${pickedTime.format(context)}';
                         dateController.text =
                             '$formattedDate, ${pickedTime.format(context)}';
@@ -212,9 +253,12 @@ class _NewProtestScreenState extends State<NewProtestScreen> {
                       color: darkPurple,
                       width: MediaQuery.of(context).size.width * 0.4,
                       onPressed: () {
-                        setState(() {
-                          currentFormPage++;
-                        });
+                        //TODO: add validator for title.
+                        //if (selectedTime != DateTime(0)) {
+                          setState(() {
+                            currentFormPage++;
+                          });
+                        //}
                       }),
                 ),
               ),
@@ -561,14 +605,15 @@ class _NewProtestScreenState extends State<NewProtestScreen> {
                       Align(
                         alignment: Alignment.bottomRight,
                         child: CustomButton(
-                            text: 'Finish',
-                            color: darkPurple,
-                            width: MediaQuery.of(context).size.width * 0.3,
-                            onPressed: () {
-                              setState(() {
-                                currentFormPage++;
-                              });
-                            }),
+                          text: 'Finish',
+                          color: darkPurple,
+                          width: MediaQuery.of(context).size.width * 0.3,
+                          onPressed: () {
+                            if (protestThumbnail != null) {
+                              _handleFinishButton();
+                            }
+                          },
+                        ),
                       ),
                     ],
                   ),
