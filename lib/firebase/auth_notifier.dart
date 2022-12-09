@@ -1,12 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 enum AuthStatus { authenticated, unauthenticated, authenticating }
 
 class AuthNotifier extends ChangeNotifier {
   final _auth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
   var _status = AuthStatus.unauthenticated;
   User? _user;
+  GoogleSignInAccount? googleUser;
 
   bool _disposed = false;
 
@@ -31,6 +34,19 @@ class AuthNotifier extends ChangeNotifier {
     return status == AuthStatus.authenticated;
   }
 
+  Future<bool> signInGoogle() async {
+    GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+    if (googleUser == null) {
+      return false;
+    }
+    GoogleSignInAuthentication googleAuthentication =
+        await googleUser.authentication;
+    await _auth.signInWithCredential(GoogleAuthProvider.credential(
+        accessToken: googleAuthentication.accessToken,
+        idToken: googleAuthentication.idToken));
+    return true;
+  }
+
   /// A [FirebaseAuthException] maybe thrown with the following error code:
   /// - **invalid-email**:
   ///  - Thrown if the email address is not valid.
@@ -41,12 +57,11 @@ class AuthNotifier extends ChangeNotifier {
   /// - **wrong-password**:
   ///  - Thrown if the password is invalid for the given email, or the account
   ///    corresponding to the email does not have a password set.
-  Future<bool> login(String email, String password) async {
+  Future<void> signInEmailPassword(String email, String password) async {
     try {
       _status = AuthStatus.authenticating;
       notifyListeners();
       await _auth.signInWithEmailAndPassword(email: email, password: password);
-      return true;
     } catch (e) {
       _status = AuthStatus.unauthenticated;
       notifyListeners();
@@ -78,6 +93,9 @@ class AuthNotifier extends ChangeNotifier {
   }
 
   Future<void> signOut() async {
+    if (await _googleSignIn.isSignedIn()) {
+      await _googleSignIn.signOut();
+    }
     await _auth.signOut();
   }
 
