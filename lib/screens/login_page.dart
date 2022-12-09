@@ -38,7 +38,26 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  Future<void> _processLogin(BuildContext context) async {
+  Future<void> _handleGoogleLogin(BuildContext context) async {
+    try {
+      setState(() {
+        _loading = true;
+      });
+      await context.read<AuthNotifier>().signInGoogle();
+    } on FirebaseAuthException catch (e) {
+      // TODO replace with snackbar?
+      log(e.message ?? "Unknown error");
+      setState(() {
+        _emailErrorMessage = 'Unknown error. Try later';
+      });
+    } finally {
+      setState(() {
+        _loading = false;
+      });
+    }
+  }
+
+  Future<void> _handleEmailLogin(BuildContext context) async {
     if (!_formKey.currentState!.validate()) return;
     try {
       setState(() {
@@ -46,7 +65,7 @@ class _LoginPageState extends State<LoginPage> {
       });
       await context
           .read<AuthNotifier>()
-          .login(_emailController.text, _passwordController.text);
+          .signInEmailPassword(_emailController.text, _passwordController.text);
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
         case 'invalid-email':
@@ -165,7 +184,7 @@ class _LoginPageState extends State<LoginPage> {
                         return null;
                       },
                       obscureText: true,
-                      onFieldSubmitted: (_) => _processLogin(context),
+                      onFieldSubmitted: (_) => _handleEmailLogin(context),
                       onChanged: (_) => setState(() {
                         _passwordErrorMessage = null;
                       }),
@@ -174,7 +193,7 @@ class _LoginPageState extends State<LoginPage> {
                     Flexible(
                       flex: 1,
                       child: CustomButton(
-                        onPressed: () => _processLogin(context),
+                        onPressed: () => _handleEmailLogin(context),
                         text: 'Login',
                       ),
                     ),
@@ -210,7 +229,7 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           ),
                           Text(
-                            'sign up via',
+                            'sign in via',
                             style: TextStyle(color: darkGray, fontSize: 18),
                           ),
                           Expanded(
@@ -236,9 +255,7 @@ class _LoginPageState extends State<LoginPage> {
                         color: white,
                         textColor: black,
                         svgLogoPath: 'assets/icons/google_icon.svg',
-                        onPressed: () {
-                          log('Clicked sign in with google');
-                        },
+                        onPressed: () => _handleGoogleLogin(context),
                       ),
                     ),
                   ],
