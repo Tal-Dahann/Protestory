@@ -1,5 +1,5 @@
 import 'dart:developer';
-
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:protestory/constants/colors.dart';
@@ -7,6 +7,7 @@ import 'package:protestory/widgets/buttons.dart';
 import 'package:protestory/widgets/text_fields.dart';
 import 'package:protestory/utils/add_spaces.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
+import 'package:image_picker/image_picker.dart';
 
 class NewProtestScreen extends StatefulWidget {
   const NewProtestScreen({Key? key}) : super(key: key);
@@ -16,7 +17,7 @@ class NewProtestScreen extends StatefulWidget {
 }
 
 class _NewProtestScreenState extends State<NewProtestScreen> {
-  int currentFormPage = 4;
+  int currentFormPage = 1;
   final titleController = TextEditingController();
   final locationController = TextEditingController();
   final dateController = TextEditingController();
@@ -42,6 +43,7 @@ class _NewProtestScreenState extends State<NewProtestScreen> {
   ];
   final tagsColors = <Color>[];
   final selectedTags = <String>[];
+  XFile? protestThumbnail = null;
 
   late FocusNode locationFocusNode;
   late FocusNode dateFocusNode;
@@ -493,6 +495,47 @@ class _NewProtestScreenState extends State<NewProtestScreen> {
                     style: TextStyle(
                         color: blue, fontWeight: FontWeight.bold, fontSize: 32),
                     textAlign: TextAlign.left,
+                  ),
+                ),
+              ),
+              addVerticalSpace(height: 40),
+              Align(
+                alignment: Alignment.center,
+                child: Padding(
+                  padding: EdgeInsets.only(
+                      left: MediaQuery.of(context).size.width * 0.1,
+                      right: MediaQuery.of(context).size.width * 0.1),
+                  child: AspectRatio(
+                    aspectRatio: 1.5,
+                    child: InkWell(
+                      onTap: () async {
+                        final ImagePicker _picker = ImagePicker();
+                        final XFile? image = await _picker.pickImage(
+                            source: ImageSource.gallery);
+                        if (image == null) {
+                          //TODO: add error handling
+                        } else {
+                          setState(() {
+                            protestThumbnail = image;
+                          });
+                        }
+                      },
+                      child: protestThumbnail == null
+                          ? Container(
+                              color: lightGray,
+                              width: MediaQuery.of(context).size.width * 0.8,
+                            )
+                          : Container(
+                              color: lightGray,
+                              width: MediaQuery.of(context).size.width * 0.8,
+                              child: FittedBox(
+                                fit: BoxFit.fill,
+                                child: Image.file(
+                                  File(protestThumbnail!.path),
+                                ),
+                              ),
+                            ),
+                    ),
                   ),
                 ),
               ),
