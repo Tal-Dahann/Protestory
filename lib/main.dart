@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:protestory/firebase/auth_notifier.dart';
 import 'package:protestory/firebase/data_provider.dart';
+import 'package:protestory/screens/create_new_protest_screen.dart';
 import 'package:protestory/screens/login_page.dart';
 import 'package:provider/provider.dart';
 
@@ -31,7 +32,7 @@ class PreMainScreen extends StatelessWidget {
         ),
       ); // TODO replace
     } else {
-      return const LoginPage();
+      return const NewProtestScreen();
     }
   }
 }
