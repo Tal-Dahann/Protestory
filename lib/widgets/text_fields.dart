@@ -1,10 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:protestory/constants/colors.dart';
 
 class CustomTextFormField extends StatefulWidget {
   final String? label;
-  final double? width;
-  final double? height;
+  final double width;
+  final double height;
   final Color? color;
   final TextEditingController? controller;
   final TextInputType? keyboardType;
@@ -16,24 +17,32 @@ class CustomTextFormField extends StatefulWidget {
   final TextInputAction? textInputAction;
   final ValueChanged<String>? onChanged;
   final ValueChanged<String>? onFieldSubmitted;
+  final IconData? icon;
+  final bool readOnly;
+  final AsyncValueGetter? onTap;
+  final FocusNode? focusNode;
 
-  const CustomTextFormField(
-      {Key? key,
-      this.label,
-      this.width,
-      this.height,
-      this.color,
-      this.controller,
-      this.validator,
-      this.keyboardType,
-      this.obscureText = false,
-      this.hintText,
-      this.errorText,
-      this.autovalidateMode,
-      this.textInputAction,
-      this.onChanged,
-      this.onFieldSubmitted})
-      : super(key: key);
+  const CustomTextFormField({
+    Key? key,
+    this.label,
+    this.width = 360,
+    this.height = 85,
+    this.color,
+    this.controller,
+    this.validator,
+    this.keyboardType,
+    this.obscureText = false,
+    this.hintText,
+    this.errorText,
+    this.autovalidateMode,
+    this.textInputAction,
+    this.onChanged,
+    this.onFieldSubmitted,
+    this.icon,
+    this.readOnly = false,
+    this.onTap,
+    this.focusNode,
+  }) : super(key: key);
 
   @override
   State<CustomTextFormField> createState() => _CustomTextFormFieldState();
@@ -43,9 +52,12 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-        width: widget.width ?? 360,
-        height: widget.height ?? 85,
+        width: widget.width,
+        height: widget.height,
         child: TextFormField(
+          focusNode: widget.focusNode,
+          onTap: widget.onTap,
+          readOnly: widget.readOnly,
           obscureText: widget.obscureText,
           keyboardType: widget.keyboardType,
           validator: widget.validator,
@@ -55,6 +67,9 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           onChanged: widget.onChanged,
           onFieldSubmitted: widget.onFieldSubmitted,
           decoration: InputDecoration(
+              suffixIcon: widget.icon != null ? Icon(
+                widget.icon, size: widget.height * 0.4, color: blue,) : null,
+              suffixIconColor: widget.icon != null ? blue : null,
               filled: true,
               fillColor: white,
               border: OutlineInputBorder(
