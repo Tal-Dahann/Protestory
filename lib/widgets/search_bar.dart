@@ -56,6 +56,9 @@ class Paginator extends StatelessWidget {
   Widget build(BuildContext context) {
     print("building pagintor: " + searchText);
     return PaginateFirestore(
+      //TODO: check if it lazy loaded
+      //itemsPerPage: 5,
+      key: ValueKey(searchText),
 //item builder type is compulsory.
       itemBuilder: (context, documentSnapshots, index) {
         final data = documentSnapshots[index].data() as Protest;
@@ -75,7 +78,8 @@ class Paginator extends StatelessWidget {
 //Change types accordingly
       itemBuilderType: PaginateBuilderType.listView,
 // to fetch real-time data
-      //isLive: true,
+      //TODO: check is it really necessary
+      isLive: true,
     );
   }
 }
