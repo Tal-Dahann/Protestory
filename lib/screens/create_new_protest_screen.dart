@@ -49,6 +49,7 @@ class _NewProtestFormState extends State<NewProtestForm> {
     Future.delayed(Duration.zero, () {
       //Function to navigate to protest page after successful upload!
       Navigator.of(context).pop();
+      Navigator.of(context).pop();
     });
     // TODO: Return to protest view after uploading protest
   }
@@ -94,6 +95,12 @@ class _NewProtestFormState extends State<NewProtestForm> {
     }
     Widget? scaffoldToDisplay = Scaffold(
       appBar: AppBar(
+        leading:  BackButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          color: blue,
+        ),
         title: const Text('New Protest',
             style: TextStyle(color: blue, fontWeight: FontWeight.bold)),
         backgroundColor: white,
