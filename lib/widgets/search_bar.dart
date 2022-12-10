@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:paginate_firestore/paginate_firestore.dart';
 import 'package:protestory/firebase/data_provider.dart';
+import 'package:protestory/widgets/protest_card_search.dart';
 import 'package:protestory/widgets/text_fields.dart';
 import 'package:provider/provider.dart';
 
@@ -41,7 +42,9 @@ class _SearchBarState extends State<SearchBar> {
               text = searchText;
             }),
           ),
-          Container(height: 500, child: Paginator(searchText: text))
+          Container(
+              height: MediaQuery.of(context).size.width * 0.8,
+              child: Paginator(searchText: text))
         ],
       ),
     );
@@ -62,11 +65,17 @@ class Paginator extends StatelessWidget {
 //item builder type is compulsory.
       itemBuilder: (context, documentSnapshots, index) {
         final data = documentSnapshots[index].data() as Protest;
-        return ListTile(
-          leading: const CircleAvatar(child: Icon(Icons.person)),
-          title: data == null ? const Text('Error in data') : Text(data.name),
-          subtitle: Text(documentSnapshots[index].id),
-        );
+        if (data == null) {
+          return Text('Error in data');
+        } else {
+          return ProtestCardSearch(protest: data);
+        }
+
+        //   ListTile(
+        //   leading: const CircleAvatar(child: Icon(Icons.person)),
+        //   title: data == null ? const Text('Error in data') : Text(data.name),
+        //   subtitle: Text(documentSnapshots[index].id),
+        // );
       },
 // orderBy is compulsory to enable pagination
       query: context
