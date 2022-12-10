@@ -77,6 +77,9 @@ class _FormPageThreeState extends State<FormPageThree> {
                 if (value == null || value.length > 500) {
                   return 'Description must be up to 500 characters.';
                 }
+                if (value.isEmpty) {
+                  return 'Description can\'t be empty';
+                }
                 return null;
               },
               controller: context
