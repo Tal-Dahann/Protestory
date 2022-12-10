@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:protestory/firebase/auth_notifier.dart';
+import 'package:protestory/widgets/search_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:protestory/screens/create_new_protest_screen.dart';
 
@@ -15,6 +16,15 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  int index = 0;
+  final screens = [
+    MainPage(),
+    Center(child: Text('not implemented yet')),
+    NewProtestScreen(),
+    SearchScreen(),
+    Center(child: Text('not implemented yet')),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,7 +46,7 @@ class _MainPageState extends State<MainPage> {
               icon: Icon(Icons.account_box_rounded), label: 'Profile'),
         ],
         onTap: (index) {
-          switch(index) {
+          switch (index) {
             case 0:
               break;
             case 1:
@@ -47,7 +57,8 @@ class _MainPageState extends State<MainPage> {
                   builder: (context) => const NewProtestScreen()));
               break;
             case 3:
-              log('pressed search - nothing to show yet');
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const SearchScreen()));
               break;
             case 4:
               log('pressed profile - nothing to show yet');

@@ -95,10 +95,7 @@ class _NewProtestFormState extends State<NewProtestForm> {
     }
     Widget? scaffoldToDisplay = Scaffold(
       appBar: AppBar(
-        leading:  BackButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
+        leading:  const BackButton(
           color: blue,
         ),
         title: const Text('New Protest',
