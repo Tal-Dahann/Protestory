@@ -39,7 +39,7 @@ class _SearchScreenState extends State<SearchScreen> {
               text = searchText;
             }),
           ),
-          addVerticalSpace(height: 3),
+          addVerticalSpace(height: 4),
           Expanded(
               child: Paginator(
             query: context
