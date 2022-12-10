@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:protestory/firebase/auth_notifier.dart';
 import 'package:protestory/firebase/data_provider.dart';
 import 'package:protestory/screens/login_screen.dart';
-import 'package:protestory/widgets/search_screen.dart';
+import 'package:protestory/screens/search_screen.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -25,7 +25,7 @@ class PreMainScreen extends StatelessWidget {
         update: (_, myAuthNotifier, myDataProvider) =>
             (myDataProvider?..updateUser(myAuthNotifier.user)) ??
             DataProvider(user: myAuthNotifier.user!),
-        child: SearchScreen(),
+        child: const SearchScreen(),
       );
       // Scaffold(
       //     body: Column(children: [
