@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-
-import 'package:protestory/widgets/text_fields.dart';
 import 'package:intl/intl.dart';
-import 'package:protestory/utils/add_spaces.dart';
-import 'package:provider/provider.dart';
 import 'package:protestory/constants/colors.dart';
 import 'package:protestory/providers/new_protest_form_provider.dart';
+import 'package:protestory/utils/add_spaces.dart';
+import 'package:protestory/widgets/text_fields.dart';
+import 'package:provider/provider.dart';
 
 class FormPageOne extends StatefulWidget {
   // final TextEditingController currentFormPageController;
@@ -34,9 +33,7 @@ class _FormPageOneState extends State<FormPageOne> {
         ),
         textButtonTheme: TextButtonThemeData(
           style: TextButton.styleFrom(
-              backgroundColor: lightBlue,
-              foregroundColor: white
-              ),
+              backgroundColor: lightBlue, foregroundColor: white),
         ),
       ),
       child: child!,
@@ -91,7 +88,10 @@ class _FormPageOneState extends State<FormPageOne> {
                     .requestFocus();
               },
               label: 'Title',
-              icon: Icons.edit,
+              icon: const Icon(
+                Icons.edit,
+                color: blue,
+              ),
             ),
           ),
           addVerticalSpace(height: 30),
@@ -127,12 +127,14 @@ class _FormPageOneState extends State<FormPageOne> {
                 return null;
               },
               onFieldSubmitted: (String value) {
-                FocusScope.of(context).requestFocus(context
-                    .read<NewProtestFormNotifier>()
-                    .dateFocusNode);
+                FocusScope.of(context).requestFocus(
+                    context.read<NewProtestFormNotifier>().dateFocusNode);
               },
               label: 'Location',
-              icon: Icons.location_on,
+              icon: const Icon(
+                Icons.location_on,
+                color: blue,
+              ),
             ),
           ),
           addVerticalSpace(height: 30),
@@ -159,7 +161,10 @@ class _FormPageOneState extends State<FormPageOne> {
               controller: context.read<NewProtestFormNotifier>().dateController,
               label: 'Date',
               focusNode: context.read<NewProtestFormNotifier>().dateFocusNode,
-              icon: Icons.calendar_month,
+              icon: const Icon(
+                Icons.calendar_month,
+                color: blue,
+              ),
               readOnly: true,
               validator: (value) {
                 if (value == null || value.isEmpty) {
