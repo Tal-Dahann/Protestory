@@ -17,16 +17,7 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  final _searchController = TextEditingController();
   String text = 'zzzzzzzzzzzzzzzzzzzzzzzzz';
-
-  @override
-  void dispose() {
-    // Clean up the controller when the widget is removed from the
-    // widget tree.
-    _searchController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +33,6 @@ class _SearchScreenState extends State<SearchScreen> {
           addVerticalSpace(height: 15),
           CustomTextFormField(
             icon: const Icon(Icons.search),
-            controller: _searchController,
             hintText: "Search...",
             onChanged: (searchText) => setState(() {
               text = searchText;
@@ -65,16 +55,20 @@ class Paginator extends StatelessWidget {
   String searchText;
   @override
   Widget build(BuildContext context) {
-    print("building pagintor: " + searchText);
+    print("building pagintor: $searchText");
     return PaginateFirestore(
       //TODO: check if it lazy loaded
       //itemsPerPage: 5,
       key: ValueKey(searchText),
+      onEmpty: const Text(
+        "No protests match your search",
+        style: TextStyle(color: darkGray),
+      ),
 //item builder type is compulsory.
       itemBuilder: (context, documentSnapshots, index) {
         final data = documentSnapshots[index].data() as Protest;
         if (data == null) {
-          return Text('Error in data');
+          return const Text('Error in data');
         } else {
           return ProtestCardSearch(protest: data);
         }
