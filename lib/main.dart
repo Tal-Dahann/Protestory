@@ -5,9 +5,14 @@ import 'package:protestory/firebase/data_provider.dart';
 import 'package:protestory/screens/create_new_protest_screen.dart';
 import 'package:protestory/screens/login_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/services.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
   runApp(FirebaseInit());
 }
 
@@ -59,9 +64,8 @@ class _MainPageState extends State<MainPage> {
                   "Logout from ${context.read<AuthNotifier>().user?.displayName}"),
             ),
             ElevatedButton(
-              onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                      builder: (context) => const NewProtestScreen())),
+              onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const NewProtestScreen())),
               child: const Text('Add Protest'),
             ),
           ],
@@ -70,7 +74,6 @@ class _MainPageState extends State<MainPage> {
     );
   }
 }
-
 
 class FirebaseInit extends StatelessWidget {
   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
