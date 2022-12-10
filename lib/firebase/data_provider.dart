@@ -130,4 +130,19 @@ class DataProvider {
   updateUser(User? user) {
     this.user = user ?? this.user;
   }
+
+  Query<Protest> getMostRecentQuery() {
+    return protestCollectionRef.orderBy('creation_time', descending: true);
+  }
+
+  Query<Protest> getMostPopularQuery() {
+    return protestCollectionRef.orderBy('participants_amount',
+        descending: true);
+  }
+
+  Query<Protest> getMyProtests() {
+    return protestCollectionRef
+        .orderBy('creation_time', descending: true)
+        .where('creator', isEqualTo: user.uid);
+  }
 }
