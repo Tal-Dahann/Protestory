@@ -1,13 +1,16 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:protestory/firebase/auth_notifier.dart';
 import 'package:protestory/firebase/data_provider.dart';
-import 'package:protestory/screens/login_page.dart';
-import 'package:protestory/widgets/search_bar.dart';
+import 'package:protestory/screens/login_screen.dart';
+import 'package:protestory/widgets/search_screen.dart';
 import 'package:provider/provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   runApp(const App());
 }
 
@@ -18,26 +21,28 @@ class PreMainScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     if (context.watch<AuthNotifier>().isAuthenticated()) {
       return ProxyProvider<AuthNotifier, DataProvider>(
-          create: (ctx) => DataProvider(user: ctx.read<AuthNotifier>().user!),
-          update: (_, myAuthNotifier, myDataProvider) =>
-              (myDataProvider?..updateUser(myAuthNotifier.user)) ??
-              DataProvider(user: myAuthNotifier.user!),
-          child: Scaffold(
-              body: Column(children: [
-            SearchBar(),
-            ElevatedButton(
-                onPressed: context.read<AuthNotifier>().signOut,
-                child: const Text("Logout")),
-          ])
-              // child: Scaffold(
-              //   body: Column(children: [
-              //     // const TestAppDana(),
-              //     ElevatedButton(
-              //         onPressed: context.read<AuthNotifier>().signOut,
-              //         child: const Text("Logout")),
-              //   ]),
-              // ),
-              )); // TODO replace
+        create: (ctx) => DataProvider(user: ctx.read<AuthNotifier>().user!),
+        update: (_, myAuthNotifier, myDataProvider) =>
+            (myDataProvider?..updateUser(myAuthNotifier.user)) ??
+            DataProvider(user: myAuthNotifier.user!),
+        child: SearchScreen(),
+      );
+      // Scaffold(
+      //     body: Column(children: [
+      //   SearchBar(),
+      //   ElevatedButton(
+      //       onPressed: context.read<AuthNotifier>().signOut,
+      //       child: const Text("Logout")),
+      // ])
+      //     // child: Scaffold(
+      //     //   body: Column(children: [
+      //     //     // const TestAppDana(),
+      //     //     ElevatedButton(
+      //     //         onPressed: context.read<AuthNotifier>().signOut,
+      //     //         child: const Text("Logout")),
+      //     //   ]),
+      //     // ),
+      //     )); // TODO replace
     } else {
       return const LoginPage();
     }

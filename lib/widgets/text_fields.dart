@@ -17,7 +17,7 @@ class CustomTextFormField extends StatefulWidget {
   final TextInputAction? textInputAction;
   final ValueChanged<String>? onChanged;
   final ValueChanged<String>? onFieldSubmitted;
-  final IconData? icon;
+  final Widget? icon;
   final bool readOnly;
   final AsyncValueGetter? onTap;
   final FocusNode? focusNode;
@@ -70,8 +70,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           onChanged: widget.onChanged,
           onFieldSubmitted: widget.onFieldSubmitted,
           decoration: InputDecoration(
-              suffixIcon: widget.icon != null ? Icon(
-                widget.icon, size: widget.height * 0.4, color: blue,) : null,
+              suffixIcon: widget.icon,
               suffixIconColor: widget.icon != null ? blue : null,
               filled: true,
               fillColor: white,
@@ -88,3 +87,6 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
         ));
   }
 }
+
+//Icon(
+//                 widget.icon, size: widget.height * 0.4, color: blue,)

@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:paginate_firestore/paginate_firestore.dart';
 import 'package:protestory/firebase/data_provider.dart';
+import 'package:protestory/utils/add_spaces.dart';
 import 'package:protestory/widgets/protest_card_search.dart';
 import 'package:protestory/widgets/text_fields.dart';
 import 'package:provider/provider.dart';
 
+import '../constants/colors.dart';
 import '../firebase/protest.dart';
 
-class SearchBar extends StatefulWidget {
-  const SearchBar({Key? key}) : super(key: key);
+class SearchScreen extends StatefulWidget {
+  const SearchScreen({Key? key}) : super(key: key);
 
   @override
-  State<SearchBar> createState() => _SearchBarState();
+  State<SearchScreen> createState() => _SearchScreenState();
 }
 
-class _SearchBarState extends State<SearchBar> {
+class _SearchScreenState extends State<SearchScreen> {
   final _searchController = TextEditingController();
-  String text = 'zzzzz';
+  String text = 'zzzzzzzzzzzzzzzzzzzzzzzzz';
 
   @override
   void dispose() {
@@ -28,23 +30,29 @@ class _SearchBarState extends State<SearchBar> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Search',
+            style: TextStyle(color: blue, fontWeight: FontWeight.bold)),
+        backgroundColor: white,
+      ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          addVerticalSpace(height: 15),
           CustomTextFormField(
+            icon: const Icon(Icons.search),
             controller: _searchController,
             hintText: "Search...",
             onChanged: (searchText) => setState(() {
-              //print("changed");
               text = searchText;
             }),
             onFieldSubmitted: (searchText) => setState(() {
               text = searchText;
             }),
           ),
-          Container(
-              height: MediaQuery.of(context).size.width * 0.8,
-              child: Paginator(searchText: text))
+          addVerticalSpace(height: 3),
+          Expanded(child: Paginator(searchText: text))
         ],
       ),
     );
