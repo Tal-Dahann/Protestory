@@ -23,16 +23,21 @@ class PreMainScreen extends StatelessWidget {
               (myDataProvider?..updateUser(myAuthNotifier.user)) ??
               DataProvider(user: myAuthNotifier.user!),
           child: Scaffold(
-            body: SearchBar(),
-            // child: Scaffold(
-            //   body: Column(children: [
-            //     // const TestAppDana(),
-            //     ElevatedButton(
-            //         onPressed: context.read<AuthNotifier>().signOut,
-            //         child: const Text("Logout")),
-            //   ]),
-            // ),
-          )); // TODO replace
+              body: Column(children: [
+            SearchBar(),
+            ElevatedButton(
+                onPressed: context.read<AuthNotifier>().signOut,
+                child: const Text("Logout")),
+          ])
+              // child: Scaffold(
+              //   body: Column(children: [
+              //     // const TestAppDana(),
+              //     ElevatedButton(
+              //         onPressed: context.read<AuthNotifier>().signOut,
+              //         child: const Text("Logout")),
+              //   ]),
+              // ),
+              )); // TODO replace
     } else {
       return const LoginPage();
     }
