@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:protestory/firebase/auth_notifier.dart';
 import 'package:protestory/firebase/data_provider.dart';
+import 'package:protestory/screens/create_new_protest_screen.dart';
 import 'package:protestory/screens/login_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -18,15 +19,7 @@ class App extends StatelessWidget {
     var app = MaterialApp(
       debugShowCheckedModeBanner: false,
       home: (context.watch<AuthNotifier>().isAuthenticated())
-          ? Scaffold(
-              body: Column(children: [
-                // const TestAppDana(),
-                ElevatedButton(
-                    onPressed: context.read<AuthNotifier>().signOut,
-                    child: Text(
-                        "Logout from ${context.read<AuthNotifier>().user?.displayName}")),
-              ]),
-            )
+          ? const MainPage()
           : const LoginPage(),
     );
     if (context.read<AuthNotifier>().isAuthenticated()) {
@@ -42,6 +35,42 @@ class App extends StatelessWidget {
     }
   }
 }
+
+class MainPage extends StatefulWidget {
+  const MainPage({Key? key}) : super(key: key);
+
+  @override
+  State<MainPage> createState() => _MainPageState();
+}
+
+class _MainPageState extends State<MainPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Align(
+        alignment: Alignment.center,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            // const TestAppDana(),
+            ElevatedButton(
+              onPressed: context.read<AuthNotifier>().signOut,
+              child: Text(
+                  "Logout from ${context.read<AuthNotifier>().user?.displayName}"),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                      builder: (context) => const NewProtestScreen())),
+              child: const Text('Add Protest'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 
 class FirebaseInit extends StatelessWidget {
   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
