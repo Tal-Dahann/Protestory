@@ -1,12 +1,11 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:protestory/firebase/auth_notifier.dart';
-import 'package:protestory/widgets/search_screen.dart';
-import 'package:provider/provider.dart';
-import 'package:protestory/screens/create_new_protest_screen.dart';
-
 import 'package:protestory/constants/colors.dart';
+import 'package:protestory/firebase/auth_notifier.dart';
+import 'package:protestory/screens/create_new_protest_screen.dart';
+import 'package:protestory/screens/search_screen.dart';
+import 'package:provider/provider.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
