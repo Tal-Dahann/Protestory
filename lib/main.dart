@@ -1,109 +1,70 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:protestory/utils/add_spaces.dart';
-import 'package:protestory/widgets/text_fields.dart';
+import 'package:flutter/services.dart';
+import 'package:protestory/firebase/auth_notifier.dart';
+import 'package:protestory/firebase/data_provider.dart';
+import 'package:protestory/screens/login_screen.dart';
+import 'package:protestory/screens/main_screen.dart';
 import 'package:provider/provider.dart';
 
-import '../constants/colors.dart';
-import '../constants/tags.dart';
-import '../firebase/data_provider.dart';
-import '../firebase/protest.dart';
-import '../widgets/paginator.dart';
-
-class SearchScreen extends StatefulWidget {
-  final initDropDownValue;
-  const SearchScreen({this.initDropDownValue = 'All', Key? key})
-      : super(key: key);
-
-  @override
-  State<SearchScreen> createState() => _SearchScreenState();
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+  runApp(FirebaseInit());
 }
 
-class _SearchScreenState extends State<SearchScreen> {
-  String text = 'zzzzzzzzzzzzzzzzzzzzzzzzz';
-
-  late String dropDownValue = widget.initDropDownValue;
+class App extends StatelessWidget {
+  const App({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    Query<Protest> qry;
-
-    switch (dropDownValue) {
-      case 'Most Recent':
-        {
-          qry = context
-              .read<DataProvider>()
-              .getProtestCollectionRef
-              .orderBy('creation_time', descending: true)
-              .where('prefixes_name', arrayContains: text);
-        }
-        break;
-      case 'Most Popular':
-        {
-          qry = context
-              .read<DataProvider>()
-              .getProtestCollectionRef
-              .orderBy('participants_amount', descending: true)
-              .where('prefixes_name', arrayContains: text);
-        }
-        break;
-      default:
-        {
-          //ALl- sorted by name
-          qry = context
-              .read<DataProvider>()
-              .getProtestCollectionRef
-              .orderBy('name', descending: false)
-              .where('name', isGreaterThanOrEqualTo: text)
-              .where('name', isLessThan: '${text}z');
-        }
-        break;
-    }
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Search',
-            style: TextStyle(color: blue, fontWeight: FontWeight.bold)),
-        backgroundColor: white,
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          addVerticalSpace(height: 15),
-          CustomTextFormField(
-            icon: const Icon(Icons.search),
-            hintText: "Search...",
-            onChanged: (searchText) => setState(() {
-              text = searchText.toLowerCase();
-            }),
-            onFieldSubmitted: (searchText) => setState(() {
-              text = searchText.toLowerCase();
-            }),
-          ),
-          addVerticalSpace(height: 4),
-          DropdownButton<String>(
-            // Initial Value
-            value: dropDownValue,
-            elevation: 10,
-            icon: const Icon(Icons.keyboard_arrow_down),
-            items: searchFilters.map((String items) {
-              return DropdownMenuItem(
-                value: items,
-                child: Text(items),
-              );
-            }).toList(),
-            // After selecting the desired option,it will
-            // change button value to selected value
-            onChanged: (String? newValue) {
-              setState(() {
-                //TODO: when it is null??
-                dropDownValue = newValue!;
-              });
-            },
-          ),
-          Expanded(child: Paginator(query: qry))
-        ],
-      ),
+    var app = MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: (context.watch<AuthNotifier>().isAuthenticated())
+          ? const MainPage()
+          : const LoginPage(),
     );
-    //onFieldSubmitted: ;
+    if (context.read<AuthNotifier>().isAuthenticated()) {
+      return ProxyProvider<AuthNotifier, DataProvider>(
+        create: (ctx) => DataProvider(user: ctx.read<AuthNotifier>().user!),
+        update: (_, myAuthNotifier, myDataProvider) =>
+            (myDataProvider?..updateUser(myAuthNotifier.user)) ??
+            DataProvider(user: myAuthNotifier.user!),
+        child: app,
+      ); // TODO replace
+    } else {
+      return app;
+    }
+  }
+}
+
+class FirebaseInit extends StatelessWidget {
+  final Future<FirebaseApp> _initialization = Firebase.initializeApp();
+
+  FirebaseInit({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: _initialization,
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Scaffold(
+              body: Center(
+                  child: Text(snapshot.error.toString(),
+                      textDirection: TextDirection.ltr)));
+        }
+        if (snapshot.connectionState == ConnectionState.done) {
+          return ChangeNotifierProvider(
+              create: (_) => AuthNotifier(), child: const App());
+        }
+
+        //TODO replace with splash screen
+        return Container();
+      },
+    );
   }
 }

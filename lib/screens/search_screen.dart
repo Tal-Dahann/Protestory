@@ -61,6 +61,9 @@ class _SearchScreenState extends State<SearchScreen> {
     }
     return Scaffold(
       appBar: AppBar(
+        leading: const BackButton(
+          color: blue,
+        ),
         title: const Text('Search',
             style: TextStyle(color: blue, fontWeight: FontWeight.bold)),
         backgroundColor: white,
