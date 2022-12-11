@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class Protest {
   String id;
   final String name;
+  String lowerCaseName;
   final Timestamp date;
   final String creator;
   final Timestamp creationTime;
@@ -12,17 +13,18 @@ class Protest {
   final String location;
   final List<String> tags;
 
-  Protest(
-      {required this.id,
-      required this.name,
-      required this.date,
-      required this.creator,
-      required this.creationTime,
-      required this.participantsAmount,
-      required this.contactInfo,
-      required this.description,
-      required this.location,
-      required this.tags});
+  Protest({
+    required this.id,
+    required this.name,
+    required this.date,
+    required this.creator,
+    required this.creationTime,
+    required this.participantsAmount,
+    required this.contactInfo,
+    required this.description,
+    required this.location,
+    required this.tags,
+  }) : this.lowerCaseName = name.toLowerCase();
 
   factory Protest.fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> snapshot,
@@ -49,6 +51,7 @@ class Protest {
   }
 
   Map<String, dynamic> toFirestore() {
+    List<String> pl = getAllPrefixes();
     return {
       "name": name,
       "date": date,
@@ -59,11 +62,22 @@ class Protest {
       "description": description,
       "location": location,
       "tags": tags,
+      "lower_case_name": lowerCaseName,
+      "prefixes_name": pl,
     };
   }
 
   String dateAndTime() {
     DateTime dateTime = date.toDate();
     return "${dateTime.day}/${dateTime.month}/${dateTime.year} , ${dateTime.hour}:${dateTime.minute}";
+  }
+
+  List<String> getAllPrefixes() {
+    List<String> pl = [];
+    int length = lowerCaseName.length;
+    for (int i = 0; i <= length; i++) {
+      pl.add(lowerCaseName.substring(0, i));
+    }
+    return pl;
   }
 }

@@ -19,6 +19,7 @@ class PreMainScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //print("this" + "${getAllPrefixes2('')}");
     if (context.watch<AuthNotifier>().isAuthenticated()) {
       return ProxyProvider<AuthNotifier, DataProvider>(
         create: (ctx) => DataProvider(user: ctx.read<AuthNotifier>().user!),
@@ -87,4 +88,13 @@ class FirebaseInit extends StatelessWidget {
       },
     );
   }
+}
+
+List<String> getAllPrefixes2(String str) {
+  List<String> pl = [];
+  int length = str.length;
+  for (int i = 0; i <= length; i++) {
+    pl.add(str.substring(0, i));
+  }
+  return pl;
 }
