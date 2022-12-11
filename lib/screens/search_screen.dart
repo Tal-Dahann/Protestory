@@ -17,15 +17,12 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  String text = 'zzzzzzzzzzzzzzzzzzzzzzzzz';
+  String text = '';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: const BackButton(
-          color: blue,
-        ),
         title: const Text('Search',
             style: TextStyle(color: blue, fontWeight: FontWeight.bold)),
         backgroundColor: white,
@@ -54,8 +51,8 @@ class _SearchScreenState extends State<SearchScreen> {
 }
 
 class Paginator extends StatelessWidget {
-  Paginator({required String this.searchText, Key? key}) : super(key: key);
-  String searchText;
+  Paginator({required this.searchText, Key? key}) : super(key: key);
+  final String searchText;
   @override
   Widget build(BuildContext context) {
     print("building pagintor: $searchText");

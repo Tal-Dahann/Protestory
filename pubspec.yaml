@@ -49,6 +49,7 @@ dependencies:
   paginate_firestore:
     git:
       url: https://github.com/waqadArshad/paginate_firestore.git
+  persistent_bottom_nav_bar: ^5.0.2
 
 dev_dependencies:
   flutter_test:

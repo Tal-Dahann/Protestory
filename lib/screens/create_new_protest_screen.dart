@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:protestory/constants/colors.dart';
 import 'package:protestory/firebase/data_provider.dart';
+import 'package:protestory/firebase/protest.dart';
 import 'package:protestory/providers/new_protest_form_provider.dart';
 import 'package:protestory/screens/new_protest_forms_screens//form_page_1.dart';
 import 'package:protestory/screens/new_protest_forms_screens/form_page_2.dart';
 import 'package:protestory/screens/new_protest_forms_screens/form_page_3.dart';
 import 'package:protestory/screens/new_protest_forms_screens/form_page_4.dart';
 import 'package:protestory/screens/new_protest_forms_screens/uploading_protest_screen.dart';
+import 'package:protestory/widgets/buttons.dart';
 import 'package:provider/provider.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
-import 'package:protestory/widgets/buttons.dart';
-import 'package:protestory/firebase/protest.dart';
 
 class NewProtestScreen extends StatefulWidget {
   const NewProtestScreen({Key? key}) : super(key: key);
@@ -95,7 +95,7 @@ class _NewProtestFormState extends State<NewProtestForm> {
     }
     Widget? scaffoldToDisplay = Scaffold(
       appBar: AppBar(
-        leading:  const BackButton(
+        leading: const BackButton(
           color: blue,
         ),
         title: const Text('New Protest',
@@ -118,7 +118,7 @@ class _NewProtestFormState extends State<NewProtestForm> {
           Padding(
             padding: const EdgeInsets.all(20.0),
             child: SingleChildScrollView(
-              physics: NeverScrollableScrollPhysics(),
+              physics: const NeverScrollableScrollPhysics(),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
