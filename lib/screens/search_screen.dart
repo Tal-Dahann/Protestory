@@ -20,7 +20,7 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  String text = 'zzzzzzzzzzzzzzzzzzzzzzzzz';
+  String text = '';
 
   late String dropDownValue = widget.initDropDownValue;
 
