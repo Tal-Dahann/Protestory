@@ -5,15 +5,55 @@ import 'package:protestory/widgets/text_fields.dart';
 import 'package:provider/provider.dart';
 
 import '../constants/colors.dart';
-import '../constants/tags.dart';
 import '../firebase/data_provider.dart';
 import '../firebase/protest.dart';
 import '../widgets/navigation.dart';
 import '../widgets/paginator.dart';
 
+enum SearchOptions {
+  all('All'),
+  mostRecent('Most Recent'),
+  mostPopular('Most Popular');
+
+  const SearchOptions(this.value);
+  final String value;
+}
+
+Query<Protest> searchQuery(BuildContext context, SearchOptions searchOption,
+    {String text = ''}) {
+  switch (searchOption) {
+    case SearchOptions.mostRecent:
+      {
+        return context
+            .read<DataProvider>()
+            .getProtestCollectionRef
+            .orderBy('creation_time', descending: true)
+            .where('prefixes_name', arrayContains: text);
+      }
+    case SearchOptions.mostPopular:
+      {
+        return context
+            .read<DataProvider>()
+            .getProtestCollectionRef
+            .orderBy('participants_amount', descending: true)
+            .where('prefixes_name', arrayContains: text);
+      }
+    default:
+      {
+        //ALl- sorted by name
+        return context
+            .read<DataProvider>()
+            .getProtestCollectionRef
+            .orderBy('name', descending: false)
+            .where('name', isGreaterThanOrEqualTo: text)
+            .where('name', isLessThan: '${text}z');
+      }
+  }
+}
+
 class SearchScreen extends StatefulWidget {
-  final String initDropDownValue;
-  const SearchScreen({this.initDropDownValue = 'All', Key? key})
+  final SearchOptions initDropDownValue;
+  const SearchScreen({this.initDropDownValue = SearchOptions.all, Key? key})
       : super(key: key);
 
   @override
@@ -23,43 +63,12 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   String text = '';
 
-  late String dropDownValue = widget.initDropDownValue;
+  late SearchOptions dropDownValue = widget.initDropDownValue;
 
   @override
   Widget build(BuildContext context) {
-    Query<Protest> qry;
+    Query<Protest> qry = searchQuery(context, dropDownValue);
 
-    switch (dropDownValue) {
-      case 'Most Recent':
-        {
-          qry = context
-              .read<DataProvider>()
-              .getProtestCollectionRef
-              .orderBy('creation_time', descending: true)
-              .where('prefixes_name', arrayContains: text);
-        }
-        break;
-      case 'Most Popular':
-        {
-          qry = context
-              .read<DataProvider>()
-              .getProtestCollectionRef
-              .orderBy('participants_amount', descending: true)
-              .where('prefixes_name', arrayContains: text);
-        }
-        break;
-      default:
-        {
-          //ALl- sorted by name
-          qry = context
-              .read<DataProvider>()
-              .getProtestCollectionRef
-              .orderBy('name', descending: false)
-              .where('name', isGreaterThanOrEqualTo: text)
-              .where('name', isLessThan: '${text}z');
-        }
-        break;
-    }
     return Scaffold(
       appBar: AppBar(
         title: const Text('Search', style: navTitleStyle),
@@ -80,20 +89,20 @@ class _SearchScreenState extends State<SearchScreen> {
             }),
           ),
           addVerticalSpace(height: 4),
-          DropdownButton<String>(
+          DropdownButton<SearchOptions>(
             // Initial Value
             value: dropDownValue,
             elevation: 10,
             icon: const Icon(Icons.keyboard_arrow_down),
-            items: searchFilters.map((String items) {
+            items: SearchOptions.values.map((SearchOptions item) {
               return DropdownMenuItem(
-                value: items,
-                child: Text(items),
+                value: item,
+                child: Text(item.value),
               );
             }).toList(),
             // After selecting the desired option,it will
             // change button value to selected value
-            onChanged: (String? newValue) {
+            onChanged: (SearchOptions? newValue) {
               setState(() {
                 //TODO: when it is null??
                 dropDownValue = newValue!;

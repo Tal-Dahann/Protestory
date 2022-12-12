@@ -69,13 +69,13 @@ class DataProvider {
   }
 
   Future<List<Protest>> getMostRecentProtests({
-    required n,
+    required int n,
   }) async {
     return getNProtests(n: n, parameter: "creation_time", isDescending: true);
   }
 
   Future<List<Protest>> getMostPopularProtests({
-    required n,
+    required int n,
   }) async {
     return getNProtests(
         n: n, parameter: "participants_amount", isDescending: true);
@@ -144,5 +144,16 @@ class DataProvider {
     return protestCollectionRef
         .orderBy('creation_time', descending: true)
         .where('creator', isEqualTo: user.uid);
+  }
+
+  Future<List<Protest>> processQuery(Query<Protest> query) async {
+    List<Protest> protestList = [];
+    var data = await query.get();
+
+    for (var element in data.docs) {
+      protestList.add(element.data());
+    }
+
+    return protestList;
   }
 }
