@@ -1,18 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:paginate_firestore/paginate_firestore.dart';
-import 'package:protestory/widgets/protest_card_search.dart';
+import 'package:protestory/widgets/protest_card.dart';
 
 import '../constants/colors.dart';
 import '../firebase/protest.dart';
 
 class Paginator extends StatelessWidget {
-  Paginator({required this.query, Key? key}) : super(key: key);
+  const Paginator({required this.query, Key? key}) : super(key: key);
 
-  Query<Protest> query;
+  final Query<Protest> query;
   @override
   Widget build(BuildContext context) {
     return PaginateFirestore(
+      shrinkWrap: true,
       //TODO: check if it lazy loaded
       //itemsPerPage: 5,
       //TODO: what is unique key??
@@ -24,11 +25,9 @@ class Paginator extends StatelessWidget {
 //item builder type is compulsory.
       itemBuilder: (context, documentSnapshots, index) {
         final data = documentSnapshots[index].data() as Protest;
-        if (data == null) {
-          return const Text('Error in data');
-        } else {
-          return ProtestCardSearch(protest: data);
-        }
+
+        return ProtestCard.byWidth(
+            protest: data, width: MediaQuery.of(context).size.width);
 
         //   ListTile(
         //   leading: const CircleAvatar(child: Icon(Icons.person)),

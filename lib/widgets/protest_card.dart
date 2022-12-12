@@ -1,27 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:protestory/firebase/protest.dart';
 
-class ProtestCard extends StatelessWidget {
-  Protest protest;
+final roundedProtestCardBorder =
+    RoundedRectangleBorder(borderRadius: BorderRadius.circular(12));
 
-  ProtestCard({required this.protest, Key? key}) : super(key: key);
+class ProtestCard extends StatelessWidget {
+  static const ratio = 1;
+  final Protest protest;
+  final ShapeBorder? shape;
+  final double height;
+  final double width;
+
+  const ProtestCard(
+      {super.key,
+      required this.protest,
+      this.shape,
+      required this.height,
+      required this.width});
+
+  const ProtestCard.byHeight(
+      {super.key, required this.protest, this.shape, required this.height})
+      : width = height * ratio;
+
+  const ProtestCard.byWidth(
+      {super.key, required this.protest, this.shape, required this.width})
+      : height = width * (1 / ratio);
 
   @override
   Widget build(BuildContext context) {
-    DateTime dateTime = protest.date.toDate();
-    return Container(
-      //   height: MediaQuery.of(context).size.height * 0.35,
-      width: MediaQuery.of(context).size.width * 0.6,
+    return SizedBox(
+      width: width,
+      height: height,
       child: Card(
-        elevation: 14,
-        // shadowColor: Colors.black,
-        // color: Colors.white,
+        elevation: 2,
         clipBehavior: Clip.antiAlias,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: shape,
         child: InkWell(
-          onTap: () {
-            //print("t");
-          },
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -33,7 +47,8 @@ class ProtestCard extends StatelessWidget {
                   alignment: Alignment.bottomLeft,
                   children: [
                     Ink.image(
-                        image: AssetImage('assets/images/tree-736885__480.jpg'),
+                        image: const AssetImage(
+                            'assets/images/tree-736885__480.jpg'),
 
                         //height: MediaQuery.of(context).size.height * 0.2,
                         fit: BoxFit.fill),
@@ -56,7 +71,7 @@ class ProtestCard extends StatelessWidget {
               Flexible(
                 flex: 2,
                 child: ListTile(
-                  leading: Icon(Icons.place),
+                  leading: const Icon(Icons.place),
                   title: Text(
                     protest.location,
                     style: const TextStyle(
@@ -69,7 +84,7 @@ class ProtestCard extends StatelessWidget {
               Flexible(
                 flex: 2,
                 child: ListTile(
-                  leading: Icon(Icons.access_time_rounded),
+                  leading: const Icon(Icons.access_time_rounded),
                   title: Text(protest.dateAndTime(),
                       style: const TextStyle(
                         fontSize: 15.0,
@@ -79,15 +94,21 @@ class ProtestCard extends StatelessWidget {
               ),
               Flexible(
                 flex: 1,
-                child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                  Text(protest.participantsAmount.toString(),
-                      style: const TextStyle(
-                        fontSize: 10.0,
-                        color: Colors.grey,
-                      )),
-                  Icon(Icons.people),
-                  Padding(padding: EdgeInsets.all(5.0))
-                ]),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(protest.participantsAmount.toString(),
+                        style: const TextStyle(
+                          fontSize: 15.0,
+                          color: Colors.grey,
+                        )),
+                    const Padding(
+                      padding: EdgeInsets.only(right: 10.0, bottom: 10),
+                      child: Icon(Icons.people),
+                    )
+                  ],
+                ),
               ),
             ],
           ),
