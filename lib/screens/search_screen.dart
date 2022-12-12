@@ -8,6 +8,7 @@ import '../constants/colors.dart';
 import '../constants/tags.dart';
 import '../firebase/data_provider.dart';
 import '../firebase/protest.dart';
+import '../widgets/navigation.dart';
 import '../widgets/paginator.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -61,8 +62,7 @@ class _SearchScreenState extends State<SearchScreen> {
     }
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Search',
-            style: TextStyle(color: blue, fontWeight: FontWeight.bold)),
+        title: const Text('Search', style: navTitleStyle),
         backgroundColor: white,
       ),
       body: Column(

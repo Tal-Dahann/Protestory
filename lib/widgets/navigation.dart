@@ -8,6 +8,9 @@ import '../screens/create_new_protest_screen.dart';
 import '../screens/favorites_screen.dart';
 import '../screens/main_screen.dart';
 
+const navTitleStyle =
+    TextStyle(color: blue, fontWeight: FontWeight.bold, fontSize: 28);
+
 class MainNavigation extends StatefulWidget {
   const MainNavigation({Key? key}) : super(key: key);
 
