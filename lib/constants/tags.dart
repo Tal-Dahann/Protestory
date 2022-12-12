@@ -16,3 +16,5 @@ final tags = [
   'Women\'s rights',
   'Other',
 ];
+
+final searchFilters = ['All', 'Most Recent', 'Most Popular'];
