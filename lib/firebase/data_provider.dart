@@ -1,20 +1,23 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:protestory/firebase/protest.dart';
 
 class DataProvider {
   static const version = "1.0.0";
-  final _firestore =
+  static final firestore =
       FirebaseFirestore.instance.collection("versions").doc("v$version");
+  static final firestorage = FirebaseStorage.instance.ref("v$version");
 
   late final CollectionReference<Protest> protestCollectionRef;
 
   User user;
 
   DataProvider({required this.user}) {
-    protestCollectionRef = _firestore.collection("protests").withConverter(
+    protestCollectionRef = firestore.collection("protests").withConverter(
           fromFirestore: Protest.fromFirestore,
           toFirestore: (Protest protest, _) => protest.toFirestore(),
         );
@@ -29,7 +32,8 @@ class DataProvider {
       required String contactInfo,
       required String description,
       required String location,
-      required List<String> tags}) async {
+      required List<String> tags,
+      required File image}) async {
     //creating doc to the protest
     var docRef = protestCollectionRef.doc();
     Protest newProtest = Protest(
@@ -42,7 +46,10 @@ class DataProvider {
         contactInfo: contactInfo,
         description: description,
         location: location,
-        tags: tags);
+        tags: tags,
+        includeImage: false);
+    await firestorage.child('protests_images').child(docRef.id).putFile(image);
+    newProtest.loadImage();
     await docRef.set(newProtest);
 
     return newProtest;

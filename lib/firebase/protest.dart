@@ -1,4 +1,9 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+
+import 'data_provider.dart';
 
 class Protest {
   String id;
@@ -12,19 +17,39 @@ class Protest {
   final String description;
   final String location;
   final List<String> tags;
+  late final Future<NetworkImage> image;
+  final bool includeImage;
 
-  Protest({
-    required this.id,
-    required this.name,
-    required this.date,
-    required this.creator,
-    required this.creationTime,
-    required this.participantsAmount,
-    required this.contactInfo,
-    required this.description,
-    required this.location,
-    required this.tags,
-  }) : this.lowerCaseName = name.toLowerCase();
+  Protest(
+      {required this.id,
+      required this.name,
+      required this.date,
+      required this.creator,
+      required this.creationTime,
+      required this.participantsAmount,
+      required this.contactInfo,
+      required this.description,
+      required this.location,
+      required this.tags,
+      this.includeImage = true})
+      : lowerCaseName = name.toLowerCase() {
+    if (includeImage) loadImage();
+  }
+
+  loadImage() {
+    image = _loadImage();
+  }
+
+  Future<NetworkImage> _loadImage() async {
+    Completer<NetworkImage> completer = Completer<NetworkImage>();
+    NetworkImage avatar = NetworkImage(await DataProvider.firestorage
+        .child('protests_images')
+        .child(id)
+        .getDownloadURL());
+    avatar.resolve(ImageConfiguration.empty).addListener(
+        ImageStreamListener((info, call) => completer.complete(avatar)));
+    return completer.future;
+  }
 
   factory Protest.fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> snapshot,

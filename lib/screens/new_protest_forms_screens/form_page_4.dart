@@ -1,10 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:protestory/utils/add_spaces.dart';
-import 'package:provider/provider.dart';
 import 'package:protestory/constants/colors.dart';
 import 'package:protestory/providers/new_protest_form_provider.dart';
-import 'dart:io';
+import 'package:protestory/utils/add_spaces.dart';
+import 'package:provider/provider.dart';
 
 class FormPageFour extends StatefulWidget {
   const FormPageFour({Key? key}) : super(key: key);
@@ -46,15 +47,16 @@ class _FormPageFourState extends State<FormPageFour> {
                 aspectRatio: 1.5,
                 child: InkWell(
                   onTap: () async {
-                    final ImagePicker _picker = ImagePicker();
+                    final ImagePicker picker = ImagePicker();
                     final XFile? image =
-                        await _picker.pickImage(source: ImageSource.gallery);
+                        await picker.pickImage(source: ImageSource.gallery);
                     if (image == null) {
                       //TODO: add error handling
                     } else {
                       setState(() {
-                        context.read<NewProtestFormNotifier>().protestThumbnail =
-                            image;
+                        context
+                            .read<NewProtestFormNotifier>()
+                            .protestThumbnail = image;
                       });
                     }
                   },

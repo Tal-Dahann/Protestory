@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:protestory/firebase/protest.dart';
+import 'package:protestory/widgets/loading.dart';
 
 final roundedProtestCardBorder =
     RoundedRectangleBorder(borderRadius: BorderRadius.circular(12));
@@ -42,17 +43,26 @@ class ProtestCard extends StatelessWidget {
             children: [
               Flexible(
                 flex: 8,
-                //fit: ,
-                child: Stack(
-                  alignment: Alignment.bottomLeft,
-                  children: [
-                    Ink.image(
-                        image: const AssetImage(
-                            'assets/images/tree-736885__480.jpg'),
-
-                        //height: MediaQuery.of(context).size.height * 0.2,
-                        fit: BoxFit.fill),
-                  ],
+                child: FutureBuilder<NetworkImage>(
+                  future: protest.image,
+                  builder: (builder, snapshot) {
+                    if (snapshot.hasError) {
+                      return Scaffold(
+                          body: Center(
+                              child: Text(snapshot.error.toString(),
+                                  textDirection: TextDirection.ltr)));
+                    }
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      return Stack(
+                        alignment: Alignment.bottomLeft,
+                        children: [
+                          Ink.image(
+                              image: snapshot.requireData, fit: BoxFit.fill),
+                        ],
+                      );
+                    }
+                    return const LoadingWidget();
+                  },
                 ),
               ),
               Flexible(
