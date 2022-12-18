@@ -2,10 +2,13 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import 'data_provider.dart';
 
 class Protest {
+  static final dateFormatter = DateFormat('dd/MM/yyyy kk:mm');
+
   String id;
   final String name;
   String lowerCaseName;
@@ -93,8 +96,7 @@ class Protest {
   }
 
   String dateAndTime() {
-    DateTime dateTime = date.toDate();
-    return "${dateTime.day}/${dateTime.month}/${dateTime.year} , ${dateTime.hour}:${dateTime.minute}";
+    return dateFormatter.format(date.toDate());
   }
 
   List<String> getAllPrefixes() {

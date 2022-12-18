@@ -1,10 +1,12 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:protestory/constants/colors.dart';
 import 'package:protestory/providers/new_protest_form_provider.dart';
 import 'package:protestory/utils/add_spaces.dart';
+import 'package:protestory/widgets/protest_card.dart';
 import 'package:provider/provider.dart';
 
 class FormPageFour extends StatefulWidget {
@@ -44,21 +46,32 @@ class _FormPageFourState extends State<FormPageFour> {
                   left: MediaQuery.of(context).size.width * 0.1,
                   right: MediaQuery.of(context).size.width * 0.1),
               child: AspectRatio(
-                aspectRatio: 1.5,
+                aspectRatio: ProtestCard.imageRatio.ratioX /
+                    ProtestCard.imageRatio.ratioY,
                 child: InkWell(
                   onTap: () async {
                     final ImagePicker picker = ImagePicker();
                     final XFile? image =
                         await picker.pickImage(source: ImageSource.gallery);
                     if (image == null) {
-                      //TODO: add error handling
-                    } else {
-                      setState(() {
-                        context
-                            .read<NewProtestFormNotifier>()
-                            .protestThumbnail = image;
-                      });
+                      return;
                     }
+                    final croppedImage = await ImageCropper().cropImage(
+                        aspectRatio: ProtestCard.imageRatio,
+                        sourcePath: image.path,
+                        uiSettings: [
+                          AndroidUiSettings(
+                              toolbarWidgetColor: blue,
+                              activeControlsWidgetColor: purple,
+                              hideBottomControls: true)
+                        ]);
+                    if (croppedImage == null) {
+                      return;
+                    }
+                    setState(() {
+                      context.read<NewProtestFormNotifier>().protestThumbnail =
+                          File(croppedImage.path);
+                    });
                   },
                   child:
                       context.read<NewProtestFormNotifier>().protestThumbnail ==
@@ -70,14 +83,10 @@ class _FormPageFourState extends State<FormPageFour> {
                           : Container(
                               color: lightGray,
                               width: MediaQuery.of(context).size.width * 0.8,
-                              child: FittedBox(
-                                fit: BoxFit.fill,
-                                child: Image.file(
-                                  File(context
-                                      .read<NewProtestFormNotifier>()
-                                      .protestThumbnail!
-                                      .path),
-                                ),
+                              child: Image.file(
+                                context
+                                    .read<NewProtestFormNotifier>()
+                                    .protestThumbnail!,
                               ),
                             ),
                 ),

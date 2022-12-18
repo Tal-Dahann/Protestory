@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:protestory/constants/colors.dart';
 import 'package:protestory/firebase/data_provider.dart';
@@ -62,8 +60,6 @@ class _NewProtestFormState extends State<NewProtestForm> {
         context.read<NewProtestFormNotifier>().descriptionController.text;
     String location =
         context.read<NewProtestFormNotifier>().locationController.text;
-    File image =
-        File(context.read<NewProtestFormNotifier>().protestThumbnail!.path);
     Protest p = await context.read<DataProvider>().addProtest(
         name: name,
         date: context.read<NewProtestFormNotifier>().selectedTime,
@@ -71,7 +67,7 @@ class _NewProtestFormState extends State<NewProtestForm> {
         description: description,
         location: location,
         tags: context.read<NewProtestFormNotifier>().selectedTags,
-        image: image);
+        image: context.read<NewProtestFormNotifier>().protestThumbnail!);
     //add protest to cloud:
   }
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:protestory/constants/colors.dart';
+import 'package:protestory/firebase/protest.dart';
 import 'package:protestory/providers/new_protest_form_provider.dart';
 import 'package:protestory/utils/add_spaces.dart';
 import 'package:protestory/widgets/text_fields.dart';
@@ -73,7 +73,7 @@ class _FormPageOneState extends State<FormPageOne> {
                 if (value == null || value.length > 25 || value.isEmpty) {
                   return 'The title must be 1-25 characters long.';
                 }
-                if (value.contains(RegExp(r'^[a-zA-Z ]+$'))) {
+                if (value.contains(RegExp(r"^[a-zA-Z ']+$"))) {
                   return null;
                 } else {
                   return 'The title can only contain letters';
@@ -209,8 +209,6 @@ class _FormPageOneState extends State<FormPageOne> {
                     pickedDate.day,
                     pickedTime.hour,
                     pickedTime.minute);
-                String formattedDate =
-                    DateFormat('dd/MM/yyyy').format(pickedDate);
                 //String formattedDate = DateFormat.yMMMEd().format(pickedDate);
                 //log('$formattedDate, ${pickedTime.format(context)}');
                 setState(
@@ -219,7 +217,9 @@ class _FormPageOneState extends State<FormPageOne> {
                         pickedTime.format(context);
                     //dateController.text = '$formattedDate - ${pickedTime.format(context)}';
                     context.read<NewProtestFormNotifier>().dateController.text =
-                        '$formattedDate, ${pickedTime.format(context)}';
+                        Protest.dateFormatter.format(context
+                            .read<NewProtestFormNotifier>()
+                            .selectedTime);
                   },
                 );
               },

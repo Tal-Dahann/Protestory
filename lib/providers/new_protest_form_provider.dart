@@ -1,5 +1,6 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 
 class NewProtestFormNotifier extends ChangeNotifier {
   int currentFormPage = 1;
@@ -12,7 +13,7 @@ class NewProtestFormNotifier extends ChangeNotifier {
   final protestTags = <String>[];
   DateTime selectedTime = DateTime(0);
   final selectedTags = <String>[];
-  XFile? protestThumbnail;
+  File? protestThumbnail;
   bool showTagsError = false;
 
   bool finishButtonClicked = false;
