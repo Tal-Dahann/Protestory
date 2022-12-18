@@ -11,6 +11,7 @@ import '../firebase/data_provider.dart';
 import 'loading.dart';
 
 class ProtestListHome extends StatelessWidget {
+  static const cardHeight = 300.0;
   final int maxLengthList;
   final SearchOptions searchOption;
 
@@ -20,72 +21,69 @@ class ProtestListHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Protest>>(
-      future: context
-          .read<DataProvider>()
-          .processQuery(searchQuery(context, searchOption)),
-      builder: (BuildContext context, AsyncSnapshot<List<Protest>> snapshot) {
-        if (snapshot.hasError) {
-          return Scaffold(
-              body: Center(
-                  child: Text(snapshot.error.toString(),
-                      textDirection: TextDirection.ltr)));
-        }
-        if (snapshot.hasData) {
-          double height = 280;
-          int listSize = min(snapshot.requireData.length, maxLengthList);
-          return Column(
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 16, bottom: 6, right: 16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 16, bottom: 6, right: 16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      searchOption.value,
-                      style: const TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: blue,
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () => 1, //TODO
-                      child: const Text(
-                        "see all",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: purple,
-                        ),
-                      ),
-                    )
-                  ],
+              Text(
+                searchOption.value,
+                style: const TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: blue,
                 ),
               ),
-              SizedBox(
-                height: height,
-                child: ListView.separated(
+              InkWell(
+                onTap: () => 1, //TODO
+                child: const Text(
+                  "see all",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: purple,
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+        SizedBox(
+          height: cardHeight,
+          child: FutureBuilder<List<Protest>>(
+            future: context
+                .read<DataProvider>()
+                .processQuery(searchQuery(context, searchOption)),
+            builder:
+                (BuildContext context, AsyncSnapshot<List<Protest>> snapshot) {
+              if (snapshot.hasError) {
+                return Scaffold(
+                    body: Center(
+                        child: Text(snapshot.error.toString(),
+                            textDirection: TextDirection.ltr)));
+              }
+              if (snapshot.hasData) {
+                int listSize = min(snapshot.requireData.length, maxLengthList);
+                return ListView.builder(
                   padding: const EdgeInsets.only(left: 8, right: 8),
                   itemCount: listSize,
                   scrollDirection: Axis.horizontal,
-                  separatorBuilder: (BuildContext context, int index) =>
-                      Container(),
                   itemBuilder: (BuildContext context, int index) {
-                    return ProtestCard.byHeight(
+                    return ProtestCard(
                       protest: snapshot.requireData[index],
-                      height: height,
-                      shape: roundedProtestCardBorder,
+                      type: ProtestCardTypes.mainScreen,
                     );
                   },
-                ),
-              ),
-            ],
-          );
-        }
-        return const LoadingWidget();
-      },
+                );
+              }
+              return const LoadingWidget();
+            },
+          ),
+        ),
+      ],
     );
   }
 }
