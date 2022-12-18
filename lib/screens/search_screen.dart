@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:paginate_firestore/bloc/pagination_listeners.dart';
 import 'package:protestory/constants/colors.dart';
+import 'package:protestory/providers/search_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../firebase/data_provider.dart';
@@ -20,31 +21,26 @@ enum SearchOptions {
   final String value;
 }
 
-Query<Protest> searchQuery(BuildContext context, SearchOptions searchOption,
+Query<Protest> searchQuery(
+    DataProvider dataProvider, SearchOptions searchOption,
     {String text = ''}) {
   switch (searchOption) {
     case SearchOptions.mostRecent:
       {
-        return context
-            .read<DataProvider>()
-            .getProtestCollectionRef
+        return dataProvider.getProtestCollectionRef
             .orderBy('creation_time', descending: true)
             .where('prefixes_name', arrayContains: text);
       }
     case SearchOptions.mostPopular:
       {
-        return context
-            .read<DataProvider>()
-            .getProtestCollectionRef
+        return dataProvider.getProtestCollectionRef
             .orderBy('participants_amount', descending: true)
             .where('prefixes_name', arrayContains: text);
       }
     default:
       {
         //ALl- sorted by name
-        return context
-            .read<DataProvider>()
-            .getProtestCollectionRef
+        return dataProvider.getProtestCollectionRef
             .orderBy('name', descending: false)
             .where('prefixes_name', arrayContains: text);
       }
@@ -52,23 +48,25 @@ Query<Protest> searchQuery(BuildContext context, SearchOptions searchOption,
 }
 
 class SearchScreen extends StatefulWidget {
-  final SearchOptions initDropDownValue;
-  const SearchScreen({this.initDropDownValue = SearchOptions.all, Key? key})
-      : super(key: key);
+  const SearchScreen({Key? key}) : super(key: key);
 
   @override
   State<SearchScreen> createState() => _SearchScreenState();
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  late SearchOptions dropDownValue = widget.initDropDownValue;
   late final QueryChangeListener<Protest> queryProvider;
   String searchText = '';
 
   @override
   void initState() {
     super.initState();
-    queryProvider = QueryChangeListener(searchQuery(context, dropDownValue));
+    queryProvider = QueryChangeListener(searchQuery(
+        context.read<DataProvider>(),
+        context.read<SearchPresetsProvider>().searchOption));
+    context.read<SearchPresetsProvider>().addListener(() {
+      _updateQuery();
+    });
   }
 
   @override
@@ -78,8 +76,9 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   _updateQuery() {
-    queryProvider.query =
-        searchQuery(context, dropDownValue, text: searchText.toLowerCase());
+    queryProvider.query = searchQuery(context.read<DataProvider>(),
+        context.read<SearchPresetsProvider>().searchOption,
+        text: searchText.toLowerCase());
   }
 
   @override
@@ -109,7 +108,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 ),
                 DropdownButton<SearchOptions>(
                   // Initial Value
-                  value: dropDownValue,
+                  value: context.watch<SearchPresetsProvider>().searchOption,
                   elevation: 10,
                   icon: const Icon(Icons.keyboard_arrow_down),
                   items: SearchOptions.values.map((SearchOptions item) {
@@ -122,9 +121,8 @@ class _SearchScreenState extends State<SearchScreen> {
                   // change button value to selected value
                   onChanged: (SearchOptions? newValue) {
                     setState(() {
-                      //TODO: when it is null??
-                      dropDownValue = newValue!;
-                      _updateQuery();
+                      context.read<SearchPresetsProvider>().searchOption =
+                          newValue!;
                     });
                   },
                 ),

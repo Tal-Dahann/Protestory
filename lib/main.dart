@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:protestory/firebase/auth_notifier.dart';
 import 'package:protestory/firebase/data_provider.dart';
+import 'package:protestory/providers/search_provider.dart';
 import 'package:protestory/screens/login_screen.dart';
 import 'package:protestory/widgets/navigation.dart';
 import 'package:provider/provider.dart';
@@ -33,7 +34,9 @@ class App extends StatelessWidget {
         update: (_, myAuthNotifier, myDataProvider) =>
             (myDataProvider?..updateUser(myAuthNotifier.user)) ??
             DataProvider(user: myAuthNotifier.user!),
-        child: app,
+        child: ChangeNotifierProvider<SearchPresetsProvider>(
+            create: (BuildContext context) => SearchPresetsProvider(),
+            child: app),
       );
     } else {
       return app;

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:protestory/constants/colors.dart';
+import 'package:protestory/providers/navigation_provider.dart';
 import 'package:protestory/screens/search_screen.dart';
+import 'package:provider/provider.dart';
 
 import '../screens/account_screen.dart';
 import '../screens/create_new_protest_screen.dart';
@@ -74,39 +76,42 @@ class _MainNavigationState extends State<MainNavigation> {
 
   @override
   Widget build(BuildContext context) {
-    return PersistentTabView(
-      context,
-      controller: _controller,
-      screens: screens,
-      items: navBarItems,
-      decoration: const NavBarDecoration(
-        boxShadow: [BoxShadow(blurRadius: 6, color: Colors.grey)],
-        borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
-        colorBehindNavBar: Colors.white,
+    return Provider(
+      create: (BuildContext context) => NavigationProvider(_controller),
+      child: PersistentTabView(
+        context,
+        controller: _controller,
+        screens: screens,
+        items: navBarItems,
+        decoration: const NavBarDecoration(
+          boxShadow: [BoxShadow(blurRadius: 6, color: Colors.grey)],
+          borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
+          colorBehindNavBar: Colors.white,
+        ),
+        navBarStyle: NavBarStyle.style12,
+        itemAnimationProperties: const ItemAnimationProperties(
+          duration: Duration(milliseconds: 200),
+          curve: Curves.ease,
+        ),
+        screenTransitionAnimation: const ScreenTransitionAnimation(
+          animateTabTransition: true,
+          curve: Curves.ease,
+          duration: Duration(milliseconds: 200),
+        ),
+        onItemSelected: (index) {
+          if (index == 2) {
+            PersistentNavBarNavigator.pushNewScreen(
+              context,
+              screen: const NewProtestScreen(),
+              withNavBar: false,
+              pageTransitionAnimation: PageTransitionAnimation.slideRight,
+            );
+            _controller.index = lastIndex;
+          } else {
+            lastIndex = index;
+          }
+        },
       ),
-      navBarStyle: NavBarStyle.style12,
-      itemAnimationProperties: const ItemAnimationProperties(
-        duration: Duration(milliseconds: 200),
-        curve: Curves.ease,
-      ),
-      screenTransitionAnimation: const ScreenTransitionAnimation(
-        animateTabTransition: true,
-        curve: Curves.ease,
-        duration: Duration(milliseconds: 200),
-      ),
-      onItemSelected: (index) {
-        if (index == 2) {
-          PersistentNavBarNavigator.pushNewScreen(
-            context,
-            screen: const NewProtestScreen(),
-            withNavBar: false,
-            pageTransitionAnimation: PageTransitionAnimation.slideRight,
-          );
-          _controller.index = lastIndex;
-        } else {
-          lastIndex = index;
-        }
-      },
     );
   }
 }

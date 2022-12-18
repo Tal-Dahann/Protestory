@@ -2,6 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:protestory/firebase/protest.dart';
+import 'package:protestory/providers/navigation_provider.dart';
+import 'package:protestory/providers/search_provider.dart';
 import 'package:protestory/screens/search_screen.dart';
 import 'package:protestory/widgets/protest_card.dart';
 import 'package:provider/provider.dart';
@@ -38,7 +40,11 @@ class ProtestListHome extends StatelessWidget {
                 ),
               ),
               InkWell(
-                onTap: () => 1, //TODO
+                onTap: () {
+                  context.read<SearchPresetsProvider>().searchOption =
+                      searchOption;
+                  context.read<NavigationProvider>().controller.jumpToTab(1);
+                },
                 child: const Text(
                   "see all",
                   style: TextStyle(
@@ -54,9 +60,8 @@ class ProtestListHome extends StatelessWidget {
         SizedBox(
           height: cardHeight,
           child: FutureBuilder<List<Protest>>(
-            future: context
-                .read<DataProvider>()
-                .processQuery(searchQuery(context, searchOption)),
+            future: context.read<DataProvider>().processQuery(
+                searchQuery(context.read<DataProvider>(), searchOption)),
             builder:
                 (BuildContext context, AsyncSnapshot<List<Protest>> snapshot) {
               if (snapshot.hasError) {
