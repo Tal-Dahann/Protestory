@@ -1,14 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:protestory/utils/add_spaces.dart';
-import 'package:protestory/widgets/text_fields.dart';
+import 'package:paginate_firestore/bloc/pagination_listeners.dart';
+import 'package:protestory/constants/colors.dart';
 import 'package:provider/provider.dart';
 
-import '../constants/colors.dart';
 import '../firebase/data_provider.dart';
 import '../firebase/protest.dart';
+import '../utils/add_spaces.dart';
 import '../widgets/navigation.dart';
 import '../widgets/paginator.dart';
+import '../widgets/text_fields.dart';
 
 enum SearchOptions {
   all('All'),
@@ -45,8 +46,7 @@ Query<Protest> searchQuery(BuildContext context, SearchOptions searchOption,
             .read<DataProvider>()
             .getProtestCollectionRef
             .orderBy('name', descending: false)
-            .where('name', isGreaterThanOrEqualTo: text)
-            .where('name', isLessThan: '${text}z');
+            .where('prefixes_name', arrayContains: text);
       }
   }
 }
@@ -61,58 +61,86 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  String text = '';
-
   late SearchOptions dropDownValue = widget.initDropDownValue;
+  late final QueryChangeListener<Protest> queryProvider;
+  String searchText = '';
+
+  @override
+  void initState() {
+    super.initState();
+    queryProvider = QueryChangeListener(searchQuery(context, dropDownValue));
+  }
+
+  @override
+  void dispose() {
+    queryProvider.dispose();
+    super.dispose();
+  }
+
+  _updateQuery() {
+    queryProvider.query =
+        searchQuery(context, dropDownValue, text: searchText.toLowerCase());
+  }
 
   @override
   Widget build(BuildContext context) {
-    Query<Protest> qry = searchQuery(context, dropDownValue);
-
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Search', style: navTitleStyle),
-        backgroundColor: white,
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          addVerticalSpace(height: 15),
-          CustomTextFormField(
-            icon: const Icon(Icons.search),
-            hintText: "Search...",
-            onChanged: (searchText) => setState(() {
-              text = searchText.toLowerCase();
-            }),
-            onFieldSubmitted: (searchText) => setState(() {
-              text = searchText.toLowerCase();
-            }),
+        appBar: AppBar(
+          title: const Text('Search', style: navTitleStyle),
+          backgroundColor: white,
+        ),
+        body: Paginator(
+          queryProvider: queryProvider,
+          header: SliverAppBar(
+            backgroundColor: white,
+            toolbarHeight: 150,
+            centerTitle: true,
+            floating: true,
+            title: Column(
+              children: [
+                addVerticalSpace(height: 15),
+                CustomTextFormField(
+                  icon: const Icon(Icons.search),
+                  hintText: "Search...",
+                  onChanged: (searchText) {
+                    this.searchText = searchText;
+                    _updateQuery();
+                  },
+                ),
+                DropdownButton<SearchOptions>(
+                  // Initial Value
+                  value: dropDownValue,
+                  elevation: 10,
+                  icon: const Icon(Icons.keyboard_arrow_down),
+                  items: SearchOptions.values.map((SearchOptions item) {
+                    return DropdownMenuItem(
+                      value: item,
+                      child: Text(item.value),
+                    );
+                  }).toList(),
+                  // After selecting the desired option,it will
+                  // change button value to selected value
+                  onChanged: (SearchOptions? newValue) {
+                    setState(() {
+                      //TODO: when it is null??
+                      dropDownValue = newValue!;
+                      _updateQuery();
+                    });
+                  },
+                ),
+              ],
+            ),
           ),
-          addVerticalSpace(height: 4),
-          DropdownButton<SearchOptions>(
-            // Initial Value
-            value: dropDownValue,
-            elevation: 10,
-            icon: const Icon(Icons.keyboard_arrow_down),
-            items: SearchOptions.values.map((SearchOptions item) {
-              return DropdownMenuItem(
-                value: item,
-                child: Text(item.value),
-              );
-            }).toList(),
-            // After selecting the desired option,it will
-            // change button value to selected value
-            onChanged: (SearchOptions? newValue) {
-              setState(() {
-                //TODO: when it is null??
-                dropDownValue = newValue!;
-              });
-            },
+          onEmpty: const Center(
+            child: Padding(
+              padding: EdgeInsets.all(10.0),
+              child: Text(
+                "No protests match your search",
+                style: TextStyle(color: darkGray),
+              ),
+            ),
           ),
-          Expanded(child: Paginator(query: qry))
-        ],
-      ),
-    );
+        ));
     //onFieldSubmitted: ;
   }
 }

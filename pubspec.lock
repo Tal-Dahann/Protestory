@@ -378,8 +378,8 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: a43838833a78ae29c2f3e3672d956ad64a213923
-      url: "https://github.com/waqadArshad/paginate_firestore.git"
+      resolved-ref: "1bb9060be703175c196a3f48840c97fa500ab253"
+      url: "https://github.com/Whitomtit/paginate_firestore.git"
     source: git
     version: "1.0.3+1"
   path:

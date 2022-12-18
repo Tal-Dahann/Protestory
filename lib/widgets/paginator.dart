@@ -1,47 +1,35 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:paginate_firestore/bloc/pagination_listeners.dart';
 import 'package:paginate_firestore/paginate_firestore.dart';
 import 'package:protestory/widgets/protest_card.dart';
 
-import '../constants/colors.dart';
 import '../firebase/protest.dart';
 
 class Paginator extends StatelessWidget {
-  const Paginator({required this.query, Key? key}) : super(key: key);
-
-  final Query<Protest> query;
+  final Widget? header;
+  final Widget onEmpty;
+  final QueryChangeListener<Protest> queryProvider;
+  const Paginator(
+      {required this.queryProvider,
+      Key? key,
+      required this.header,
+      required this.onEmpty})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     return PaginateFirestore(
-      shrinkWrap: true,
-      //TODO: check if it lazy loaded
-      //itemsPerPage: 5,
-      //TODO: what is unique key??
-      key: UniqueKey(),
-      onEmpty: const Text(
-        "No protests match your search",
-        style: TextStyle(color: darkGray),
-      ),
-//item builder type is compulsory.
+      header: header,
+      onEmpty: onEmpty,
+      queryProvider: queryProvider,
+      isLive: true,
       itemBuilder: (context, documentSnapshots, index) {
         final data = documentSnapshots[index].data() as Protest;
 
-        return ProtestCard.byWidth(
-            protest: data, width: MediaQuery.of(context).size.width);
-
-        //   ListTile(
-        //   leading: const CircleAvatar(child: Icon(Icons.person)),
-        //   title: data == null ? const Text('Error in data') : Text(data.name),
-        //   subtitle: Text(documentSnapshots[index].id),
-        // );
+        return ProtestCard(
+          protest: data,
+          type: ProtestCardTypes.wholeScreen,
+        );
       },
-// orderBy is compulsory to enable pagination
-      query: query,
-//Change types accordingly
-      itemBuilderType: PaginateBuilderType.listView,
-// to fetch real-time data
-      //TODO: check is it really necessary
-      isLive: true,
     );
   }
 }
