@@ -42,6 +42,7 @@ class App extends StatelessWidget {
             child: app),
       );
     } else {
+      FlutterNativeSplash.remove();
       return app;
     }
   }
