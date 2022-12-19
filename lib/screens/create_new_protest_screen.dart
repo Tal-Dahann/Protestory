@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:protestory/constants/colors.dart';
+import 'package:protestory/firebase/auth_notifier.dart';
 import 'package:protestory/firebase/data_provider.dart';
 import 'package:protestory/firebase/protest.dart';
 import 'package:protestory/providers/new_protest_form_provider.dart';
@@ -60,10 +61,14 @@ class _NewProtestFormState extends State<NewProtestForm> {
         context.read<NewProtestFormNotifier>().descriptionController.text;
     String location =
         context.read<NewProtestFormNotifier>().locationController.text;
+    String? contactInfo = context.read<AuthNotifier>().user!.email;
+    if (contactInfo == null) {
+      contactInfo = 'No contact info provided';
+    }
     Protest p = await context.read<DataProvider>().addProtest(
         name: name,
         date: context.read<NewProtestFormNotifier>().selectedTime,
-        contactInfo: 'test@test.test',
+        contactInfo: contactInfo,
         description: description,
         location: location,
         tags: context.read<NewProtestFormNotifier>().selectedTags,

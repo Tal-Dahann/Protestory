@@ -14,6 +14,7 @@ class _UploadingProtestScreenState extends State<UploadingProtestScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text('New Protest - Uploading...',
             style: TextStyle(color: blue, fontWeight: FontWeight.bold)),
         backgroundColor: white,
