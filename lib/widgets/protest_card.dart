@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:protestory/firebase/protest.dart';
 import 'package:protestory/screens/protest_information_screen.dart';
 import 'package:protestory/widgets/loading.dart';
@@ -34,7 +35,16 @@ class ProtestCard extends StatelessWidget {
       aspectRatio: cardRatio,
       child: InkWell(
         onTap: () {
-          Navigator.push(context, MaterialPageRoute(builder: (ctx) => ProtestInformationScreen(protest: protest)));
+          //Navigator.push(context, MaterialPageRoute(builder: (ctx) => ProtestInformationScreen(protest: protest)));
+          Navigator.of(context).push(
+              PageTransition(
+                  type: PageTransitionType.fade,
+                  duration: const Duration(
+                      milliseconds: 400),
+                  reverseDuration: const Duration(
+                      milliseconds: 300),
+                  child: ProtestInformationScreen(protest: protest)
+          ), );
         },
         child: Card(
           elevation: 2,
