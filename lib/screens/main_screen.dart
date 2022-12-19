@@ -39,17 +39,26 @@ class _MainScreenState extends State<MainScreen> {
         ),
         backgroundColor: white,
       ),
-      body: ListView.separated(
-          padding: const EdgeInsets.only(bottom: 20.0, top: 10.0),
-          itemBuilder: (context, index) =>
-              ProtestListHome(searchOption: list[index]),
-          separatorBuilder: (context, index) => const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10.0),
-                child: Divider(
-                  color: Colors.grey,
+      body: RefreshIndicator(
+        color: blue,
+        onRefresh: () {
+          setState(() {
+
+          });
+          return Future.value(false);
+        },
+        child: ListView.separated(
+            padding: const EdgeInsets.only(bottom: 20.0, top: 10.0),
+            itemBuilder: (context, index) =>
+                ProtestListHome(searchOption: list[index]),
+            separatorBuilder: (context, index) => const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10.0),
+                  child: Divider(
+                    color: Colors.grey,
+                  ),
                 ),
-              ),
-          itemCount: list.length),
+            itemCount: list.length),
+      ),
     );
   }
 }
