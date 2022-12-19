@@ -88,7 +88,7 @@ class _MainNavigationState extends State<MainNavigation> {
           borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
           colorBehindNavBar: Colors.white,
         ),
-        navBarStyle: NavBarStyle.style12,
+        navBarStyle: NavBarStyle.style3,
         itemAnimationProperties: const ItemAnimationProperties(
           duration: Duration(milliseconds: 200),
           curve: Curves.ease,
