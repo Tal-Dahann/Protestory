@@ -7,13 +7,15 @@ import 'package:protestory/providers/search_provider.dart';
 import 'package:protestory/screens/login_screen.dart';
 import 'package:protestory/widgets/navigation.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   runApp(FirebaseInit());
 }
 
@@ -29,6 +31,7 @@ class App extends StatelessWidget {
           : const LoginPage(),
     );
     if (context.read<AuthNotifier>().isAuthenticated()) {
+      FlutterNativeSplash.remove();
       return ProxyProvider<AuthNotifier, DataProvider>(
         create: (ctx) => DataProvider(user: ctx.read<AuthNotifier>().user!),
         update: (_, myAuthNotifier, myDataProvider) =>
