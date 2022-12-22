@@ -62,9 +62,7 @@ class _NewProtestFormState extends State<NewProtestForm> {
     String location =
         context.read<NewProtestFormNotifier>().locationController.text;
     String? contactInfo = context.read<AuthNotifier>().user!.email;
-    if (contactInfo == null) {
-      contactInfo = 'No contact info provided';
-    }
+    contactInfo ??= 'No contact info provided';
     Protest p = await context.read<DataProvider>().addProtest(
         name: name,
         date: context.read<NewProtestFormNotifier>().selectedTime,

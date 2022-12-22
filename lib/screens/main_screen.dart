@@ -42,10 +42,8 @@ class _MainScreenState extends State<MainScreen> {
       body: RefreshIndicator(
         color: blue,
         onRefresh: () {
-          setState(() {
-
-          });
-          return Future.value(false);
+          setState(() {});
+          return Future.value();
         },
         child: ListView.separated(
             padding: const EdgeInsets.only(bottom: 20.0, top: 10.0),

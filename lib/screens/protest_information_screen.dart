@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:protestory/constants/colors.dart';
-import 'package:protestory/widgets/loading.dart';
 import 'package:protestory/firebase/protest.dart';
+import 'package:protestory/widgets/loading.dart';
 import 'package:protestory/widgets/protest_information_detailed.dart';
 
 class ProtestInformationScreen extends StatefulWidget {
   final Protest protest;
 
-  ProtestInformationScreen({Key? key, required this.protest}) : super(key: key);
+  const ProtestInformationScreen({Key? key, required this.protest})
+      : super(key: key);
 
   @override
   State<ProtestInformationScreen> createState() =>
@@ -28,8 +29,8 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
           padding: const EdgeInsets.all(10.0),
           child: FloatingActionButton.extended(
             backgroundColor: purple,
-            label: Text('Join'),
-            icon: Icon(Icons.person_add),
+            label: const Text('Join'),
+            icon: const Icon(Icons.person_add),
             onPressed: () {},
           ),
         ),
@@ -56,7 +57,7 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
                         ),
                       ),
                       onPressed: () {},
-                      child: BackButton(
+                      child: const BackButton(
                         color: blue,
                       ),
                     ),
@@ -86,7 +87,7 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
                 ),
               ),
             ),
-            SliverAppBar(
+            const SliverAppBar(
               pinned: true,
               primary: false,
               automaticallyImplyLeading: false,
@@ -116,7 +117,7 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
                   Expanded(
                     child: TabBarView(children: [
                       ProtestInformationDetailed(protest: protest),
-                      Container(child: Center(child: Text('Stories here')))
+                      const Center(child: Text('Stories here'))
                     ]),
                   )
                 ],

@@ -1,13 +1,13 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:protestory/firebase/auth_notifier.dart';
 import 'package:protestory/firebase/data_provider.dart';
 import 'package:protestory/providers/search_provider.dart';
 import 'package:protestory/screens/login_screen.dart';
 import 'package:protestory/widgets/navigation.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 void main() {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -30,8 +30,10 @@ class App extends StatelessWidget {
           ? const MainNavigation()
           : const LoginPage(),
     );
-    if (context.read<AuthNotifier>().isAuthenticated()) {
+    if (context.read<AuthNotifier>().isReady()) {
       FlutterNativeSplash.remove();
+    }
+    if (context.read<AuthNotifier>().isAuthenticated()) {
       return ProxyProvider<AuthNotifier, DataProvider>(
         create: (ctx) => DataProvider(user: ctx.read<AuthNotifier>().user!),
         update: (_, myAuthNotifier, myDataProvider) =>
@@ -42,7 +44,6 @@ class App extends StatelessWidget {
             child: app),
       );
     } else {
-      FlutterNativeSplash.remove();
       return app;
     }
   }

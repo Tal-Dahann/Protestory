@@ -2,12 +2,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-enum AuthStatus { authenticated, unauthenticated, authenticating }
+enum AuthStatus { authenticated, unauthenticated, authenticating, initiation }
 
 class AuthNotifier extends ChangeNotifier {
   final _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
-  var _status = AuthStatus.unauthenticated;
+  var _status = AuthStatus.initiation;
   User? _user;
   GoogleSignInAccount? googleUser;
 
@@ -32,6 +32,10 @@ class AuthNotifier extends ChangeNotifier {
 
   bool isAuthenticated() {
     return status == AuthStatus.authenticated;
+  }
+
+  bool isReady() {
+    return status != AuthStatus.initiation;
   }
 
   Future<bool> signInGoogle() async {

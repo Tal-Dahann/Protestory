@@ -7,7 +7,7 @@ import 'package:protestory/utils/add_spaces.dart';
 class ProtestInformationDetailed extends StatelessWidget {
   final Protest protest;
 
-  ProtestInformationDetailed({Key? key, required this.protest})
+  const ProtestInformationDetailed({Key? key, required this.protest})
       : super(key: key);
 
   @override
@@ -21,7 +21,7 @@ class ProtestInformationDetailed extends StatelessWidget {
           addVerticalSpace(height: 20),
           Text(
             protest.name,
-            style: TextStyle(
+            style: const TextStyle(
               color: blue,
               fontWeight: FontWeight.bold,
               fontSize: 32,
@@ -38,7 +38,7 @@ class ProtestInformationDetailed extends StatelessWidget {
                   Row(
                     children: [
                       Icon(Icons.location_on, color: Colors.grey[800]),
-                      Text(' ' + protest.location,
+                      Text(' ${protest.location}',
                           style: TextStyle(color: Colors.grey[800]))
                     ],
                   ),
@@ -46,9 +46,7 @@ class ProtestInformationDetailed extends StatelessWidget {
                     children: [
                       Icon(Icons.watch_later, color: Colors.grey[800]),
                       Text(
-                          ' ' +
-                              DateFormat('dd/MM/yyyy kk:mm')
-                                  .format(protest.date.toDate()),
+                          ' ${DateFormat('dd/MM/yyyy kk:mm').format(protest.date.toDate())}',
                           style: TextStyle(color: Colors.grey[800]))
                     ],
                   ),
@@ -57,8 +55,7 @@ class ProtestInformationDetailed extends StatelessWidget {
                       Icon(Icons.people, color: Colors.grey[800]),
                       protest.participantsAmount != 0
                           ? Text(
-                              protest.participantsAmount.toString() +
-                                  ' people already joined!',
+                              '${protest.participantsAmount} people already joined!',
                               style: TextStyle(color: Colors.grey[800]))
                           : Text(' no participants yet',
                               style: TextStyle(color: Colors.grey[800]))
@@ -67,7 +64,7 @@ class ProtestInformationDetailed extends StatelessWidget {
                   Row(
                     children: [
                       Icon(Icons.email, color: Colors.grey[800]),
-                      Text(' ' + protest.contactInfo,
+                      Text(' ${protest.contactInfo}',
                           style: TextStyle(color: Colors.grey[800]))
                     ],
                   ),
@@ -76,7 +73,7 @@ class ProtestInformationDetailed extends StatelessWidget {
               Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
+                children: const [
                   CircleAvatar(
                     radius: 35,
                   ),
@@ -87,11 +84,11 @@ class ProtestInformationDetailed extends StatelessWidget {
             ],
           ),
           addVerticalSpace(height: 10),
-          Divider(
+          const Divider(
             thickness: 2,
           ),
           addVerticalSpace(height: 10),
-          Text(
+          const Text(
             'Description',
             style: TextStyle(
               color: purple,
@@ -104,14 +101,14 @@ class ProtestInformationDetailed extends StatelessWidget {
             flex: 3,
             child: Material(
                 elevation: 4,
-                child: Container(
+                child: SizedBox(
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height * 0.5,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
                       protest.description,
-                      style: TextStyle(fontSize: 18, color: darkGray),
+                      style: const TextStyle(fontSize: 18, color: darkGray),
                     ),
                   ),
                 )),

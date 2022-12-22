@@ -26,7 +26,6 @@ class ProtestCard extends StatelessWidget {
         shape = null;
         break;
     }
-    ;
   }
 
   @override
@@ -37,14 +36,12 @@ class ProtestCard extends StatelessWidget {
         onTap: () {
           //Navigator.push(context, MaterialPageRoute(builder: (ctx) => ProtestInformationScreen(protest: protest)));
           Navigator.of(context).push(
-              PageTransition(
-                  type: PageTransitionType.fade,
-                  duration: const Duration(
-                      milliseconds: 400),
-                  reverseDuration: const Duration(
-                      milliseconds: 300),
-                  child: ProtestInformationScreen(protest: protest)
-          ), );
+            PageTransition(
+                type: PageTransitionType.fade,
+                duration: const Duration(milliseconds: 400),
+                reverseDuration: const Duration(milliseconds: 300),
+                child: ProtestInformationScreen(protest: protest)),
+          );
         },
         child: Card(
           elevation: 2,
@@ -53,7 +50,8 @@ class ProtestCard extends StatelessWidget {
           child: InkWell(
             child: Padding(
               padding: const EdgeInsets.only(bottom: 8.0),
-              child: Stack(alignment: AlignmentDirectional.bottomEnd, children: [
+              child:
+                  Stack(alignment: AlignmentDirectional.bottomEnd, children: [
                 Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
