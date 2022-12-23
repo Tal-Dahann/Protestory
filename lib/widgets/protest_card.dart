@@ -4,6 +4,8 @@ import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:protestory/firebase/protest.dart';
 import 'package:protestory/screens/protest_information_screen.dart';
 
+import '../utils/add_spaces.dart';
+
 enum ProtestCardTypes { mainScreen, wholeScreen }
 
 class ProtestCard extends StatelessWidget {
@@ -15,7 +17,7 @@ class ProtestCard extends StatelessWidget {
       {super.key, required this.protest, required ProtestCardTypes type}) {
     switch (type) {
       case ProtestCardTypes.mainScreen:
-        cardRatio = 3 / 4;
+        cardRatio = 15 / 16;
         shape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(12));
         break;
       case ProtestCardTypes.wholeScreen:
@@ -43,16 +45,16 @@ class ProtestCard extends StatelessWidget {
           //       child: ProtestInformationScreen(protest: protest)),
           // );
         },
-        child: Card(
-          elevation: 2,
-          clipBehavior: Clip.antiAlias,
-          shape: shape,
-          child: InkWell(
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child:
-                  Stack(alignment: AlignmentDirectional.bottomEnd, children: [
-                Column(
+        child: Padding(
+          padding: const EdgeInsets.all(5.0),
+          child: Card(
+            elevation: 2,
+            clipBehavior: Clip.antiAlias,
+            shape: shape,
+            child: InkWell(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -76,59 +78,72 @@ class ProtestCard extends StatelessWidget {
                       ),
                     ),
                     Flexible(
-                        flex: 5,
+                      flex: 5,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 5.0),
                         child: Column(
                           children: [
-                            Flexible(
-                              flex: 1,
-                              child: ListTile(
-                                leading: const Icon(Icons.place),
-                                title: AutoSizeText(
-                                  protest.location,
-                                  style: const TextStyle(
-                                    fontSize: 15.0,
-                                    color: Colors.grey,
-                                  ),
-                                  minFontSize: 15.0,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
+                            // Location:
+                            Expanded(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.location_on, color: Colors.grey[800]),
+                                  addHorizontalSpace(width: 4),
+                                  Expanded(
+                                    child: AutoSizeText(protest.location,
+                                        minFontSize: 15.0,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(color: Colors.grey[800])),
+                                  )
+                                ],
                               ),
                             ),
-                            Flexible(
-                              flex: 1,
-                              child: ListTile(
-                                leading: const Icon(Icons.access_time_rounded),
-                                title: Text(protest.dateAndTime(),
-                                    style: const TextStyle(
-                                      fontSize: 15.0,
-                                      color: Colors.grey,
-                                    )),
+                            Expanded(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.watch_later_outlined,
+                                      color: Colors.grey[800]),
+                                  addHorizontalSpace(width: 4),
+                                  Expanded(
+                                    child: AutoSizeText(protest.dateAndTime(),
+                                        minFontSize: 15.0,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(color: Colors.grey[800])),
+                                  )
+                                ],
                               ),
                             ),
+                            Expanded(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(protest.participantsAmount.toString(),
+                                      style: const TextStyle(
+                                        fontSize: 15.0,
+                                        color: Colors.grey,
+                                      )),
+                                  const Padding(
+                                    padding: EdgeInsets.only(left: 2.0, right: 8.0),
+                                    child: Icon(Icons.people),
+                                  )
+                                ],
+                              ),
+                            ),
+
                           ],
-                        )),
-                    const SizedBox(
-                      height: 8.0,
-                    )
+                        ),
+                      ),
+                    ),
                   ],
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(protest.participantsAmount.toString(),
-                        style: const TextStyle(
-                          fontSize: 15.0,
-                          color: Colors.grey,
-                        )),
-                    const Padding(
-                      padding: EdgeInsets.only(left: 2.0, right: 8.0),
-                      child: Icon(Icons.people),
-                    )
-                  ],
-                )
-              ]),
+              ),
             ),
           ),
         ),
