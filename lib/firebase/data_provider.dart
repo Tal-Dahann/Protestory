@@ -8,9 +8,9 @@ import 'package:protestory/firebase/protest.dart';
 import 'package:protestory/firebase/user.dart';
 
 class DataProvider {
-  static const version = "1.0.0";
+  static const version = "1.0.1";
   static final firestore =
-      FirebaseFirestore.instance.collection("versions").doc("v$version");
+  FirebaseFirestore.instance.collection("versions").doc("v$version");
   static final firestorage = FirebaseStorage.instance.ref("v$version");
 
   late final CollectionReference<Protest> protestsCollectionRef;
@@ -20,9 +20,9 @@ class DataProvider {
 
   DataProvider(User fireUser) {
     protestsCollectionRef = firestore.collection("protests").withConverter(
-          fromFirestore: Protest.fromFirestore,
-          toFirestore: (Protest protest, _) => protest.toFirestore(),
-        );
+      fromFirestore: Protest.fromFirestore,
+      toFirestore: (Protest protest, _) => protest.toFirestore(),
+    );
     usersCollectionRef = firestore.collection("users").withConverter(
         fromFirestore: PUser.fromFirestore,
         toFirestore: (PUser user, _) => user.toFirestore());
@@ -32,14 +32,13 @@ class DataProvider {
   CollectionReference<Protest> get getProtestCollectionRef =>
       protestsCollectionRef;
 
-  Future<Protest> addProtest(
-      {required String name,
-      required DateTime date,
-      required String contactInfo,
-      required String description,
-      required String location,
-      required List<String> tags,
-      required File image}) async {
+  Future<Protest> addProtest({required String name,
+    required DateTime date,
+    required String contactInfo,
+    required String description,
+    required String location,
+    required List<String> tags,
+    required File image}) async {
     //creating doc to the protest
     var docRef = protestsCollectionRef.doc();
     Protest newProtest = Protest(
@@ -60,11 +59,36 @@ class DataProvider {
     return newProtest;
   }
 
+  Future<Protest> updateProtest({required Protest protest,
+    required String name,
+    required DateTime date,
+    required String contactInfo,
+    required String description,
+    required String location,
+    required List<String> tags,
+    required File image}) async {
+    var docRef = protestsCollectionRef.doc(protest.id);
+    Protest updatedProtest = Protest(
+      id: protest.id,
+      name: name,
+      date: Timestamp.fromDate(date),
+      creator: protest.creator,
+      creationTime: protest.creationTime,
+      participantsAmount: protest.participantsAmount,
+      contactInfo: contactInfo,
+      description: description,
+      location: location,
+      tags: tags,
+    );
+    await firestorage.child('protests_images').child(protest.id).putFile(image);
+    await docRef.set(updatedProtest);
+    return updatedProtest;
+  }
+
   //parameter is the name of the field we sorting by
-  Future<List<Protest>> getNProtests(
-      {required n,
-      required String parameter,
-      required bool isDescending}) async {
+  Future<List<Protest>> getNProtests({required n,
+    required String parameter,
+    required bool isDescending}) async {
     List<Protest> protestList = [];
     // print("entered getNprotests" + "\n");
     var query = await protestsCollectionRef
@@ -124,7 +148,7 @@ class DataProvider {
     Iterable<String> tagsListCopy = tagsList.take(numOfElements);
 
     var query =
-        protestsCollectionRef.orderBy("creation_time", descending: true);
+    protestsCollectionRef.orderBy("creation_time", descending: true);
 
     //filtering for every tag
     for (String tag in tagsListCopy) {
