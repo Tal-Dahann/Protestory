@@ -8,11 +8,27 @@ import 'package:protestory/screens/create_new_protest_screen.dart';
 import 'package:protestory/widgets/protest_information_detailed.dart';
 import 'package:provider/provider.dart';
 
-class ProtestInformationScreen extends StatefulWidget {
-  final Protest protest;
+class ProtestHolder extends ChangeNotifier {
+  Protest _protest;
 
-  const ProtestInformationScreen({Key? key, required this.protest})
-      : super(key: key);
+  ProtestHolder(Protest protest) : _protest = protest;
+
+  Protest get protest {
+    return _protest;
+  }
+
+  set protest(Protest protest) {
+    _protest = protest;
+    notifyListeners();
+  }
+}
+
+class ProtestInformationScreen extends StatefulWidget {
+  final ProtestHolder protestHolder;
+
+  ProtestInformationScreen({Key? key, required protest})
+      : protestHolder = ProtestHolder(protest),
+        super(key: key);
 
   @override
   State<ProtestInformationScreen> createState() =>
@@ -35,8 +51,14 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
   );
 
   @override
+  void initState() {
+    widget.protestHolder.addListener(() => setState(() {}));
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    Protest protest = widget.protest;
+    Protest protest = widget.protestHolder.protest;
     bool isCreator = context.read<AuthNotifier>().user?.uid == protest.creator;
 
     return DefaultTabController(
@@ -85,62 +107,68 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
               ),
               actions: isCreator
                   ? [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        right: 10.0,
-                      ),
-                      child: Container(
-                        decoration: (BoxDecoration(
-                            shape: BoxShape.rectangle,
-                            borderRadius: BorderRadius.circular(12),
-                            color: Colors.white70)),
-                        child: PopupMenuButton(
-                          onSelected: (index) {
-                            switch (index) {
-                              case 0:
-                                PersistentNavBarNavigator.pushNewScreen(
-                                  context,
-                                  screen: NewProtestScreen(
-                                    formStatus:
-                                    FormStatus.editing,
-                                    protest: protest,
-                                  ),
-                                  withNavBar: false,
-                                  pageTransitionAnimation: PageTransitionAnimation.slideRight,
-                                );
-                                break;
-                              case 1:
-                              //TODO: ADD DELETE PROTEST HERE
-                                context.read<DataProvider>().deleteProtest(protest);
-                                Navigator.of(context).pop();
-                                break;
-                            }
-                          },
-                          itemBuilder: (BuildContext context) {
-                            return [
-                              const PopupMenuItem(
-                                value: 0,
-                                child: Text('Edit'),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              right: 10.0,
+                            ),
+                            child: Container(
+                              decoration: (BoxDecoration(
+                                  shape: BoxShape.rectangle,
+                                  borderRadius: BorderRadius.circular(12),
+                                  color: Colors.white70)),
+                              child: PopupMenuButton(
+                                onSelected: (index) {
+                                  switch (index) {
+                                    case 0:
+                                      PersistentNavBarNavigator.pushNewScreen(
+                                        context,
+                                        screen: ChangeNotifierProvider<
+                                            ProtestHolder>(
+                                          create: (_) => widget.protestHolder,
+                                          child: NewProtestScreen(
+                                            formStatus: FormStatus.editing,
+                                            protest: protest,
+                                          ),
+                                        ),
+                                        withNavBar: false,
+                                        pageTransitionAnimation:
+                                            PageTransitionAnimation.slideRight,
+                                      );
+                                      break;
+                                    case 1:
+                                      //TODO: ADD DELETE PROTEST HERE
+                                      context
+                                          .read<DataProvider>()
+                                          .deleteProtest(protest);
+                                      Navigator.of(context).pop();
+                                      break;
+                                  }
+                                },
+                                itemBuilder: (BuildContext context) {
+                                  return [
+                                    const PopupMenuItem(
+                                      value: 0,
+                                      child: Text('Edit'),
+                                    ),
+                                    PopupMenuItem(
+                                      value: 1,
+                                      child: Text('Delete',
+                                          style: TextStyle(
+                                              color: Colors.red[900])),
+                                    ),
+                                  ];
+                                },
+                                icon: const Icon(Icons.more_vert, color: blue),
                               ),
-                              PopupMenuItem(
-                                value: 1,
-                                child: Text('Delete',
-                                    style: TextStyle(
-                                        color: Colors.red[900])),
-                              ),
-                            ];
-                          },
-                          icon: const Icon(Icons.more_vert, color: blue),
-                        ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
-                ),
-              ]
+                    ]
                   : null,
               bottom: PreferredSize(
                 preferredSize: tabs.preferredSize,

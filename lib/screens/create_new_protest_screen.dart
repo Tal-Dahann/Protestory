@@ -70,17 +70,21 @@ class _NewProtestFormState extends State<NewProtestForm> {
       //    builder: (context) => const UploadingProtestScreen()));
     });
     //Upload Protest
-    Protest protest = await processDataAndUploadNewProtest();
+    Protest protest = await processDataAndUpload();
     Future.delayed(Duration.zero, () {
       //Function to navigate to protest page after successful upload!
       Navigator.of(context).popUntil(ModalRoute.withName("/"));
-      PersistentNavBarNavigator.pushNewScreen(context,
-          screen: ProtestInformationScreen(protest: protest),
-          pageTransitionAnimation: PageTransitionAnimation.slideUp);
+      if (widget.formStatus == FormStatus.editing) {
+        context.read<ProtestHolder>().protest = protest;
+      } else {
+        PersistentNavBarNavigator.pushNewScreen(context,
+            screen: ProtestInformationScreen(protest: protest),
+            pageTransitionAnimation: PageTransitionAnimation.slideUp);
+      }
     });
   }
 
-  Future<Protest> processDataAndUploadNewProtest() async {
+  Future<Protest> processDataAndUpload() async {
     String name = context.read<NewProtestFormNotifier>().titleController.text;
     String description =
         context.read<NewProtestFormNotifier>().descriptionController.text;
