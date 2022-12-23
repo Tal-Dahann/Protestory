@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:protestory/constants/colors.dart';
+import 'package:protestory/firebase/protest.dart';
 import 'package:protestory/providers/new_protest_form_provider.dart';
 import 'package:protestory/utils/add_spaces.dart';
 import 'package:protestory/widgets/protest_card.dart';
@@ -46,8 +47,8 @@ class _FormPageFourState extends State<FormPageFour> {
                   left: MediaQuery.of(context).size.width * 0.1,
                   right: MediaQuery.of(context).size.width * 0.1),
               child: AspectRatio(
-                aspectRatio: ProtestCard.imageRatio.ratioX /
-                    ProtestCard.imageRatio.ratioY,
+                aspectRatio:
+                    Protest.imageRatio.ratioX / Protest.imageRatio.ratioY,
                 child: InkWell(
                   onTap: () async {
                     final ImagePicker picker = ImagePicker();
@@ -57,7 +58,7 @@ class _FormPageFourState extends State<FormPageFour> {
                       return;
                     }
                     final croppedImage = await ImageCropper().cropImage(
-                        aspectRatio: ProtestCard.imageRatio,
+                        aspectRatio: Protest.imageRatio,
                         sourcePath: image.path,
                         uiSettings: [
                           AndroidUiSettings(

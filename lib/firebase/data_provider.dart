@@ -37,19 +37,18 @@ class DataProvider {
     //creating doc to the protest
     var docRef = protestCollectionRef.doc();
     Protest newProtest = Protest(
-        id: docRef.id,
-        name: name,
-        date: Timestamp.fromDate(date),
-        creator: user.uid,
-        creationTime: Timestamp.fromDate(DateTime.now()),
-        participantsAmount: 0,
-        contactInfo: contactInfo,
-        description: description,
-        location: location,
-        tags: tags,
-        includeImage: false);
+      id: docRef.id,
+      name: name,
+      date: Timestamp.fromDate(date),
+      creator: user.uid,
+      creationTime: Timestamp.fromDate(DateTime.now()),
+      participantsAmount: 0,
+      contactInfo: contactInfo,
+      description: description,
+      location: location,
+      tags: tags,
+    );
     await firestorage.child('protests_images').child(docRef.id).putFile(image);
-    newProtest.loadImage();
     await docRef.set(newProtest);
 
     return newProtest;

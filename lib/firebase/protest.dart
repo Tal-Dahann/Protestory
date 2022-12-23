@@ -2,13 +2,17 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:intl/intl.dart';
 
+import '../widgets/loading.dart';
 import 'data_provider.dart';
 
 class Protest {
+  static const imageRatio = CropAspectRatio(ratioX: 16, ratioY: 9);
   static final dateFormatter = DateFormat('dd/MM/yyyy kk:mm');
 
+  final UniqueKey _key = UniqueKey();
   String id;
   final String name;
   String lowerCaseName;
@@ -20,38 +24,65 @@ class Protest {
   final String description;
   final String location;
   final List<String> tags;
-  late final Future<NetworkImage> image;
-  final bool includeImage;
+  Completer<NetworkImage>? _imageCompleter;
+  NetworkImage? _image;
 
-  Protest(
-      {required this.id,
-      required this.name,
-      required this.date,
-      required this.creator,
-      required this.creationTime,
-      required this.participantsAmount,
-      required this.contactInfo,
-      required this.description,
-      required this.location,
-      required this.tags,
-      this.includeImage = true})
-      : lowerCaseName = name.toLowerCase() {
-    if (includeImage) loadImage();
+  Protest({
+    required this.id,
+    required this.name,
+    required this.date,
+    required this.creator,
+    required this.creationTime,
+    required this.participantsAmount,
+    required this.contactInfo,
+    required this.description,
+    required this.location,
+    required this.tags,
+  }) : lowerCaseName = name.toLowerCase();
+
+  Future<NetworkImage> get image async {
+    if (_imageCompleter == null) {
+      _imageCompleter = Completer<NetworkImage>();
+      NetworkImage image = NetworkImage(await DataProvider.firestorage
+          .child('protests_images')
+          .child(id)
+          .getDownloadURL());
+      image
+          .resolve(ImageConfiguration.empty)
+          .addListener(ImageStreamListener((info, call) {
+        _image = image;
+        _imageCompleter!.complete(image);
+      }));
+    }
+    return _imageCompleter!.future;
   }
 
-  loadImage() {
-    image = _loadImage();
+  Widget imageWrapper(ImageProvider<Object> image) {
+    return Hero(
+      tag: _key,
+      child: AspectRatio(
+        aspectRatio: imageRatio.ratioX / imageRatio.ratioY,
+        child: Material(
+          color: Colors.transparent,
+          child: Ink.image(image: image, fit: BoxFit.fill),
+        ),
+      ),
+    );
   }
 
-  Future<NetworkImage> _loadImage() async {
-    Completer<NetworkImage> completer = Completer<NetworkImage>();
-    NetworkImage avatar = NetworkImage(await DataProvider.firestorage
-        .child('protests_images')
-        .child(id)
-        .getDownloadURL());
-    avatar.resolve(ImageConfiguration.empty).addListener(
-        ImageStreamListener((info, call) => completer.complete(avatar)));
-    return completer.future;
+  Widget getImageWidget() {
+    if (_image != null) {
+      return imageWrapper(_image!);
+    }
+    return FutureBuilder<NetworkImage>(
+      future: image,
+      builder: (builder, snapshot) {
+        if (snapshot.hasData) {
+          return imageWrapper(snapshot.requireData);
+        }
+        return const LoadingWidget();
+      },
+    );
   }
 
   factory Protest.fromFirestore(

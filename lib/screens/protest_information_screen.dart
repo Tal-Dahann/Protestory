@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:protestory/constants/colors.dart';
 import 'package:protestory/firebase/protest.dart';
-import 'package:protestory/widgets/loading.dart';
 import 'package:protestory/widgets/protest_information_detailed.dart';
 
 class ProtestInformationScreen extends StatefulWidget {
@@ -39,7 +38,9 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
             SliverAppBar(
               pinned: true,
               shadowColor: Colors.transparent,
-              expandedHeight: 240,
+              expandedHeight: MediaQuery.of(context).size.width /
+                  Protest.imageRatio.ratioX *
+                  Protest.imageRatio.ratioY,
               floating: true,
               toolbarHeight: MediaQuery.of(context).size.height * 0.1,
               leadingWidth: MediaQuery.of(context).size.width,
@@ -66,25 +67,7 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
               ),
               backgroundColor: Colors.white,
               flexibleSpace: FlexibleSpaceBar(
-                background: AspectRatio(
-                  aspectRatio: imageRatio.ratioX / imageRatio.ratioY,
-                  child: FutureBuilder<NetworkImage>(
-                    future: protest.image,
-                    builder: (builder, snapshot) {
-                      if (snapshot.hasError) {
-                        return Scaffold(
-                            body: Center(
-                                child: Text(snapshot.error.toString(),
-                                    textDirection: TextDirection.ltr)));
-                      }
-                      if (snapshot.hasData) {
-                        return Ink.image(
-                            image: snapshot.requireData, fit: BoxFit.fill);
-                      }
-                      return const LoadingWidget();
-                    },
-                  ),
-                ),
+                background: protest.getImageWidget(),
               ),
             ),
             const SliverAppBar(

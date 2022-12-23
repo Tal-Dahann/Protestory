@@ -1,15 +1,12 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:image_cropper/image_cropper.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:protestory/firebase/protest.dart';
 import 'package:protestory/screens/protest_information_screen.dart';
-import 'package:protestory/widgets/loading.dart';
 
 enum ProtestCardTypes { mainScreen, wholeScreen }
 
 class ProtestCard extends StatelessWidget {
-  static const imageRatio = CropAspectRatio(ratioX: 16, ratioY: 9);
   final Protest protest;
   late final ShapeBorder? shape;
   late final double cardRatio;
@@ -35,13 +32,16 @@ class ProtestCard extends StatelessWidget {
       child: InkWell(
         onTap: () {
           //Navigator.push(context, MaterialPageRoute(builder: (ctx) => ProtestInformationScreen(protest: protest)));
-          Navigator.of(context).push(
-            PageTransition(
-                type: PageTransitionType.fade,
-                duration: const Duration(milliseconds: 400),
-                reverseDuration: const Duration(milliseconds: 300),
-                child: ProtestInformationScreen(protest: protest)),
-          );
+          PersistentNavBarNavigator.pushNewScreen(context,
+              screen: ProtestInformationScreen(protest: protest),
+              pageTransitionAnimation: PageTransitionAnimation.slideUp);
+          // p.push(
+          //   PageTransition(
+          //       type: PageTransitionType.fade,
+          //       duration: const Duration(milliseconds: 400),
+          //       reverseDuration: const Duration(milliseconds: 300),
+          //       child: ProtestInformationScreen(protest: protest)),
+          // );
         },
         child: Card(
           elevation: 2,
@@ -56,25 +56,7 @@ class ProtestCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    AspectRatio(
-                      aspectRatio: imageRatio.ratioX / imageRatio.ratioY,
-                      child: FutureBuilder<NetworkImage>(
-                        future: protest.image,
-                        builder: (builder, snapshot) {
-                          if (snapshot.hasError) {
-                            return Scaffold(
-                                body: Center(
-                                    child: Text(snapshot.error.toString(),
-                                        textDirection: TextDirection.ltr)));
-                          }
-                          if (snapshot.hasData) {
-                            return Ink.image(
-                                image: snapshot.requireData, fit: BoxFit.fill);
-                          }
-                          return const LoadingWidget();
-                        },
-                      ),
-                    ),
+                    protest.getImageWidget(),
                     Flexible(
                       flex: 3,
                       child: Padding(
