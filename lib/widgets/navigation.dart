@@ -76,7 +76,7 @@ class _MainNavigationState extends State<MainNavigation> {
 
   @override
   Widget build(BuildContext context) {
-    return Provider(
+    return ChangeNotifierProvider(
       create: (BuildContext context) => NavigationProvider(_controller),
       child: PersistentTabView(
         context,
@@ -105,7 +105,8 @@ class _MainNavigationState extends State<MainNavigation> {
               screen: const NewProtestScreen(),
               withNavBar: false,
               pageTransitionAnimation: PageTransitionAnimation.slideRight,
-            );
+            ).then((value) =>
+                context.read<NavigationProvider>().protestsUpdated());
             _controller.index = lastIndex;
           } else {
             lastIndex = index;

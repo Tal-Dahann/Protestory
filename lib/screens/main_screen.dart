@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:protestory/providers/navigation_provider.dart';
 import 'package:protestory/screens/search_screen.dart';
+import 'package:provider/provider.dart';
 
 import '../constants/colors.dart';
 import '../widgets/navigation.dart';
@@ -16,6 +18,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
+    context.watch<NavigationProvider>();
     List<SearchOptions> list = [
       SearchOptions.mostPopular,
       SearchOptions.mostRecent,

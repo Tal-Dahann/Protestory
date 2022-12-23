@@ -1,7 +1,12 @@
+import 'package:flutter/cupertino.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
-class NavigationProvider {
+class NavigationProvider extends ChangeNotifier {
   final PersistentTabController controller;
 
   NavigationProvider(this.controller);
+
+  void protestsUpdated() {
+    notifyListeners();
+  }
 }

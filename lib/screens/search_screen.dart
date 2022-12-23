@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import '../firebase/data_provider.dart';
 import '../firebase/protest.dart';
+import '../providers/navigation_provider.dart';
 import '../utils/add_spaces.dart';
 import '../widgets/navigation.dart';
 import '../widgets/paginator.dart';
@@ -83,6 +84,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<NavigationProvider>();
     return Scaffold(
         appBar: AppBar(
           title: const Text('Search', style: navTitleStyle),

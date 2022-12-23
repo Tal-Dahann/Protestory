@@ -4,6 +4,7 @@ import 'package:protestory/constants/colors.dart';
 import 'package:protestory/firebase/auth_notifier.dart';
 import 'package:protestory/firebase/data_provider.dart';
 import 'package:protestory/firebase/protest.dart';
+import 'package:protestory/providers/navigation_provider.dart';
 import 'package:protestory/screens/create_new_protest_screen.dart';
 import 'package:protestory/widgets/protest_information_detailed.dart';
 import 'package:provider/provider.dart';
@@ -58,6 +59,7 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    DataProvider dataProvider = context.read<DataProvider>();
     Protest protest = widget.protestHolder.protest;
     bool isCreator = context.read<AuthNotifier>().user?.uid == protest.creator;
 
@@ -137,7 +139,9 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
                                         withNavBar: false,
                                         pageTransitionAnimation:
                                             PageTransitionAnimation.slideRight,
-                                      );
+                                      ).then((value) => context
+                                          .read<NavigationProvider>()
+                                          .protestsUpdated());
                                       break;
                                     case 1:
                                       bool? confirmed = await showDialog<bool>(
@@ -170,10 +174,12 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
                                         },
                                       );
                                       if (confirmed ?? false) {
+                                        await dataProvider
+                                            .deleteProtest(protest);
                                         Future.delayed(const Duration(), () {
                                           context
-                                              .read<DataProvider>()
-                                              .deleteProtest(protest);
+                                              .read<NavigationProvider>()
+                                              .protestsUpdated();
                                           Navigator.of(context).pop();
                                         });
                                       }
