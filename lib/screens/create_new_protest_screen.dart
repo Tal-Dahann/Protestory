@@ -61,8 +61,11 @@ class NewProtestForm extends StatefulWidget {
 class _NewProtestFormState extends State<NewProtestForm> {
   void _handleFinishButton(BuildContext context) async {
     Future.delayed(Duration.zero, () {
-      Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => const UploadingProtestScreen()));
+      PersistentNavBarNavigator.pushNewScreen(context,
+          screen: const UploadingProtestScreen(),
+          pageTransitionAnimation: PageTransitionAnimation.slideRight);
+      // Navigator.of(context).push(MaterialPageRoute(
+      //    builder: (context) => const UploadingProtestScreen()));
     });
     //Upload Protest
     Protest protest = await processDataAndUploadNewProtest();
@@ -76,81 +79,47 @@ class _NewProtestFormState extends State<NewProtestForm> {
   }
 
   Future<Protest> processDataAndUploadNewProtest() async {
-    String name = context
-        .read<NewProtestFormNotifier>()
-        .titleController
-        .text;
+    String name = context.read<NewProtestFormNotifier>().titleController.text;
     String description =
-        context
-            .read<NewProtestFormNotifier>()
-            .descriptionController
-            .text;
+        context.read<NewProtestFormNotifier>().descriptionController.text;
     String location =
-        context
-            .read<NewProtestFormNotifier>()
-            .locationController
-            .text;
-    String? contactInfo = context
-        .read<AuthNotifier>()
-        .user!
-        .email;
+        context.read<NewProtestFormNotifier>().locationController.text;
+    String? contactInfo = context.read<AuthNotifier>().user!.email;
     contactInfo ??= 'No contact info provided';
     if (widget.formStatus == FormStatus.editing) {
-      return context.read<DataProvider>().updateProtest(
-        protest: widget.protest!,
-        name: name,
-        date: context
-            .read<NewProtestFormNotifier>()
-            .selectedTime,
-        contactInfo: contactInfo,
-        description: description,
-        location: location,
-        tags: context
-            .read<NewProtestFormNotifier>()
-            .selectedTags,
-        image: context
-            .read<NewProtestFormNotifier>()
-            .protestThumbnail!,);
+      return await context.read<DataProvider>().updateProtest(
+            protest: widget.protest!,
+            name: name,
+            date: context.read<NewProtestFormNotifier>().selectedTime,
+            contactInfo: contactInfo,
+            description: description,
+            location: location,
+            tags: context.read<NewProtestFormNotifier>().selectedTags,
+            image: context.read<NewProtestFormNotifier>().protestThumbnail,
+          );
     }
-    return context.read<DataProvider>().addProtest(
+    return await context.read<DataProvider>().addProtest(
         name: name,
-        date: context
-            .read<NewProtestFormNotifier>()
-            .selectedTime,
+        date: context.read<NewProtestFormNotifier>().selectedTime,
         contactInfo: contactInfo,
         description: description,
         location: location,
-        tags: context
-            .read<NewProtestFormNotifier>()
-            .selectedTags,
-        image: context
-            .read<NewProtestFormNotifier>()
-            .protestThumbnail!);
+        tags: context.read<NewProtestFormNotifier>().selectedTags,
+        image: context.read<NewProtestFormNotifier>().protestThumbnail!);
   }
 
   void initExistingFields(BuildContext context, Protest? p) async {
-    context
-        .read<NewProtestFormNotifier>()
-        .titleController
-        .text = p!.name;
-    context
-        .read<NewProtestFormNotifier>()
-        .locationController
-        .text = p.location;
-    context
-        .read<NewProtestFormNotifier>()
-        .dateController
-        .text = p.dateAndTime();
-    context
-        .read<NewProtestFormNotifier>()
-        .selectedTags = p.tags;
-    context
-        .read<NewProtestFormNotifier>()
-        .descriptionController
-        .text = p.description;
-    context
-        .read<NewProtestFormNotifier>()
-        .existingProtestThumbnail = await p.image;
+    context.read<NewProtestFormNotifier>().titleController.text = p!.name;
+    context.read<NewProtestFormNotifier>().locationController.text = p.location;
+    context.read<NewProtestFormNotifier>().dateController.text =
+        p.dateAndTime();
+    context.read<NewProtestFormNotifier>().selectedTime =
+        p.date.toDate();
+    context.read<NewProtestFormNotifier>().selectedTags = p.tags;
+    context.read<NewProtestFormNotifier>().descriptionController.text =
+        p.description;
+    context.read<NewProtestFormNotifier>().existingProtestThumbnail =
+        await p.image;
   }
 
   @override
@@ -163,14 +132,10 @@ class _NewProtestFormState extends State<NewProtestForm> {
 
   @override
   Widget build(BuildContext context) {
-    if (context
-        .watch<NewProtestFormNotifier>()
-        .finishButtonClicked == true) {
+    if (context.watch<NewProtestFormNotifier>().finishButtonClicked == true) {
       _handleFinishButton(context);
     }
-    int currPageNum = context
-        .watch<NewProtestFormNotifier>()
-        .currentFormPage;
+    int currPageNum = context.watch<NewProtestFormNotifier>().currentFormPage;
     Widget? currPageToDisplay;
     switch (currPageNum) {
       case 1:
@@ -195,9 +160,10 @@ class _NewProtestFormState extends State<NewProtestForm> {
         ),
         title: widget.formStatus == FormStatus.creating
             ? const Text('New Protest',
-            style: TextStyle(color: blue, fontWeight: FontWeight.bold))
+                style: TextStyle(color: blue, fontWeight: FontWeight.bold))
             : Text('Editing \'${widget.protest!.name}\'',
-            style: const TextStyle(color: blue, fontWeight: FontWeight.bold)),
+                style:
+                    const TextStyle(color: blue, fontWeight: FontWeight.bold)),
         backgroundColor: white,
       ),
       body: Column(
@@ -205,17 +171,13 @@ class _NewProtestFormState extends State<NewProtestForm> {
           StepProgressIndicator(
             totalSteps: 4,
             selectedColor: purple,
-            currentStep: context
-                .read<NewProtestFormNotifier>()
-                .currentFormPage,
+            currentStep: context.read<NewProtestFormNotifier>().currentFormPage,
             size: 7,
           ),
           Expanded(
               flex: 4,
               child: Form(
-                  key: context
-                      .read<NewProtestFormNotifier>()
-                      .formKey,
+                  key: context.read<NewProtestFormNotifier>().formKey,
                   child: currPageToDisplay)),
           Padding(
             padding: const EdgeInsets.all(20.0),
@@ -224,51 +186,41 @@ class _NewProtestFormState extends State<NewProtestForm> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  context
-                      .read<NewProtestFormNotifier>()
-                      .currentFormPage > 1
+                  context.read<NewProtestFormNotifier>().currentFormPage > 1
                       ? Align(
-                    alignment: Alignment.bottomLeft,
-                    child: CustomButton(
-                        text: 'Previous',
-                        textColor: purple,
-                        color: white,
-                        width: MediaQuery
-                            .of(context)
-                            .size
-                            .width * 0.35,
-                        onPressed: () {
-                          bool showTagError = context
-                              .read<NewProtestFormNotifier>()
-                              .showTagsError;
-                          setState(() {
-                            if (showTagError) {
-                              context
-                                  .read<NewProtestFormNotifier>()
-                                  .hideTagsError();
-                            }
-                            context
-                                .read<NewProtestFormNotifier>()
-                                .prevPage();
-                          });
-                        }),
-                  )
+                          alignment: Alignment.bottomLeft,
+                          child: CustomButton(
+                              text: 'Previous',
+                              textColor: purple,
+                              color: white,
+                              width: MediaQuery.of(context).size.width * 0.35,
+                              onPressed: () {
+                                bool showTagError = context
+                                    .read<NewProtestFormNotifier>()
+                                    .showTagsError;
+                                setState(() {
+                                  if (showTagError) {
+                                    context
+                                        .read<NewProtestFormNotifier>()
+                                        .hideTagsError();
+                                  }
+                                  context
+                                      .read<NewProtestFormNotifier>()
+                                      .prevPage();
+                                });
+                              }),
+                        )
                       : const SizedBox(),
                   Align(
                     alignment: Alignment.bottomRight,
                     child: CustomButton(
                         text: currPageNum != 4 ? 'Continue' : 'Finish',
                         color: darkPurple,
-                        width: MediaQuery
-                            .of(context)
-                            .size
-                            .width * 0.4,
+                        width: MediaQuery.of(context).size.width * 0.4,
                         onPressed: () async {
                           FocusManager.instance.primaryFocus?.unfocus();
                           GlobalKey<FormState> formKey =
-                              context
-                                  .read<NewProtestFormNotifier>()
-                                  .formKey;
+                              context.read<NewProtestFormNotifier>().formKey;
                           bool valid = false;
                           switch (currPageNum) {
                             case 1:
@@ -291,8 +243,14 @@ class _NewProtestFormState extends State<NewProtestForm> {
                               break;
                             case 4:
                               if (context
-                                  .read<NewProtestFormNotifier>()
-                                  .protestThumbnail !=
+                                      .read<NewProtestFormNotifier>()
+                                      .protestThumbnail !=
+                                  null) {
+                                valid = true;
+                              }
+                              if (context
+                                      .read<NewProtestFormNotifier>()
+                                      .existingProtestThumbnail !=
                                   null) {
                                 valid = true;
                               }

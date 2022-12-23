@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:protestory/constants/colors.dart';
 import 'package:protestory/firebase/auth_notifier.dart';
 import 'package:protestory/firebase/protest.dart';
@@ -86,14 +87,16 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
                                 onSelected: (index) {
                                   switch (index) {
                                     case 0:
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  NewProtestScreen(
-                                                    formStatus:
-                                                        FormStatus.editing,
-                                                    protest: protest,
-                                                  )));
+                                      PersistentNavBarNavigator.pushNewScreen(
+                                        context,
+                                        screen: NewProtestScreen(
+                                          formStatus:
+                                          FormStatus.editing,
+                                          protest: protest,
+                                        ),
+                                        withNavBar: false,
+                                        pageTransitionAnimation: PageTransitionAnimation.slideRight,
+                                      );
                                       break;
                                     case 1:
                                       //TODO: ADD DELETE PROTEST HERE
