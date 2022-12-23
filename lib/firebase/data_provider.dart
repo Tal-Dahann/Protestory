@@ -8,7 +8,7 @@ import 'package:protestory/firebase/protest.dart';
 import 'package:protestory/firebase/user.dart';
 
 class DataProvider {
-  static const version = "1.0.0";
+  static const version = "1.0.1";
   static final firestore =
       FirebaseFirestore.instance.collection("versions").doc("v$version");
   static final firestorage = FirebaseStorage.instance.ref("v$version");
@@ -58,6 +58,39 @@ class DataProvider {
     await docRef.set(newProtest);
 
     return newProtest;
+  }
+
+  Future<Protest> updateProtest(
+      {required Protest protest,
+      required String name,
+      required DateTime date,
+      required String contactInfo,
+      required String description,
+      required String location,
+      required List<String> tags,
+      required File? image}) async {
+    var docRef = protestsCollectionRef.doc(protest.id);
+    Protest updatedProtest = Protest(
+      id: protest.id,
+      name: name,
+      date: Timestamp.fromDate(date),
+      creator: protest.creator,
+      creationTime: protest.creationTime,
+      participantsAmount: protest.participantsAmount,
+      contactInfo: contactInfo,
+      description: description,
+      location: location,
+      tags: tags,
+    );
+    if (image != null) {
+      //if its null, we didnt update the image so we dont need to update firestorage
+      await firestorage
+          .child('protests_images')
+          .child(protest.id)
+          .putFile(image);
+    }
+    await docRef.set(updatedProtest);
+    return updatedProtest;
   }
 
   //parameter is the name of the field we sorting by

@@ -10,10 +10,11 @@ class NewProtestFormNotifier extends ChangeNotifier {
   final timeController = TextEditingController();
   final descriptionController = TextEditingController();
   final formKey = GlobalKey<FormState>();
-  final protestTags = <String>[];
+  // final protestTags = <String>[];
   DateTime selectedTime = DateTime(0);
-  final selectedTags = <String>[];
+  List<String> selectedTags = <String>[];
   File? protestThumbnail;
+  NetworkImage? existingProtestThumbnail;
   bool showTagsError = false;
 
   bool finishButtonClicked = false;

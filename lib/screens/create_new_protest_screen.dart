@@ -18,8 +18,15 @@ import 'package:step_progress_indicator/step_progress_indicator.dart';
 import '../widgets/discard_changes.dart';
 import '../widgets/navigation.dart';
 
+enum FormStatus { creating, editing }
+
 class NewProtestScreen extends StatefulWidget {
-  const NewProtestScreen({Key? key}) : super(key: key);
+  final FormStatus formStatus;
+  final Protest? protest;
+
+  const NewProtestScreen(
+      {Key? key, this.formStatus = FormStatus.creating, this.protest})
+      : super(key: key);
 
   @override
   State<NewProtestScreen> createState() => _NewProtestScreenState();
@@ -32,14 +39,21 @@ class _NewProtestScreenState extends State<NewProtestScreen> {
     return DiscardChanges(
       child: ChangeNotifierProvider(
         create: (context) => NewProtestFormNotifier(),
-        child: const NewProtestForm(),
+        child: NewProtestForm(
+          formStatus: widget.formStatus,
+          protest: widget.protest,
+        ),
       ),
     );
   }
 }
 
 class NewProtestForm extends StatefulWidget {
-  const NewProtestForm({Key? key}) : super(key: key);
+  final FormStatus formStatus;
+  final Protest? protest;
+
+  const NewProtestForm({Key? key, required this.formStatus, this.protest})
+      : super(key: key);
 
   @override
   State<NewProtestForm> createState() => _NewProtestFormState();
@@ -48,8 +62,11 @@ class NewProtestForm extends StatefulWidget {
 class _NewProtestFormState extends State<NewProtestForm> {
   void _handleFinishButton(BuildContext context) async {
     Future.delayed(Duration.zero, () {
-      Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => const UploadingProtestScreen()));
+      PersistentNavBarNavigator.pushNewScreen(context,
+          screen: const UploadingProtestScreen(),
+          pageTransitionAnimation: PageTransitionAnimation.slideRight);
+      // Navigator.of(context).push(MaterialPageRoute(
+      //    builder: (context) => const UploadingProtestScreen()));
     });
     //Upload Protest
     Protest protest = await processDataAndUploadNewProtest();
@@ -70,7 +87,19 @@ class _NewProtestFormState extends State<NewProtestForm> {
         context.read<NewProtestFormNotifier>().locationController.text;
     String? contactInfo = context.read<AuthNotifier>().user!.email;
     contactInfo ??= 'No contact info provided';
-    return context.read<DataProvider>().addProtest(
+    if (widget.formStatus == FormStatus.editing) {
+      return await context.read<DataProvider>().updateProtest(
+            protest: widget.protest!,
+            name: name,
+            date: context.read<NewProtestFormNotifier>().selectedTime,
+            contactInfo: contactInfo,
+            description: description,
+            location: location,
+            tags: context.read<NewProtestFormNotifier>().selectedTags,
+            image: context.read<NewProtestFormNotifier>().protestThumbnail,
+          );
+    }
+    return await context.read<DataProvider>().addProtest(
         name: name,
         date: context.read<NewProtestFormNotifier>().selectedTime,
         contactInfo: contactInfo,
@@ -78,6 +107,28 @@ class _NewProtestFormState extends State<NewProtestForm> {
         location: location,
         tags: context.read<NewProtestFormNotifier>().selectedTags,
         image: context.read<NewProtestFormNotifier>().protestThumbnail!);
+  }
+
+  void initExistingFields(BuildContext context, Protest? p) async {
+    context.read<NewProtestFormNotifier>().titleController.text = p!.name;
+    context.read<NewProtestFormNotifier>().locationController.text = p.location;
+    context.read<NewProtestFormNotifier>().dateController.text =
+        p.dateAndTime();
+    context.read<NewProtestFormNotifier>().selectedTime =
+        p.date.toDate();
+    context.read<NewProtestFormNotifier>().selectedTags = p.tags;
+    context.read<NewProtestFormNotifier>().descriptionController.text =
+        p.description;
+    context.read<NewProtestFormNotifier>().existingProtestThumbnail =
+        await p.image;
+  }
+
+  @override
+  void initState() {
+    if (widget.protest != null && widget.formStatus == FormStatus.editing) {
+      initExistingFields(context, widget.protest);
+    }
+    super.initState();
   }
 
   @override
@@ -109,7 +160,11 @@ class _NewProtestFormState extends State<NewProtestForm> {
         leading: const BackButton(
           color: blue,
         ),
-        title: const Text('New Protest', style: navTitleStyle),
+        title: widget.formStatus == FormStatus.creating
+            ? const Text('New Protest',
+                style: navTitleStyle)
+            : Text('Editing \'${widget.protest!.name}\'',
+                style: navTitleStyle),
         backgroundColor: white,
       ),
       body: Column(
@@ -199,6 +254,12 @@ class _NewProtestFormState extends State<NewProtestForm> {
                               if (context
                                       .read<NewProtestFormNotifier>()
                                       .protestThumbnail !=
+                                  null) {
+                                valid = true;
+                              }
+                              if (context
+                                      .read<NewProtestFormNotifier>()
+                                      .existingProtestThumbnail !=
                                   null) {
                                 valid = true;
                               }

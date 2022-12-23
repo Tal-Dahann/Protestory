@@ -73,8 +73,26 @@ class _FormPageFourState extends State<FormPageFour> {
                           File(croppedImage.path);
                     });
                   },
-                  child:
-                      context.read<NewProtestFormNotifier>().protestThumbnail ==
+                  child: (context
+                                  .read<NewProtestFormNotifier>()
+                                  .existingProtestThumbnail !=
+                              null &&
+                          context
+                                  .read<NewProtestFormNotifier>()
+                                  .protestThumbnail ==
+                              null
+                      ? Container(
+                          color: lightGray,
+                          width: MediaQuery.of(context).size.width * 0.8,
+                          child: Image.network(
+                            context
+                                .read<NewProtestFormNotifier>()
+                                .existingProtestThumbnail!
+                                .url,
+                          ))
+                      : (context
+                                  .read<NewProtestFormNotifier>()
+                                  .protestThumbnail ==
                               null
                           ? Container(
                               color: lightGray,
@@ -88,7 +106,7 @@ class _FormPageFourState extends State<FormPageFour> {
                                     .read<NewProtestFormNotifier>()
                                     .protestThumbnail!,
                               ),
-                            ),
+                            ))),
                 ),
               ),
             ),

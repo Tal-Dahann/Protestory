@@ -16,7 +16,9 @@ class _UploadingProtestScreenState extends State<UploadingProtestScreen> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('Uploading...', style: navTitleStyle),
+        leading: null,
+        title: const Text('New Protest - Uploading...',
+            style: navTitleStyle),
         backgroundColor: white,
         centerTitle: true,
       ),
