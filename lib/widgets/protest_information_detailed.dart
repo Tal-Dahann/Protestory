@@ -71,16 +71,25 @@ class ProtestInformationDetailed extends StatelessWidget {
                   ),
                 ],
               ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: const [
-                  CircleAvatar(
-                    radius: 35,
-                  ),
-                  //TODO: insert protest creator name here:
-                  Text('Insert Name'),
-                ],
+              FutureBuilder(
+                future: context
+                    .read<DataProvider>()
+                    .getUserById(userId: protest.creator),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    PUser creator = snapshot.requireData;
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        creator.getAvatarWidget(radius: 35),
+                        const SizedBox(height: 5),
+                        Text(creator.username),
+                      ],
+                    );
+                  }
+                  return Container();
+                },
               )
             ],
           ),
