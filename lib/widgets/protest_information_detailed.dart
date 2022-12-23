@@ -31,44 +31,68 @@ class ProtestInformationDetailed extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.location_on, color: Colors.grey[800]),
-                      Text(' ${protest.location}',
-                          style: TextStyle(color: Colors.grey[800]))
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Icon(Icons.watch_later, color: Colors.grey[800]),
-                      Text(
-                          ' ${DateFormat('dd/MM/yyyy kk:mm').format(protest.date.toDate())}',
-                          style: TextStyle(color: Colors.grey[800]))
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Icon(Icons.people, color: Colors.grey[800]),
-                      protest.participantsAmount != 0
-                          ? Text(
-                              '${protest.participantsAmount} people already joined!',
-                              style: TextStyle(color: Colors.grey[800]))
-                          : Text(' no participants yet',
-                              style: TextStyle(color: Colors.grey[800]))
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Icon(Icons.email, color: Colors.grey[800]),
-                      Text(' ${protest.contactInfo}',
-                          style: TextStyle(color: Colors.grey[800]))
-                    ],
-                  ),
-                ],
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Icon(Icons.location_on, color: Colors.grey[800]),
+                        addHorizontalSpace(width: 3),
+                        Expanded(
+                          child: Text(protest.location,
+                              style: TextStyle(color: Colors.grey[800])),
+                        )
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Icon(Icons.watch_later, color: Colors.grey[800]),
+                        addHorizontalSpace(width: 3),
+                        Expanded(
+                          child: Text(
+                              '${DateFormat('dd/MM/yyyy kk:mm').format(protest.date.toDate())}',
+                              style: TextStyle(color: Colors.grey[800])),
+                        )
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Icon(Icons.people, color: Colors.grey[800]),
+                        addHorizontalSpace(width: 3),
+                        protest.participantsAmount != 0
+                            ? Expanded(
+                              child: Text(
+                                  '${protest.participantsAmount} people already joined!',
+                                  style: TextStyle(color: Colors.grey[800])),
+                            )
+                            : Expanded(
+                              child: Text('no participants yet',
+                                  style: TextStyle(color: Colors.grey[800])),
+                            )
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Icon(Icons.email, color: Colors.grey[800]),
+                        addHorizontalSpace(width: 3),
+                        Expanded(
+                          child: Text('${protest.contactInfo}',
+                              style: TextStyle(color: Colors.grey[800])),
+                        )
+                      ],
+                    ),
+                  ],
+                ),
               ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
