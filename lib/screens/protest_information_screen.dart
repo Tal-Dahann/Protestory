@@ -121,7 +121,7 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
                                   borderRadius: BorderRadius.circular(12),
                                   color: Colors.white70)),
                               child: PopupMenuButton(
-                                onSelected: (index) {
+                                onSelected: (index) async {
                                   switch (index) {
                                     case 0:
                                       PersistentNavBarNavigator.pushNewScreen(
@@ -140,11 +140,43 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
                                       );
                                       break;
                                     case 1:
-                                      //TODO: ADD DELETE PROTEST HERE
-                                      context
-                                          .read<DataProvider>()
-                                          .deleteProtest(protest);
-                                      Navigator.of(context).pop();
+                                      bool? confirmed = await showDialog<bool>(
+                                        context: context,
+                                        builder: (context) {
+                                          return AlertDialog(
+                                            title: const Text(
+                                                'Are you sure you want to delete?'),
+                                            actionsAlignment:
+                                                MainAxisAlignment.end,
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context, false);
+                                                },
+                                                style: TextButton.styleFrom(
+                                                    foregroundColor: purple),
+                                                child: const Text('No'),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context, true);
+                                                },
+                                                style: TextButton.styleFrom(
+                                                    foregroundColor: purple),
+                                                child: const Text('Yes'),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                      if (confirmed ?? false) {
+                                        Future.delayed(const Duration(), () {
+                                          context
+                                              .read<DataProvider>()
+                                              .deleteProtest(protest);
+                                          Navigator.of(context).pop();
+                                        });
+                                      }
                                       break;
                                   }
                                 },

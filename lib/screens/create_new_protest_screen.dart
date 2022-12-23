@@ -36,7 +36,6 @@ class NewProtestScreen extends StatefulWidget {
 class _NewProtestScreenState extends State<NewProtestScreen> {
   @override
   Widget build(BuildContext context) {
-    Future.delayed(Duration.zero);
     return DiscardChanges(
       child: ChangeNotifierProvider(
         create: (context) => NewProtestFormNotifier(),
