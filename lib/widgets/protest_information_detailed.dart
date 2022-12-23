@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:markdown_editor_plus/widgets/markdown_parse.dart';
 import 'package:protestory/constants/colors.dart';
 import 'package:protestory/firebase/protest.dart';
 import 'package:protestory/utils/add_spaces.dart';
@@ -141,9 +142,9 @@ class ProtestInformationDetailed extends StatelessWidget {
                   height: MediaQuery.of(context).size.height * 0.5,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      protest.description,
-                      style: const TextStyle(fontSize: 18, color: darkGray),
+                    child: MarkdownParse(
+                      data: protest.description,
+                      physics: const NeverScrollableScrollPhysics(),
                     ),
                   ),
                 )),

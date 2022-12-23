@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:protestory/constants/colors.dart';
 import 'package:protestory/widgets/loading.dart';
+import 'package:protestory/widgets/navigation.dart';
 
 class UploadingProtestScreen extends StatefulWidget {
   const UploadingProtestScreen({Key? key}) : super(key: key);
@@ -15,12 +16,11 @@ class _UploadingProtestScreenState extends State<UploadingProtestScreen> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('New Protest - Uploading...',
-            style: TextStyle(color: blue, fontWeight: FontWeight.bold)),
+        title: const Text('Uploading...', style: navTitleStyle),
         backgroundColor: white,
         centerTitle: true,
       ),
-      body: const Align(alignment: Alignment.center ,child: LoadingWidget()),
+      body: const Align(alignment: Alignment.center, child: LoadingWidget()),
     );
   }
 }

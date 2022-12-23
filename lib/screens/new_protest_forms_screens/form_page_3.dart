@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:protestory/utils/add_spaces.dart';
-import 'package:provider/provider.dart';
+import 'package:markdown_editor_plus/widgets/splitted_markdown_form_field.dart';
 import 'package:protestory/constants/colors.dart';
 import 'package:protestory/providers/new_protest_form_provider.dart';
-import 'package:protestory/widgets/text_fields.dart';
+import 'package:protestory/utils/add_spaces.dart';
+import 'package:provider/provider.dart';
 
 class FormPageThree extends StatefulWidget {
   const FormPageThree({Key? key}) : super(key: key);
-
 
   @override
   State<FormPageThree> createState() => _FormPageThreeState();
@@ -60,9 +59,7 @@ class _FormPageThreeState extends State<FormPageThree> {
               child: const Text(
                 'Tip: a more detailed description is more likely to get more people to support your protest.',
                 style: TextStyle(
-                    color: darkGray,
-                    fontWeight: FontWeight.w400,
-                    fontSize: 14),
+                    color: darkGray, fontWeight: FontWeight.w400, fontSize: 14),
                 textAlign: TextAlign.left,
               ),
             ),
@@ -72,23 +69,30 @@ class _FormPageThreeState extends State<FormPageThree> {
             padding: EdgeInsets.only(
                 left: MediaQuery.of(context).size.width * 0.1,
                 right: MediaQuery.of(context).size.width * 0.1),
-            child: CustomTextFormField(
-              validator: (value) {
-                if (value == null || value.length > 500) {
-                  return 'Description must be up to 500 characters.';
-                }
-                if (value.isEmpty) {
-                  return 'Description can\'t be empty';
-                }
-                return null;
-              },
-              controller: context
-                  .read<NewProtestFormNotifier>()
-                  .descriptionController,
-              height: MediaQuery.of(context).size.height * 0.4,
-              keyboardType: TextInputType.multiline,
+            child: SplittedMarkdownFormField(
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: white,
+                border: OutlineInputBorder(
+                    borderSide: const BorderSide(color: darkGray),
+                    borderRadius: BorderRadius.circular(8)),
+                focusedBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(color: blue),
+                    borderRadius: BorderRadius.circular(8)),
+                floatingLabelBehavior: FloatingLabelBehavior.never,
+              ),
+              // validator: (value) {
+              //   if (value == null || value.length > 500) {
+              //     return 'Description must be up to 500 characters.';
+              //   }
+              //   if (value.isEmpty) {
+              //     return 'Description can\'t be empty';
+              //   }
+              //   return null;
+              // },
+              controller:
+                  context.read<NewProtestFormNotifier>().descriptionController,
               maxLines: 12,
-              autovalidateMode: AutovalidateMode.onUserInteraction,
             ),
           ),
         ],

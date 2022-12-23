@@ -16,6 +16,7 @@ import 'package:provider/provider.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 
 import '../widgets/discard_changes.dart';
+import '../widgets/navigation.dart';
 
 class NewProtestScreen extends StatefulWidget {
   const NewProtestScreen({Key? key}) : super(key: key);
@@ -103,27 +104,35 @@ class _NewProtestFormState extends State<NewProtestForm> {
         currPageToDisplay = const Text('Error Occurred....');
     }
     Widget? scaffoldToDisplay = Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         leading: const BackButton(
           color: blue,
         ),
-        title: const Text('New Protest',
-            style: TextStyle(color: blue, fontWeight: FontWeight.bold)),
+        title: const Text('New Protest', style: navTitleStyle),
         backgroundColor: white,
       ),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          StepProgressIndicator(
-            totalSteps: 4,
-            selectedColor: purple,
-            currentStep: context.read<NewProtestFormNotifier>().currentFormPage,
-            size: 7,
+          Flexible(
+            child: Column(
+              children: [
+                StepProgressIndicator(
+                  totalSteps: 4,
+                  selectedColor: purple,
+                  currentStep:
+                      context.read<NewProtestFormNotifier>().currentFormPage,
+                  size: 7,
+                ),
+                Flexible(
+                  child: Form(
+                      key: context.read<NewProtestFormNotifier>().formKey,
+                      child: currPageToDisplay),
+                ),
+              ],
+            ),
           ),
-          Expanded(
-              flex: 4,
-              child: Form(
-                  key: context.read<NewProtestFormNotifier>().formKey,
-                  child: currPageToDisplay)),
           Padding(
             padding: const EdgeInsets.all(20.0),
             child: SingleChildScrollView(

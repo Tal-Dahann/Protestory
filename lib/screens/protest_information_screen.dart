@@ -15,6 +15,20 @@ class ProtestInformationScreen extends StatefulWidget {
 }
 
 class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
+  static const tabs = TabBar(
+    labelColor: purple,
+    unselectedLabelColor: blue,
+    indicatorColor: purple,
+    tabs: [
+      Tab(
+        text: 'Details',
+      ),
+      Tab(
+        text: 'Stories',
+      )
+    ],
+  );
+
   @override
   Widget build(BuildContext context) {
     Protest protest = widget.protest;
@@ -62,32 +76,27 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
                   ),
                 ],
               ),
+              bottom: PreferredSize(
+                preferredSize: tabs.preferredSize,
+                child: const ColoredBox(
+                    color: Colors.white,
+                    child: TabBar(
+                      labelColor: purple,
+                      unselectedLabelColor: blue,
+                      indicatorColor: purple,
+                      tabs: [
+                        Tab(
+                          text: 'Details',
+                        ),
+                        Tab(
+                          text: 'Stories',
+                        )
+                      ],
+                    )),
+              ),
               backgroundColor: Colors.white,
               flexibleSpace: FlexibleSpaceBar(
                 background: protest.getImageWidget(),
-              ),
-            ),
-            const SliverAppBar(
-              pinned: true,
-              primary: false,
-              automaticallyImplyLeading: false,
-              elevation: 8,
-              backgroundColor: white,
-              title: Align(
-                alignment: AlignmentDirectional.center,
-                child: TabBar(
-                  labelColor: purple,
-                  unselectedLabelColor: blue,
-                  indicatorColor: purple,
-                  tabs: [
-                    Tab(
-                      text: 'Details',
-                    ),
-                    Tab(
-                      text: 'Stories',
-                    )
-                  ],
-                ),
               ),
             ),
             SliverFillRemaining(
