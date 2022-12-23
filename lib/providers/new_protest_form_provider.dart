@@ -1,14 +1,15 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class NewProtestFormNotifier extends ChangeNotifier {
   int currentFormPage = 1;
   final titleController = TextEditingController();
-  final locationController = TextEditingController();
   final dateController = TextEditingController();
   final timeController = TextEditingController();
   final descriptionController = TextEditingController();
+  final locationController = TextEditingController();
   final formKey = GlobalKey<FormState>();
   // final protestTags = <String>[];
   DateTime selectedTime = DateTime(0);
@@ -16,6 +17,7 @@ class NewProtestFormNotifier extends ChangeNotifier {
   File? protestThumbnail;
   NetworkImage? existingProtestThumbnail;
   bool showTagsError = false;
+  LatLng? locationLatLng;
 
   bool finishButtonClicked = false;
 
@@ -26,7 +28,6 @@ class NewProtestFormNotifier extends ChangeNotifier {
     timeController.text = '';
     dateController.text = '';
     titleController.text = '';
-    locationController.text = '';
     descriptionController.text = '';
     locationFocusNode = FocusNode();
     dateFocusNode = FocusNode();

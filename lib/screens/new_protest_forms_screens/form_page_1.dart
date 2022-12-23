@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:place_picker/entities/location_result.dart';
+import 'package:place_picker/widgets/place_picker.dart';
 import 'package:protestory/constants/colors.dart';
 import 'package:protestory/firebase/protest.dart';
 import 'package:protestory/providers/new_protest_form_provider.dart';
@@ -42,6 +44,7 @@ class _FormPageOneState extends State<FormPageOne> {
 
   @override
   Widget build(BuildContext context) {
+    final notifier = context.read<NewProtestFormNotifier>();
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
       child: Column(
@@ -116,8 +119,7 @@ class _FormPageOneState extends State<FormPageOne> {
                 right: MediaQuery.of(context).size.width * 0.1),
             child: CustomTextFormField(
               autovalidateMode: AutovalidateMode.onUserInteraction,
-              controller:
-                  context.read<NewProtestFormNotifier>().locationController,
+              controller: notifier.locationController,
               focusNode:
                   context.read<NewProtestFormNotifier>().locationFocusNode,
               validator: (value) {
@@ -135,6 +137,18 @@ class _FormPageOneState extends State<FormPageOne> {
                 Icons.location_on,
                 color: blue,
               ),
+              readOnly: true,
+              onTap: () async {
+                LocationResult result =
+                    await Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => PlacePicker(
+                              "AIzaSyCo-uZ1Sbqmdvi0qhYilL_yZ82CodRViEQ",
+                            )));
+                if (result.formattedAddress != null) {
+                  notifier.locationController.text = result.formattedAddress!;
+                }
+                notifier.locationLatLng = result.latLng;
+              },
             ),
           ),
           addVerticalSpace(height: 30),

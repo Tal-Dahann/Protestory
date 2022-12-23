@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:protestory/constants/colors.dart';
 import 'package:protestory/firebase/auth_notifier.dart';
@@ -85,6 +86,8 @@ class _NewProtestFormState extends State<NewProtestForm> {
         context.read<NewProtestFormNotifier>().descriptionController.text;
     String location =
         context.read<NewProtestFormNotifier>().locationController.text;
+    LatLng locationLatLng =
+        context.read<NewProtestFormNotifier>().locationLatLng!;
     String? contactInfo = context.read<AuthNotifier>().user!.email;
     contactInfo ??= 'No contact info provided';
     if (widget.formStatus == FormStatus.editing) {
@@ -95,6 +98,7 @@ class _NewProtestFormState extends State<NewProtestForm> {
             contactInfo: contactInfo,
             description: description,
             location: location,
+            locationLatLng: locationLatLng,
             tags: context.read<NewProtestFormNotifier>().selectedTags,
             image: context.read<NewProtestFormNotifier>().protestThumbnail,
           );
@@ -105,6 +109,7 @@ class _NewProtestFormState extends State<NewProtestForm> {
         contactInfo: contactInfo,
         description: description,
         location: location,
+        locationLatLng: locationLatLng,
         tags: context.read<NewProtestFormNotifier>().selectedTags,
         image: context.read<NewProtestFormNotifier>().protestThumbnail!);
   }
@@ -112,10 +117,10 @@ class _NewProtestFormState extends State<NewProtestForm> {
   void initExistingFields(BuildContext context, Protest? p) async {
     context.read<NewProtestFormNotifier>().titleController.text = p!.name;
     context.read<NewProtestFormNotifier>().locationController.text = p.location;
+    context.read<NewProtestFormNotifier>().locationLatLng = p.locationLatLng;
     context.read<NewProtestFormNotifier>().dateController.text =
         p.dateAndTime();
-    context.read<NewProtestFormNotifier>().selectedTime =
-        p.date.toDate();
+    context.read<NewProtestFormNotifier>().selectedTime = p.date.toDate();
     context.read<NewProtestFormNotifier>().selectedTags = p.tags;
     context.read<NewProtestFormNotifier>().descriptionController.text =
         p.description;
@@ -161,10 +166,8 @@ class _NewProtestFormState extends State<NewProtestForm> {
           color: blue,
         ),
         title: widget.formStatus == FormStatus.creating
-            ? const Text('New Protest',
-                style: navTitleStyle)
-            : Text('Editing \'${widget.protest!.name}\'',
-                style: navTitleStyle),
+            ? const Text('New Protest', style: navTitleStyle)
+            : Text('Editing \'${widget.protest!.name}\'', style: navTitleStyle),
         backgroundColor: white,
       ),
       body: Column(

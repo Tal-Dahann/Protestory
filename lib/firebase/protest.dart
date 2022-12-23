@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter_platform_interface/src/types/location.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:intl/intl.dart';
 
@@ -23,6 +24,7 @@ class Protest {
   final String contactInfo;
   final String description;
   final String location;
+  final LatLng locationLatLng;
   final List<String> tags;
   Completer<NetworkImage>? _imageCompleter;
   NetworkImage? _image;
@@ -37,6 +39,7 @@ class Protest {
     required this.contactInfo,
     required this.description,
     required this.location,
+    required this.locationLatLng,
     required this.tags,
   }) : lowerCaseName = name.toLowerCase();
 
@@ -107,6 +110,7 @@ class Protest {
       contactInfo: data['contact_info'],
       description: data['description'],
       location: data['location'],
+      locationLatLng: LatLng(data['latitude'] ?? 0.0, data['longitude'] ?? 0.0),
       tags: List.from(data['tags']),
     );
   }
@@ -122,6 +126,8 @@ class Protest {
       "contact_info": contactInfo,
       "description": description,
       "location": location,
+      "latitude": locationLatLng.latitude,
+      "longitude": locationLatLng.longitude,
       "tags": tags,
       "lower_case_name": lowerCaseName,
       "prefixes_name": pl,

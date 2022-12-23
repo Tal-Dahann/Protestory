@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:google_maps_flutter_platform_interface/src/types/location.dart';
 import 'package:protestory/firebase/protest.dart';
 import 'package:protestory/firebase/user.dart';
 
@@ -17,7 +18,6 @@ class DataProvider {
   late final CollectionReference<PUser> usersCollectionRef;
 
   late PUser user;
-
 
   DataProvider(User fireUser) {
     protestsCollectionRef = firestore.collection("protests").withConverter(
@@ -39,6 +39,7 @@ class DataProvider {
       required String contactInfo,
       required String description,
       required String location,
+      required LatLng locationLatLng,
       required List<String> tags,
       required File image}) async {
     //creating doc to the protest
@@ -53,6 +54,7 @@ class DataProvider {
       contactInfo: contactInfo,
       description: description,
       location: location,
+      locationLatLng: locationLatLng,
       tags: tags,
     );
     await firestorage.child('protests_images').child(docRef.id).putFile(image);
@@ -68,6 +70,7 @@ class DataProvider {
       required String contactInfo,
       required String description,
       required String location,
+      required LatLng locationLatLng,
       required List<String> tags,
       required File? image}) async {
     var docRef = protestsCollectionRef.doc(protest.id);
@@ -81,6 +84,7 @@ class DataProvider {
       contactInfo: contactInfo,
       description: description,
       location: location,
+      locationLatLng: locationLatLng,
       tags: tags,
     );
     if (image != null) {

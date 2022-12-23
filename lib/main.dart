@@ -25,6 +25,8 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var app = MaterialApp(
+      title: 'Protestory',
+      theme: ThemeData(appBarTheme: const AppBarTheme(color: Colors.white)),
       debugShowCheckedModeBanner: false,
       home: (context.watch<AuthNotifier>().isAuthenticated())
           ? const MainNavigation()
