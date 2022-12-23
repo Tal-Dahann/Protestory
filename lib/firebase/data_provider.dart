@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:protestory/firebase/protest.dart';
+import 'package:protestory/firebase/user.dart';
 
 class DataProvider {
   static const version = "1.0.0";
@@ -12,19 +13,24 @@ class DataProvider {
       FirebaseFirestore.instance.collection("versions").doc("v$version");
   static final firestorage = FirebaseStorage.instance.ref("v$version");
 
-  late final CollectionReference<Protest> protestCollectionRef;
+  late final CollectionReference<Protest> protestsCollectionRef;
+  late final CollectionReference<PUser> usersCollectionRef;
 
-  User user;
+  late PUser user;
 
-  DataProvider({required this.user}) {
-    protestCollectionRef = firestore.collection("protests").withConverter(
+  DataProvider(User fireUser) {
+    protestsCollectionRef = firestore.collection("protests").withConverter(
           fromFirestore: Protest.fromFirestore,
           toFirestore: (Protest protest, _) => protest.toFirestore(),
         );
+    usersCollectionRef = firestore.collection("users").withConverter(
+        fromFirestore: PUser.fromFirestore,
+        toFirestore: (PUser user, _) => user.toFirestore());
+    syncUser(fireUser);
   }
 
   CollectionReference<Protest> get getProtestCollectionRef =>
-      protestCollectionRef;
+      protestsCollectionRef;
 
   Future<Protest> addProtest(
       {required String name,
@@ -35,12 +41,12 @@ class DataProvider {
       required List<String> tags,
       required File image}) async {
     //creating doc to the protest
-    var docRef = protestCollectionRef.doc();
+    var docRef = protestsCollectionRef.doc();
     Protest newProtest = Protest(
       id: docRef.id,
       name: name,
       date: Timestamp.fromDate(date),
-      creator: user.uid,
+      creator: user.id,
       creationTime: Timestamp.fromDate(DateTime.now()),
       participantsAmount: 0,
       contactInfo: contactInfo,
@@ -61,7 +67,7 @@ class DataProvider {
       required bool isDescending}) async {
     List<Protest> protestList = [];
     // print("entered getNprotests" + "\n");
-    var query = await protestCollectionRef
+    var query = await protestsCollectionRef
         .orderBy(parameter, descending: isDescending)
         .limit(n)
         .get();
@@ -91,7 +97,7 @@ class DataProvider {
   Future<Protest> getProtestById({
     required String protestId,
   }) async {
-    final docSnap = await protestCollectionRef.doc(protestId).get();
+    final docSnap = await protestsCollectionRef.doc(protestId).get();
 
     Protest? protest = docSnap.data(); // Convert to Protest object
     if (protest != null) {
@@ -117,7 +123,8 @@ class DataProvider {
 
     Iterable<String> tagsListCopy = tagsList.take(numOfElements);
 
-    var query = protestCollectionRef.orderBy("creation_time", descending: true);
+    var query =
+        protestsCollectionRef.orderBy("creation_time", descending: true);
 
     //filtering for every tag
     for (String tag in tagsListCopy) {
@@ -133,23 +140,25 @@ class DataProvider {
     return protestList;
   }
 
-  updateUser(User? user) {
-    this.user = user ?? this.user;
+  updateUser(User? fireUser) {
+    if (fireUser != null) {
+      syncUser(fireUser);
+    }
   }
 
   Query<Protest> getMostRecentQuery() {
-    return protestCollectionRef.orderBy('creation_time', descending: true);
+    return protestsCollectionRef.orderBy('creation_time', descending: true);
   }
 
   Query<Protest> getMostPopularQuery() {
-    return protestCollectionRef.orderBy('participants_amount',
+    return protestsCollectionRef.orderBy('participants_amount',
         descending: true);
   }
 
   Query<Protest> getMyProtests() {
-    return protestCollectionRef
+    return protestsCollectionRef
         .orderBy('creation_time', descending: true)
-        .where('creator', isEqualTo: user.uid);
+        .where('creator', isEqualTo: user.id);
   }
 
   Future<List<Protest>> processQuery(Query<Protest> query) async {
@@ -161,5 +170,17 @@ class DataProvider {
     }
 
     return protestList;
+  }
+
+  Future<PUser> getUserById({
+    required String userId,
+  }) async {
+    var data = await usersCollectionRef.doc(userId).get();
+    return data.data()!;
+  }
+
+  Future<void> syncUser(User fireUser) async {
+    user = PUser.fromFireAuth(fireUser);
+    await usersCollectionRef.doc(user.id).set(user);
   }
 }

@@ -35,10 +35,10 @@ class App extends StatelessWidget {
     }
     if (context.read<AuthNotifier>().isAuthenticated()) {
       return ProxyProvider<AuthNotifier, DataProvider>(
-        create: (ctx) => DataProvider(user: ctx.read<AuthNotifier>().user!),
+        create: (ctx) => DataProvider(ctx.read<AuthNotifier>().user!),
         update: (_, myAuthNotifier, myDataProvider) =>
             (myDataProvider?..updateUser(myAuthNotifier.user)) ??
-            DataProvider(user: myAuthNotifier.user!),
+            DataProvider(myAuthNotifier.user!),
         child: ChangeNotifierProvider<SearchPresetsProvider>(
             create: (BuildContext context) => SearchPresetsProvider(),
             child: app),
