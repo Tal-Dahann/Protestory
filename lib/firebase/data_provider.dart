@@ -8,7 +8,7 @@ import 'package:protestory/firebase/protest.dart';
 import 'package:protestory/firebase/user.dart';
 
 class DataProvider {
-  static const version = "1.0.1";
+  static const version = "1.0.0";
   static final firestore =
       FirebaseFirestore.instance.collection("versions").doc("v$version");
   static final firestorage = FirebaseStorage.instance.ref("v$version");
