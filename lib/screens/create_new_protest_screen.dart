@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:protestory/constants/colors.dart';
 import 'package:protestory/firebase/auth_notifier.dart';
 import 'package:protestory/firebase/data_provider.dart';
@@ -9,6 +10,7 @@ import 'package:protestory/screens/new_protest_forms_screens/form_page_2.dart';
 import 'package:protestory/screens/new_protest_forms_screens/form_page_3.dart';
 import 'package:protestory/screens/new_protest_forms_screens/form_page_4.dart';
 import 'package:protestory/screens/new_protest_forms_screens/uploading_protest_screen.dart';
+import 'package:protestory/screens/protest_information_screen.dart';
 import 'package:protestory/widgets/buttons.dart';
 import 'package:provider/provider.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
@@ -48,17 +50,18 @@ class _NewProtestFormState extends State<NewProtestForm> {
       Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => const UploadingProtestScreen()));
     });
-    //TODO: Upload image to firestore storage
     //Upload Protest
-    await processDataAndUploadNewProtest();
+    Protest protest = await processDataAndUploadNewProtest();
     Future.delayed(Duration.zero, () {
       //Function to navigate to protest page after successful upload!
       Navigator.of(context).popUntil(ModalRoute.withName("/"));
+      PersistentNavBarNavigator.pushNewScreen(context,
+          screen: ProtestInformationScreen(protest: protest),
+          pageTransitionAnimation: PageTransitionAnimation.slideUp);
     });
-    // TODO: Return to protest view after uploading protest
   }
 
-  Future<void> processDataAndUploadNewProtest() async {
+  Future<Protest> processDataAndUploadNewProtest() async {
     String name = context.read<NewProtestFormNotifier>().titleController.text;
     String description =
         context.read<NewProtestFormNotifier>().descriptionController.text;
@@ -66,7 +69,7 @@ class _NewProtestFormState extends State<NewProtestForm> {
         context.read<NewProtestFormNotifier>().locationController.text;
     String? contactInfo = context.read<AuthNotifier>().user!.email;
     contactInfo ??= 'No contact info provided';
-    Protest p = await context.read<DataProvider>().addProtest(
+    return context.read<DataProvider>().addProtest(
         name: name,
         date: context.read<NewProtestFormNotifier>().selectedTime,
         contactInfo: contactInfo,
@@ -74,7 +77,6 @@ class _NewProtestFormState extends State<NewProtestForm> {
         location: location,
         tags: context.read<NewProtestFormNotifier>().selectedTags,
         image: context.read<NewProtestFormNotifier>().protestThumbnail!);
-    //add protest to cloud:
   }
 
   @override
