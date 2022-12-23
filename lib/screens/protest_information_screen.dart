@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:image_cropper/image_cropper.dart';
 import 'package:protestory/constants/colors.dart';
 import 'package:protestory/firebase/protest.dart';
 import 'package:protestory/widgets/protest_information_detailed.dart';
@@ -16,8 +15,6 @@ class ProtestInformationScreen extends StatefulWidget {
 }
 
 class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
-  static const imageRatio = CropAspectRatio(ratioX: 16, ratioY: 9);
-
   @override
   Widget build(BuildContext context) {
     Protest protest = widget.protest;

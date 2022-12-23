@@ -13,6 +13,8 @@ import 'package:protestory/widgets/buttons.dart';
 import 'package:provider/provider.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 
+import '../widgets/discard_changes.dart';
+
 class NewProtestScreen extends StatefulWidget {
   const NewProtestScreen({Key? key}) : super(key: key);
 
@@ -24,9 +26,11 @@ class _NewProtestScreenState extends State<NewProtestScreen> {
   @override
   Widget build(BuildContext context) {
     Future.delayed(Duration.zero);
-    return ChangeNotifierProvider(
-      create: (context) => NewProtestFormNotifier(),
-      child: const NewProtestForm(),
+    return DiscardChanges(
+      child: ChangeNotifierProvider(
+        create: (context) => NewProtestFormNotifier(),
+        child: const NewProtestForm(),
+      ),
     );
   }
 }
@@ -49,8 +53,7 @@ class _NewProtestFormState extends State<NewProtestForm> {
     await processDataAndUploadNewProtest();
     Future.delayed(Duration.zero, () {
       //Function to navigate to protest page after successful upload!
-      Navigator.of(context).pop();
-      Navigator.of(context).pop();
+      Navigator.of(context).popUntil(ModalRoute.withName("/"));
     });
     // TODO: Return to protest view after uploading protest
   }

@@ -7,7 +7,6 @@ import 'package:protestory/constants/colors.dart';
 import 'package:protestory/firebase/protest.dart';
 import 'package:protestory/providers/new_protest_form_provider.dart';
 import 'package:protestory/utils/add_spaces.dart';
-import 'package:protestory/widgets/protest_card.dart';
 import 'package:provider/provider.dart';
 
 class FormPageFour extends StatefulWidget {
