@@ -18,6 +18,7 @@ class DataProvider {
 
   late PUser user;
 
+
   DataProvider(User fireUser) {
     protestsCollectionRef = firestore.collection("protests").withConverter(
           fromFirestore: Protest.fromFirestore,
@@ -91,6 +92,11 @@ class DataProvider {
     }
     await docRef.set(updatedProtest);
     return updatedProtest;
+  }
+
+  Future<void> deleteProtest(Protest protestToDelete) async {
+    firestorage.child('protests_images').child(protestToDelete.id).delete();
+    return await protestsCollectionRef.doc(protestToDelete.id).delete();
   }
 
   //parameter is the name of the field we sorting by

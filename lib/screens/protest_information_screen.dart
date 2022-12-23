@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:protestory/constants/colors.dart';
 import 'package:protestory/firebase/auth_notifier.dart';
+import 'package:protestory/firebase/data_provider.dart';
 import 'package:protestory/firebase/protest.dart';
 import 'package:protestory/screens/create_new_protest_screen.dart';
 import 'package:protestory/widgets/protest_information_detailed.dart';
@@ -114,6 +115,8 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
                                 break;
                               case 1:
                               //TODO: ADD DELETE PROTEST HERE
+                                context.read<DataProvider>().deleteProtest(protest);
+                                Navigator.of(context).pop();
                                 break;
                             }
                           },
