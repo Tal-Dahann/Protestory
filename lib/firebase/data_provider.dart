@@ -181,6 +181,6 @@ class DataProvider {
 
   Future<void> syncUser(User fireUser) async {
     user = PUser.fromFireAuth(fireUser);
-    await usersCollectionRef.doc(user.id).set(user);
+    await usersCollectionRef.doc(user.id).set(user, SetOptions(merge: true));
   }
 }

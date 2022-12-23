@@ -46,7 +46,11 @@ class PUser {
             backgroundImage: snapshot.requireData,
           );
         }
-        return const LoadingWidget();
+        return CircleAvatar(
+          radius: radius,
+          backgroundColor: Colors.transparent,
+          child: const LoadingWidget(),
+        );
       },
     );
   }
