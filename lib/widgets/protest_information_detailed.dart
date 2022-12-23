@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:protestory/constants/colors.dart';
+import 'package:protestory/firebase/data_provider.dart';
 import 'package:protestory/firebase/protest.dart';
+import 'package:protestory/firebase/user.dart';
 import 'package:protestory/utils/add_spaces.dart';
+import 'package:provider/provider.dart';
 
 class ProtestInformationDetailed extends StatelessWidget {
   final Protest protest;
@@ -45,8 +47,7 @@ class ProtestInformationDetailed extends StatelessWidget {
                   Row(
                     children: [
                       Icon(Icons.watch_later, color: Colors.grey[800]),
-                      Text(
-                          ' ${DateFormat('dd/MM/yyyy kk:mm').format(protest.date.toDate())}',
+                      Text(' ${protest.dateAndTime()}',
                           style: TextStyle(color: Colors.grey[800]))
                     ],
                   ),

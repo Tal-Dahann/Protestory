@@ -57,7 +57,7 @@ class Protest {
     return _imageCompleter!.future;
   }
 
-  Widget imageWrapper(ImageProvider<Object> image) {
+  Widget _imageWrapper(ImageProvider<Object> image) {
     return Hero(
       tag: _key,
       child: AspectRatio(
@@ -72,15 +72,17 @@ class Protest {
 
   Widget getImageWidget() {
     if (_image != null) {
-      return imageWrapper(_image!);
+      return _imageWrapper(_image!);
     }
     return FutureBuilder<NetworkImage>(
       future: image,
       builder: (builder, snapshot) {
         if (snapshot.hasData) {
-          return imageWrapper(snapshot.requireData);
+          return _imageWrapper(snapshot.requireData);
         }
-        return const LoadingWidget();
+        return AspectRatio(
+            aspectRatio: imageRatio.ratioX / imageRatio.ratioY,
+            child: const LoadingWidget());
       },
     );
   }

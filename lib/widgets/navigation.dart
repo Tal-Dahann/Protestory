@@ -51,7 +51,7 @@ class _MainNavigationState extends State<MainNavigation> {
         activeColorPrimary: blue,
         inactiveColorPrimary: lightBlue),
     PersistentBottomNavBarItem(
-        icon: const Icon(Icons.account_box_rounded),
+        icon: const Icon(Icons.person),
         title: 'Profile',
         activeColorPrimary: blue,
         inactiveColorPrimary: lightBlue),

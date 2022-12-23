@@ -14,19 +14,23 @@ class AuthNotifier extends ChangeNotifier {
   bool _disposed = false;
 
   AuthNotifier() {
-    _auth.authStateChanges().listen((User? firebaseUser) async {
+    _auth.userChanges().listen((User? firebaseUser) async {
       if (firebaseUser == null) {
         _user = null;
-        _status = AuthStatus.unauthenticated;
+        status = AuthStatus.unauthenticated;
       } else {
         _user = firebaseUser;
-        _status = AuthStatus.authenticated;
+        status = AuthStatus.authenticated;
       }
-      notifyListeners();
     });
   }
 
   AuthStatus get status => _status;
+
+  set status(AuthStatus status) {
+    _status = status;
+    notifyListeners();
+  }
 
   User? get user => _user;
 
@@ -63,12 +67,10 @@ class AuthNotifier extends ChangeNotifier {
   ///    corresponding to the email does not have a password set.
   Future<void> signInEmailPassword(String email, String password) async {
     try {
-      _status = AuthStatus.authenticating;
-      notifyListeners();
+      status = AuthStatus.authenticating;
       await _auth.signInWithEmailAndPassword(email: email, password: password);
     } catch (e) {
-      _status = AuthStatus.unauthenticated;
-      notifyListeners();
+      status = AuthStatus.unauthenticated;
       rethrow;
     }
   }
@@ -83,15 +85,13 @@ class AuthNotifier extends ChangeNotifier {
   Future<UserCredential> signUp(
       String email, String password, String username) async {
     try {
-      _status = AuthStatus.authenticating;
-      notifyListeners();
+      status = AuthStatus.authenticating;
       var userCredential = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
       await userCredential.user?.updateDisplayName(username);
       return userCredential;
     } catch (e) {
-      _status = AuthStatus.unauthenticated;
-      notifyListeners();
+      status = AuthStatus.unauthenticated;
       rethrow;
     }
   }
