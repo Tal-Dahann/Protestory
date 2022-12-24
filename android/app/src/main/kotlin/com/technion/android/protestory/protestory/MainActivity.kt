@@ -1,4 +1,4 @@
-package com.technion.android.protestory.protestory
+package com.technion.android.protestory
 
 import io.flutter.embedding.android.FlutterActivity
 
