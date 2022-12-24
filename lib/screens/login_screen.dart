@@ -14,7 +14,7 @@ import 'package:protestory/widgets/loading.dart';
 import 'package:protestory/widgets/text_fields.dart';
 import 'package:provider/provider.dart';
 
-import '../firebase/auth_notifier.dart';
+import 'package:protestory/firebase/auth_notifier.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
