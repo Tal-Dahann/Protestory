@@ -78,41 +78,43 @@ class _MainNavigationState extends State<MainNavigation> {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (BuildContext context) => NavigationProvider(_controller),
-      child: PersistentTabView(
-        context,
-        controller: _controller,
-        screens: screens,
-        items: navBarItems,
-        decoration: const NavBarDecoration(
-          boxShadow: [BoxShadow(blurRadius: 6, color: Colors.grey)],
-          borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
-          colorBehindNavBar: Colors.white,
-        ),
-        navBarStyle: NavBarStyle.style12,
-        itemAnimationProperties: const ItemAnimationProperties(
-          duration: Duration(milliseconds: 200),
-          curve: Curves.ease,
-        ),
-        screenTransitionAnimation: const ScreenTransitionAnimation(
-          animateTabTransition: true,
-          curve: Curves.ease,
-          duration: Duration(milliseconds: 200),
-        ),
-        onItemSelected: (index) {
-          if (index == 2) {
-            PersistentNavBarNavigator.pushNewScreen(
-              context,
-              screen: const NewProtestScreen(),
-              withNavBar: false,
-              pageTransitionAnimation: PageTransitionAnimation.slideRight,
-            ).then((value) =>
-                context.read<NavigationProvider>().protestsUpdated());
-            _controller.index = lastIndex;
-          } else {
-            lastIndex = index;
-          }
-        },
-      ),
+      builder: (context, _) {
+        return PersistentTabView(
+          context,
+          controller: _controller,
+          screens: screens,
+          items: navBarItems,
+          decoration: const NavBarDecoration(
+            boxShadow: [BoxShadow(blurRadius: 6, color: Colors.grey)],
+            borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
+            colorBehindNavBar: Colors.white,
+          ),
+          navBarStyle: NavBarStyle.style12,
+          itemAnimationProperties: const ItemAnimationProperties(
+            duration: Duration(milliseconds: 200),
+            curve: Curves.ease,
+          ),
+          screenTransitionAnimation: const ScreenTransitionAnimation(
+            animateTabTransition: true,
+            curve: Curves.ease,
+            duration: Duration(milliseconds: 200),
+          ),
+          onItemSelected: (index) {
+            if (index == 2) {
+              PersistentNavBarNavigator.pushNewScreen(
+                context,
+                screen: const NewProtestScreen(),
+                withNavBar: false,
+                pageTransitionAnimation: PageTransitionAnimation.slideRight,
+              ).then((value) =>
+                  context.read<NavigationProvider>().protestsUpdated());
+              _controller.index = lastIndex;
+            } else {
+              lastIndex = index;
+            }
+          },
+        );
+      },
     );
   }
 }
