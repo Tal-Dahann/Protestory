@@ -1,3 +1,5 @@
+![repo_banner](https://github.com/Technion236272/2023a-Protestory/blob/docs/assets/docs-images/repo_banner.png)
+
 # Protestory
 
 > Protestory is a convenient and user-friendly app for searching and creating protests around the world.
