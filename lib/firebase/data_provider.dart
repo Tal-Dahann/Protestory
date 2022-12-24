@@ -7,6 +7,9 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:google_maps_flutter_platform_interface/src/types/location.dart';
 import 'package:protestory/firebase/protest.dart';
 import 'package:protestory/firebase/user.dart';
+import 'package:protestory/screens/protest_information_screen.dart';
+
+import 'attender.dart';
 
 class DataProvider {
   static const version = "1.0.0";
@@ -16,6 +19,7 @@ class DataProvider {
 
   late final CollectionReference<Protest> protestsCollectionRef;
   late final CollectionReference<PUser> usersCollectionRef;
+  late final CollectionReference<Attender> attendingCollectionRef;
 
   late PUser user;
 
@@ -28,6 +32,11 @@ class DataProvider {
         fromFirestore: PUser.fromFirestore,
         toFirestore: (PUser user, _) => user.toFirestore());
     syncUser(fireUser);
+
+    attendingCollectionRef = firestore.collection("attending").withConverter(
+          fromFirestore: Attender.fromFirestore,
+          toFirestore: (Attender att, _) => att.toFirestore(),
+        );
   }
 
   CollectionReference<Protest> get getProtestCollectionRef =>
@@ -225,5 +234,72 @@ class DataProvider {
   Future<void> syncUser(User fireUser) async {
     user = PUser.fromFireAuth(fireUser);
     await usersCollectionRef.doc(user.id).set(user, SetOptions(merge: true));
+  }
+
+  Future<void> joinToProtest(
+      String protestId, ProtestHolder protestHolder) async {
+    //check if already attending
+    if (await isAlreadyAttending(protestId)) {
+      return;
+    }
+
+    Protest updatedProtest = protestHolder.protest;
+    updatedProtest.participantsAmount += 1;
+    protestHolder.protest = updatedProtest;
+
+    //updating the protest info
+    await protestsCollectionRef
+        .doc(protestId)
+        .update({"participants_amount": FieldValue.increment(1)});
+
+    //updating the attending collection
+    var docRef = attendingCollectionRef.doc();
+    Attender newAttender = Attender(
+        docId: docRef.id,
+        userID: user.id,
+        protestID: protestId,
+        creationTime: Timestamp.now());
+    await docRef.set(newAttender);
+  }
+
+  Future<bool> isAlreadyAttending(String protestId) async {
+    // TODO: can u do where on empty where
+    var matchDocs = await attendingCollectionRef
+        .where('user_id', isEqualTo: user.id)
+        .where('protest_id', isEqualTo: protestId)
+        .get();
+
+    if (matchDocs.docs.isNotEmpty) {
+      return true;
+    }
+
+    return false;
+  }
+
+  Future<void> leaveProtest(
+      String protestId, ProtestHolder protestHolder) async {
+    //check if not attending
+    if (await isAlreadyAttending(protestId) == false) {
+      return;
+    }
+
+    Protest updatedProtest = protestHolder.protest;
+    updatedProtest.participantsAmount -= 1;
+    protestHolder.protest = updatedProtest;
+
+    //updating the protest info
+    await protestsCollectionRef
+        .doc(protestId)
+        .update({"participants_amount": FieldValue.increment(-1)});
+
+    //deleting the attending collection
+    var matchDocs = await attendingCollectionRef
+        .where('user_id', isEqualTo: user.id)
+        .where('protest_id', isEqualTo: protestId)
+        .get();
+
+    for (var element in matchDocs.docs) {
+      element.reference.delete();
+    }
   }
 }
