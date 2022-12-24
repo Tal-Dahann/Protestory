@@ -42,6 +42,9 @@ class DataProvider {
   CollectionReference<Protest> get getProtestCollectionRef =>
       protestsCollectionRef;
 
+  CollectionReference<Attender> get getAttendingCollectionRef =>
+      attendingCollectionRef;
+
   Future<Protest> addProtest(
       {required String name,
       required DateTime date,
@@ -301,5 +304,12 @@ class DataProvider {
     for (var element in matchDocs.docs) {
       element.reference.delete();
     }
+  }
+
+  Query<Attender> getMyAttendings() {
+    return attendingCollectionRef
+        .orderBy('creation_time', descending: true)
+        .where('user_id', isEqualTo: user.id);
+    print("getMYAttendings");
   }
 }
