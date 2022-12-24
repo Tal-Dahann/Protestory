@@ -9,8 +9,11 @@ import 'package:protestory/screens/create_new_protest_screen.dart';
 import 'package:protestory/widgets/protest_information_detailed.dart';
 import 'package:provider/provider.dart';
 
+enum AttendingStatus { unKnown, attending, notAttending }
+
 class ProtestHolder extends ChangeNotifier {
   Protest _protest;
+  AttendingStatus _isAttending = AttendingStatus.unKnown;
 
   ProtestHolder(Protest protest) : _protest = protest;
 
@@ -18,9 +21,26 @@ class ProtestHolder extends ChangeNotifier {
     return _protest;
   }
 
+  AttendingStatus get isAttending {
+    return _isAttending;
+  }
+
   set protest(Protest protest) {
     _protest = protest;
     notifyListeners();
+  }
+
+  set isAttending(AttendingStatus attStatues) {
+    _isAttending = attStatues;
+    notifyListeners();
+  }
+
+  void initIsAttending(BuildContext context) async {
+    if (await context.read<DataProvider>().isAlreadyAttending(protest.id)) {
+      isAttending = AttendingStatus.attending;
+    } else {
+      isAttending = AttendingStatus.notAttending;
+    }
   }
 }
 
@@ -54,12 +74,12 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
   @override
   void initState() {
     widget.protestHolder.addListener(() => setState(() {}));
+    widget.protestHolder.initIsAttending(context);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    print("building");
     DataProvider dataProvider = context.read<DataProvider>();
     Protest protest = widget.protestHolder.protest;
     bool isCreator = context.read<AuthNotifier>().user?.uid == protest.creator;
@@ -69,16 +89,11 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        floatingActionButton: FutureBuilder(
-            future: isAttending,
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return Container();
-              }
-              if (snapshot.hasData) {
-                if (snapshot.requireData) {
-                  //already attending
-                  return Padding(
+        floatingActionButton: (widget.protestHolder.isAttending ==
+                AttendingStatus.unKnown)
+            ? Container()
+            : (widget.protestHolder.isAttending != AttendingStatus.notAttending)
+                ? Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: FloatingActionButton.extended(
                       backgroundColor: purple,
@@ -87,12 +102,12 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
                       onPressed: () {
                         dataProvider.leaveProtest(
                             protest.id, widget.protestHolder);
+                        widget.protestHolder.isAttending =
+                            AttendingStatus.notAttending;
                       },
                     ),
-                  );
-                } else {
-                  // not attending yet
-                  return Padding(
+                  )
+                : Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: FloatingActionButton.extended(
                       backgroundColor: purple,
@@ -101,13 +116,11 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
                       onPressed: () {
                         dataProvider.joinToProtest(
                             protest.id, widget.protestHolder);
+                        widget.protestHolder.isAttending =
+                            AttendingStatus.attending;
                       },
                     ),
-                  );
-                }
-              }
-              return Container();
-            }),
+                  ),
         body: CustomScrollView(
           slivers: <Widget>[
             SliverAppBar(
