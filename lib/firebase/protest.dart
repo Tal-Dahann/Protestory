@@ -20,7 +20,7 @@ class Protest {
   final Timestamp date;
   final String creator;
   final Timestamp creationTime;
-  final int participantsAmount;
+  int participantsAmount;
   final String contactInfo;
   final String description;
   final String location;

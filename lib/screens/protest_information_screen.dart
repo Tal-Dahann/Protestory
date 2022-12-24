@@ -59,22 +59,55 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print("building");
     DataProvider dataProvider = context.read<DataProvider>();
     Protest protest = widget.protestHolder.protest;
     bool isCreator = context.read<AuthNotifier>().user?.uid == protest.creator;
+    final Future<bool> isAttending =
+        dataProvider.isAlreadyAttending(protest.id);
 
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        floatingActionButton: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: FloatingActionButton.extended(
-            backgroundColor: purple,
-            label: const Text('Join'),
-            icon: const Icon(Icons.person_add),
-            onPressed: () {},
-          ),
-        ),
+        floatingActionButton: FutureBuilder(
+            future: isAttending,
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Container();
+              }
+              if (snapshot.hasData) {
+                if (snapshot.requireData) {
+                  //already attending
+                  return Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: FloatingActionButton.extended(
+                      backgroundColor: purple,
+                      label: const Text('Leave'),
+                      icon: const Icon(Icons.person_remove),
+                      onPressed: () {
+                        dataProvider.leaveProtest(
+                            protest.id, widget.protestHolder);
+                      },
+                    ),
+                  );
+                } else {
+                  // not attending yet
+                  return Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: FloatingActionButton.extended(
+                      backgroundColor: purple,
+                      label: const Text('Join'),
+                      icon: const Icon(Icons.person_add),
+                      onPressed: () {
+                        dataProvider.joinToProtest(
+                            protest.id, widget.protestHolder);
+                      },
+                    ),
+                  );
+                }
+              }
+              return Container();
+            }),
         body: CustomScrollView(
           slivers: <Widget>[
             SliverAppBar(
