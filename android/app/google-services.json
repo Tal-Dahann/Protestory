@@ -7,12 +7,65 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:583482726520:android:75583838a413aa518d758d",
+        "android_client_info": {
+          "package_name": "com.technion.android.protestory"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "583482726520-8k4r7jnba7lgfbc2uk7srkr2pe9mifvl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVC0LYd4y4Ncw4CvdLbRnBS-K3PVHyIGE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "583482726520-8k4r7jnba7lgfbc2uk7srkr2pe9mifvl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:583482726520:android:caec777b534916248d758d",
         "android_client_info": {
           "package_name": "com.technion.android.protestory.protestory"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "583482726520-8bnba0oltqmhruj97tp0cj42j8fb2sna.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.technion.android.protestory.protestory",
+            "certificate_hash": "e1d06e39837dadcc1b0723c8411857d0abd88894"
+          }
+        },
+        {
+          "client_id": "583482726520-9ug74lic37udtgujjm4kph8f76rhscvj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.technion.android.protestory.protestory",
+            "certificate_hash": "5e80e78d30be4e5c106253aa8c15f776daa089d8"
+          }
+        },
+        {
+          "client_id": "583482726520-jbdrj4atsfg7q67p3hc71esm3olbhhfa.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.technion.android.protestory.protestory",
+            "certificate_hash": "d0c2b5f3d66c8bd1f5e4f56a7f660f531c83570c"
+          }
+        },
         {
           "client_id": "583482726520-8k4r7jnba7lgfbc2uk7srkr2pe9mifvl.apps.googleusercontent.com",
           "client_type": 3
