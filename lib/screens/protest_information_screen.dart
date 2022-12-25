@@ -100,6 +100,8 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
                       label: const Text('Leave'),
                       icon: const Icon(Icons.person_remove),
                       onPressed: () async {
+                        widget.protestHolder.isAttending =
+                            AttendingStatus.unKnown;
                         await dataProvider.leaveProtest(
                             protest.id, widget.protestHolder);
                         widget.protestHolder.isAttending =
@@ -119,6 +121,8 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
                       label: const Text('Join'),
                       icon: const Icon(Icons.person_add),
                       onPressed: () async {
+                        widget.protestHolder.isAttending =
+                            AttendingStatus.unKnown;
                         await dataProvider.joinToProtest(
                             protest.id, widget.protestHolder);
                         widget.protestHolder.isAttending =
