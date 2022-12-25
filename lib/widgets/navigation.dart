@@ -107,7 +107,7 @@ class _MainNavigationState extends State<MainNavigation> {
                 withNavBar: false,
                 pageTransitionAnimation: PageTransitionAnimation.slideRight,
               ).then((value) =>
-                  context.read<NavigationProvider>().protestsUpdated());
+                  context.read<NavigationProvider>().notifyScreens());
               _controller.index = lastIndex;
             } else {
               lastIndex = index;

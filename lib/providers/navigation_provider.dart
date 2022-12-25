@@ -6,7 +6,7 @@ class NavigationProvider extends ChangeNotifier {
 
   NavigationProvider(this.controller);
 
-  void protestsUpdated() {
+  void notifyScreens() {
     notifyListeners();
   }
 }

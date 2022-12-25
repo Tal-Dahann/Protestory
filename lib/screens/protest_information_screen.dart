@@ -83,8 +83,8 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
     DataProvider dataProvider = context.read<DataProvider>();
     Protest protest = widget.protestHolder.protest;
     bool isCreator = context.read<AuthNotifier>().user?.uid == protest.creator;
-    final Future<bool> isAttending =
-        dataProvider.isAlreadyAttending(protest.id);
+    // final Future<bool> isAttending =
+    //     dataProvider.isAlreadyAttending(protest.id);
 
     return DefaultTabController(
       length: 2,
@@ -99,11 +99,16 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
                       backgroundColor: purple,
                       label: const Text('Leave'),
                       icon: const Icon(Icons.person_remove),
-                      onPressed: () {
-                        dataProvider.leaveProtest(
+                      onPressed: () async {
+                        await dataProvider.leaveProtest(
                             protest.id, widget.protestHolder);
                         widget.protestHolder.isAttending =
                             AttendingStatus.notAttending;
+                        Future.delayed(
+                            Duration.zero,
+                            () => context
+                                .read<NavigationProvider>()
+                                .notifyScreens());
                       },
                     ),
                   )
@@ -113,11 +118,16 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
                       backgroundColor: purple,
                       label: const Text('Join'),
                       icon: const Icon(Icons.person_add),
-                      onPressed: () {
-                        dataProvider.joinToProtest(
+                      onPressed: () async {
+                        await dataProvider.joinToProtest(
                             protest.id, widget.protestHolder);
                         widget.protestHolder.isAttending =
                             AttendingStatus.attending;
+                        Future.delayed(
+                            Duration.zero,
+                            () => context
+                                .read<NavigationProvider>()
+                                .notifyScreens());
                       },
                     ),
                   ),
@@ -187,7 +197,7 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
                                             PageTransitionAnimation.slideRight,
                                       ).then((value) => context
                                           .read<NavigationProvider>()
-                                          .protestsUpdated());
+                                          .notifyScreens());
                                       break;
                                     case 1:
                                       bool? confirmed = await showDialog<bool>(
@@ -225,7 +235,7 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
                                         Future.delayed(const Duration(), () {
                                           context
                                               .read<NavigationProvider>()
-                                              .protestsUpdated();
+                                              .notifyScreens();
                                           Navigator.of(context).pop();
                                         });
                                       }
