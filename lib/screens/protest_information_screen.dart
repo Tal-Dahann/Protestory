@@ -89,7 +89,7 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        floatingActionButton: (widget.protestHolder.isAttending ==
+        floatingActionButton: isCreator ? null : (widget.protestHolder.isAttending ==
                 AttendingStatus.unKnown)
             ? Container()
             : (widget.protestHolder.isAttending != AttendingStatus.notAttending)
