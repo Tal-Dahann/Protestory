@@ -261,7 +261,9 @@ class DataProvider {
         docId: docRef.id,
         userID: user.id,
         protestID: protestId,
-        creationTime: Timestamp.now());
+        creationTime: Timestamp.now(),
+        username: user.username,
+        protestName: protestHolder.protest.name);
     await docRef.set(newAttender);
   }
 
@@ -310,6 +312,5 @@ class DataProvider {
     return attendingCollectionRef
         .orderBy('creation_time', descending: true)
         .where('user_id', isEqualTo: user.id);
-    print("getMYAttendings");
   }
 }

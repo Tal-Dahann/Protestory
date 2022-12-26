@@ -3,14 +3,19 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class Attender {
   String docId;
   final String userID;
+  final String username;
   final String protestID;
+  final String protestName;
   final Timestamp creationTime;
 
-  Attender(
-      {required this.docId,
-      required this.userID,
-      required this.protestID,
-      required this.creationTime});
+  Attender({
+    required this.docId,
+    required this.userID,
+    required this.protestID,
+    required this.creationTime,
+    required this.username,
+    required this.protestName,
+  });
 
   factory Attender.fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> snapshot,
@@ -27,6 +32,8 @@ class Attender {
       userID: data['user_id'],
       protestID: data['protest_id'],
       creationTime: data['creation_time'],
+      username: data['username'],
+      protestName: data['protest_name']
     );
   }
 
@@ -35,6 +42,8 @@ class Attender {
       "user_id": userID,
       "protest_id": protestID,
       "creation_time": creationTime,
+      'username': username,
+      "protest_name": protestName
     };
   }
 }
