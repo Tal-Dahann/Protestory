@@ -111,8 +111,19 @@ class DataProvider {
   }
 
   Future<void> deleteProtest(Protest protestToDelete) async {
-    firestorage.child('protests_images').child(protestToDelete.id).delete();
+    await firestorage
+        .child('protests_images')
+        .child(protestToDelete.id)
+        .delete();
+    var query = await getProtestAttenders(protestToDelete.id).get();
+    for (var currDoc in query.docs) {
+      currDoc.reference.delete();
+    }
     return await protestsCollectionRef.doc(protestToDelete.id).delete();
+  }
+
+  Query<Attender> getProtestAttenders(String protestId) {
+    return attendingCollectionRef.where('protest_id', isEqualTo: protestId);
   }
 
   //parameter is the name of the field we sorting by
@@ -261,7 +272,9 @@ class DataProvider {
         docId: docRef.id,
         userID: user.id,
         protestID: protestId,
-        creationTime: Timestamp.now());
+        creationTime: Timestamp.now(),
+        username: user.username,
+        protestName: protestHolder.protest.name);
     await docRef.set(newAttender);
   }
 
@@ -310,6 +323,5 @@ class DataProvider {
     return attendingCollectionRef
         .orderBy('creation_time', descending: true)
         .where('user_id', isEqualTo: user.id);
-    print("getMYAttendings");
   }
 }

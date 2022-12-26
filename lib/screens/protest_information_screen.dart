@@ -9,7 +9,7 @@ import 'package:protestory/screens/create_new_protest_screen.dart';
 import 'package:protestory/widgets/protest_information_detailed.dart';
 import 'package:provider/provider.dart';
 
-enum AttendingStatus { unKnown, attending, notAttending }
+enum AttendingStatus { unKnown, attending, notAttending, joining, leaving }
 
 class ProtestHolder extends ChangeNotifier {
   Protest _protest;
@@ -89,7 +89,7 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        floatingActionButton: (widget.protestHolder.isAttending ==
+        floatingActionButton: isCreator ? null : (widget.protestHolder.isAttending ==
                 AttendingStatus.unKnown)
             ? Container()
             : (widget.protestHolder.isAttending != AttendingStatus.notAttending)
@@ -99,9 +99,10 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
                       backgroundColor: purple,
                       label: const Text('Leave'),
                       icon: const Icon(Icons.person_remove),
-                      onPressed: () async {
+                      onPressed: widget.protestHolder.isAttending ==
+                          AttendingStatus.attending ? () async {
                         widget.protestHolder.isAttending =
-                            AttendingStatus.unKnown;
+                            AttendingStatus.leaving;
                         await dataProvider.leaveProtest(
                             protest.id, widget.protestHolder);
                         widget.protestHolder.isAttending =
@@ -111,7 +112,7 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
                             () => context
                                 .read<NavigationProvider>()
                                 .notifyScreens());
-                      },
+                      } : () => {},
                     ),
                   )
                 : Padding(
@@ -120,9 +121,10 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
                       backgroundColor: purple,
                       label: const Text('Join'),
                       icon: const Icon(Icons.person_add),
-                      onPressed: () async {
+                      onPressed: widget.protestHolder.isAttending ==
+                          AttendingStatus.notAttending ? () async {
                         widget.protestHolder.isAttending =
-                            AttendingStatus.unKnown;
+                            AttendingStatus.joining;
                         await dataProvider.joinToProtest(
                             protest.id, widget.protestHolder);
                         widget.protestHolder.isAttending =
@@ -132,7 +134,7 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
                             () => context
                                 .read<NavigationProvider>()
                                 .notifyScreens());
-                      },
+                      } : () => {},
                     ),
                   ),
         body: CustomScrollView(
