@@ -25,13 +25,13 @@
 * [ ] Send and get notifications about followed protests.
 * [X] Filter and sort protests by popularity and keywords.
 * [ ] Filter and sort protests by distance.
-* [ ] Posting your reasons to join the protest - *aka stories* - to be seen by others.
+* [X] Posting your reasons to join the protest - *aka stories* - to be seen by others.
 * [ ] View the upcoming protests on a calendar.
 * [ ] Share your protest on other platforms.
 * [ ] Invite another organisers to help you with a protest.
 
 ## App Pictures
 
-| Login Screen                                                                                                  | Main Screen                                                                                                   | Protest Iinformation                                                                                                   | Search Page                                                                                                   |
+| Login Screen                                                                                                  | Main Screen                                                                                                   | Protest information                                                                                                    | Search Page                                                                                                   |
 | ------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
 | ![login_screen](https://github.com/Technion236272/2023a-Protestory/blob/docs/assets/docs-images/login_page.jpg) | ![main_screen](https://github.com/Technion236272/2023a-Protestory/blob/docs/assets/docs-images/main_screen.jpg) | ![protest_info](https://github.com/Technion236272/2023a-Protestory/blob/docs/assets/docs-images/protest_information.jpg) | ![search_page](https://github.com/Technion236272/2023a-Protestory/blob/docs/assets/docs-images/search_page.jpg) |
