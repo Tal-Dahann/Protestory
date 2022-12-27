@@ -127,7 +127,7 @@ class DataProvider {
         .collection("stories")
         .get();
     for (var doc in snapshots.docs) {
-      await doc.reference.delete();
+      doc.reference.delete();
     }
 
     return await protestsCollectionRef.doc(protestToDelete.id).delete();
