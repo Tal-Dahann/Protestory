@@ -18,11 +18,8 @@ class ProtestInformationDetailed extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: ListView(
         children: [
-          addVerticalSpace(height: 20),
           Text(
             protest.name,
             style: const TextStyle(
@@ -123,6 +120,41 @@ class ProtestInformationDetailed extends StatelessWidget {
           const Divider(
             thickness: 2,
           ),
+          addVerticalSpace(height: 20),
+          const Text(
+            'Tags',
+            style: TextStyle(
+              color: purple,
+              fontWeight: FontWeight.bold,
+              fontSize: 24,
+            ),
+          ),
+          addVerticalSpace(height: 10),
+          Wrap(
+            spacing: 7,
+            children: List<Widget>.generate(
+              protest.tags.length,
+              (int index) {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 3.0),
+                  child: Chip(
+                    side: const BorderSide(color: lightGray),
+                    labelPadding: const EdgeInsets.all(3.0),
+                    label: Text(
+                      protest.tags[index],
+                      style: const TextStyle(color: black, fontSize: 14),
+                    ),
+                    backgroundColor: white,
+                    elevation: 2,
+                  ),
+                );
+              },
+            ).toList(),
+          ),
+          addVerticalSpace(height: 10),
+          const Divider(
+            thickness: 2,
+          ),
           addVerticalSpace(height: 10),
           const Text(
             'Description',
@@ -133,22 +165,20 @@ class ProtestInformationDetailed extends StatelessWidget {
             ),
           ),
           addVerticalSpace(height: 20),
-          Expanded(
-            flex: 3,
-            child: Material(
-                elevation: 4,
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height * 0.5,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: MarkdownParse(
-                      data: protest.description,
-                      physics: const NeverScrollableScrollPhysics(),
-                    ),
+          Material(
+              elevation: 4,
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height * 0.8,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: MarkdownParse(
+                    data: protest.description,
+                    physics: const NeverScrollableScrollPhysics(),
                   ),
-                )),
-          ),
+                ),
+              )),
+          addVerticalSpace(height: 60),
         ],
       ),
     );
