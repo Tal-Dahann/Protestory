@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import '../constants/colors.dart';
 import '../firebase/protest.dart';
 import '../providers/data_provider.dart';
-import '../utils/add_spaces.dart';
 
 class ProtestStories extends StatefulWidget {
   Protest protest;
@@ -24,24 +23,12 @@ class _ProtestStoriesState extends State<ProtestStories> {
     return Center(
       child: Column(
         children: [
-          Container(
-            height: MediaQuery.of(context).size.height * 0.5,
+          Flexible(
             child: PaginatorStories(
               protestID: widget.protest.id,
               queryProvider: QueryChangeListener(context
                   .read<DataProvider>()
                   .queryStoriesOfProtest(protestId: widget.protest.id)),
-              header: SliverAppBar(
-                backgroundColor: white,
-                toolbarHeight: 5,
-                centerTitle: true,
-                floating: true,
-                title: Column(
-                  children: [
-                    addVerticalSpace(height: 15),
-                  ],
-                ),
-              ),
               onEmpty: const Center(
                 child: Padding(
                   padding: EdgeInsets.all(10.0),

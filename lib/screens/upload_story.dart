@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:protestory/providers/data_provider.dart';
 import 'package:protestory/utils/add_spaces.dart';
+import 'package:protestory/utils/exceptions.dart';
 import 'package:protestory/widgets/buttons.dart';
 import 'package:protestory/widgets/text_fields.dart';
 import 'package:provider/provider.dart';
@@ -13,7 +14,8 @@ class UploadStoryScreen extends StatefulWidget {
   final TextEditingController storyController;
   final Protest protest;
 
-  const UploadStoryScreen({Key? key, required this.storyController, required this.protest})
+  const UploadStoryScreen(
+      {Key? key, required this.storyController, required this.protest})
       : super(key: key);
 
   @override
@@ -24,12 +26,13 @@ class _UploadStoryScreenState extends State<UploadStoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           leading: const BackButton(
             color: blue,
           ),
-          title: Text(
-            'Write Story',
+          title: const Text(
+            'Write A Story',
             style: navTitleStyle,
           ),
           backgroundColor: white,
@@ -58,38 +61,31 @@ class _UploadStoryScreenState extends State<UploadStoryScreen> {
               ),
             ),
             Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Align(
-                      alignment: Alignment.topCenter,
-                      child: CustomButton(
-                        text: 'Cancel',
-                        onPressed: () {
+                  CustomButton(
+                      text: 'Upload',
+                      onPressed: () {
+                        FocusManager.instance.primaryFocus?.unfocus();
+                        if (widget.storyController.text == '') {
+                          ProtestoryException.showExceptionSnackBar(context,
+                              message: 'Can\'t upload empty story.');
+                        } else {
+                          context.read<DataProvider>().addStory(
+                              widget.protest, widget.storyController.text);
                           Navigator.of(context).pop();
-                        },
-                        color: white,
-                        textColor: blue,
-                      )),
-                  Align(
-                      alignment: Alignment.topCenter,
-                      child: CustomButton(
-                          text: 'Upload',
-                          onPressed: () async {
-                            FocusManager.instance.primaryFocus?.unfocus();
-                            await Future.delayed(Duration(milliseconds: 500));
-                            if (widget.storyController.text == '') {
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(const SnackBar(
-                                content: Text('Can\'t upload empty story.'),
-                                behavior: SnackBarBehavior.floating,
-                              ));
-                            } else {
-                              context.read<DataProvider>().addStory(widget.protest, widget.storyController.text);
-                              Navigator.of(context).pop();
-                            }
-                          })),
+                        }
+                      }),
+                  addVerticalSpace(height: 15),
+                  CustomButton(
+                    text: 'Cancel',
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    color: white,
+                    textColor: blue,
+                  ),
                 ],
               ),
             ),

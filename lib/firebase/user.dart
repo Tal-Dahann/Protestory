@@ -19,6 +19,14 @@ class PUser {
         username = fireUser.displayName ?? 'Anonymous',
         photoURL = fireUser.photoURL;
 
+  static Widget getAvatarLoadingWidget({double? radius}) {
+    return CircleAvatar(
+      radius: radius,
+      backgroundColor: Colors.transparent,
+      child: const LoadingWidget(),
+    );
+  }
+
   Widget getAvatarWidget({double? radius}) {
     if (photoURL == null) {
       return CircleAvatar(
@@ -47,11 +55,7 @@ class PUser {
             backgroundImage: snapshot.requireData,
           );
         }
-        return CircleAvatar(
-          radius: radius,
-          backgroundColor: Colors.transparent,
-          child: const LoadingWidget(),
-        );
+        return getAvatarLoadingWidget(radius: radius);
       },
     );
   }
