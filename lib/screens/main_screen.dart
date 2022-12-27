@@ -51,7 +51,7 @@ class _MainScreenState extends State<MainScreen> {
         child: ListView.separated(
             padding: const EdgeInsets.only(bottom: 20.0, top: 10.0),
             itemBuilder: (context, index) =>
-                ProtestListHome(searchOption: list[index]),
+                ProtestListHome(searchOption: list[index], maxLengthList: 5,),
             separatorBuilder: (context, index) => const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 10.0),
                   child: Divider(
