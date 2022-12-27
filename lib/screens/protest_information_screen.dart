@@ -83,7 +83,6 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
     super.initState();
   }
 
-
   @override
   Widget build(BuildContext context) {
     DataProvider dataProvider = context.read<DataProvider>();
@@ -343,13 +342,16 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
           body: Column(
             children: [
               Expanded(
-                child: TabBarView(children: [
-                  ProtestInformationDetailed(protest: protest),
-                  ProtestStories(
-                    protest: protest,
-                    dataProvider: context.read<DataProvider>(),
-                  ),
-                ]),
+                child: TabBarView(
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: [
+                    ProtestInformationDetailed(protest: protest),
+                    ProtestStories(
+                      protest: protest,
+                      dataProvider: context.read<DataProvider>(),
+                    ),
+                  ],
+                ),
               )
             ],
           ),
