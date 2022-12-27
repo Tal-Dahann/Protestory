@@ -312,7 +312,17 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
               Expanded(
                 child: TabBarView(children: [
                   ProtestInformationDetailed(protest: protest),
-                  const Center(child: Text('Stories here'))
+                  Center(
+                    child: TextButton(
+                      onPressed: () {
+                        context
+                            .read<DataProvider>()
+                            .addStory(protest, "content");
+                        print("added story");
+                      },
+                      child: const Text('addStory'),
+                    ),
+                  )
                 ]),
               )
             ],

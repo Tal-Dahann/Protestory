@@ -10,6 +10,7 @@ import 'package:protestory/firebase/user.dart';
 import 'package:protestory/screens/protest_information_screen.dart';
 
 import '../firebase/attender.dart';
+import '../firebase/story.dart';
 import '../utils/exceptions.dart';
 
 class DataProvider {
@@ -312,5 +313,29 @@ class DataProvider {
     return attendingCollectionRef
         .orderBy('creation_time', descending: true)
         .where('user_id', isEqualTo: user.id);
+  }
+
+  Future<void> addStory(Protest protestToAddTo, String content) async {
+    //assuming it not empty content
+
+    var protestRef = protestsCollectionRef.doc(protestToAddTo.id);
+
+    // TODO:  check if the protest exists
+
+    var storyNewDocRef = protestRef
+        .collection("stories")
+        .withConverter(
+          fromFirestore: Story.fromFirestore,
+          toFirestore: (Story story, _) => story.toFirestore(),
+        )
+        .doc();
+
+    Story newStory = Story(
+      docId: storyNewDocRef.id,
+      userID: user.id,
+      content: content,
+      creationTime: Timestamp.now(),
+    );
+    await storyNewDocRef.set(newStory);
   }
 }
