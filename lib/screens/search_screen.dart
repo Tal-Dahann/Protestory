@@ -58,7 +58,7 @@ Query<Protest> searchQuery(DataProvider dataProvider,
     wantedQuery = dataProvider.getProtestCollectionRef
         .orderBy('creation_time', descending: true);
     if (selectedTags.isNotEmpty) {
-      wantedQuery = wantedQuery.where('ags', arrayContainsAny: selectedTags);
+      wantedQuery = wantedQuery.where('tags', arrayContainsAny: selectedTags);
     }
   }
   return wantedQuery;
@@ -75,7 +75,6 @@ class _SearchScreenState extends State<SearchScreen> {
   late final QueryChangeListener<Protest> queryProvider;
   String searchText = '';
 
-  // List<String> selectedTagsList = [];
   bool isSearchView = true;
 
   @override
