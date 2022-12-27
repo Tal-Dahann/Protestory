@@ -3,7 +3,7 @@ import 'package:protestory/constants/colors.dart';
 import 'package:protestory/providers/new_protest_form_provider.dart';
 import 'package:protestory/utils/add_spaces.dart';
 import 'package:provider/provider.dart';
-import 'package:markdown_editor_plus/markdown_editor_plus.dart';
+import 'package:protestory/widgets/text_fields.dart';
 
 class FormPageThree extends StatefulWidget {
   const FormPageThree({Key? key}) : super(key: key);
@@ -65,59 +65,27 @@ class _FormPageThreeState extends State<FormPageThree> {
             ),
           ),
           addVerticalSpace(height: 20),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Padding(
-              padding: EdgeInsets.only(
-                  left: MediaQuery.of(context).size.width * 0.1,
-                  right: MediaQuery.of(context).size.width * 0.1),
-              child: const Text(
-                'Click the text to enter edit mode',
-                style: TextStyle(
-                    color: purple, fontWeight: FontWeight.w400, fontSize: 14),
-                textAlign: TextAlign.left,
-              ),
-            ),
-          ),
-          addVerticalSpace(height: 20),
           Padding(
             padding: EdgeInsets.only(
                 left: MediaQuery.of(context).size.width * 0.1,
                 right: MediaQuery.of(context).size.width * 0.1),
-            child: MarkdownAutoPreview(
-              decoration: InputDecoration(
-                hintText: 'write your description here',
-                errorMaxLines: 4,
-                filled: true,
-                fillColor: white,
-                border: OutlineInputBorder(
-                    borderSide: const BorderSide(color: darkGray),
-                    borderRadius: BorderRadius.circular(8)),
-                focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: blue),
-                    borderRadius: BorderRadius.circular(8)),
-                floatingLabelBehavior: FloatingLabelBehavior.never,
-              ),
-              onTap: () {
-                if (context.read<NewProtestFormNotifier>().descriptionController.text == 'Edit Description') {
-                  context.read<NewProtestFormNotifier>().descriptionController.text = '';
+            child: CustomTextFormField(
+              validator: (value) {
+                if (value == null || value.length > 1000) {
+                  return 'Description must be up to 1000 characters.';
                 }
+                if (value.isEmpty) {
+                  return 'Description can\'t be empty';
+                }
+                return null;
               },
-              onChanged: (desc) {
-                if (desc.trim().isEmpty) {
-                  context.read<NewProtestFormNotifier>().descriptionController.text = '### Description Title';
-                }
-                if (desc.length > 1000 && !context.read<NewProtestFormNotifier>().descHasError) {
-                  context.read<NewProtestFormNotifier>().descHasError = true;
-                } else {
-                  context.read<NewProtestFormNotifier>().descHasError = false;
-                }
-              },
-              enableToolBar: true,
-
-              controller:
-                  context.read<NewProtestFormNotifier>().descriptionController,
-              emojiConvert: true,
+              controller: context
+                  .read<NewProtestFormNotifier>()
+                  .descriptionController,
+              height: MediaQuery.of(context).size.height * 0.4,
+              keyboardType: TextInputType.multiline,
+              maxLines: 12,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
             ),
           )
         ],

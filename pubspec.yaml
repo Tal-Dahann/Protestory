@@ -55,7 +55,6 @@ dependencies:
   auto_size_text: ^3.0.0
   flutter_native_splash: ^2.2.16
   flutter_lints: ^2.0.1
-  markdown_editor_plus: ^0.2.13
   google_maps_flutter: ^2.2.2
   place_picker: ^0.10.0
 
