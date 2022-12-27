@@ -12,18 +12,20 @@
 
 ## Core Features
 
-* [ ] Create new protests.
-* [ ] Add protest information such as location, time, description, topics and more.
-* [ ] Join protests created by others.
-* [ ] Explore a variety of protests.
-* [ ] View the protest you follow or joined.
-* [ ] Creating user accounts.
+* [x] Create new protests.
+* [x] Add protest information such as location, time, description, topics and more.
+* [x] Join protests created by others.
+* [x] Explore a variety of protests.
+* [x] View the protest you follow or joined.
+* [x] Creating user accounts.
 
 ## Complementary features
 
-* [ ] Signup and login via Google and Facebook.
+* [x] Signup and login via Google.
+* [x] Signup and login via Facebook.
 * [ ] Send and get notifications about followed protests.
-* [ ] Filter and sort protests by distance, popularity and keywords.
+* [x] Filter and sort protests by popularity and keywords.
+* [ ] Filter and sort protests by distance.
 * [ ] Posting your reasons to join the protest - *aka stories* - to be seen by others.
 * [ ] View the upcoming protests on a calendar.
 * [ ] Share your protest on other platforms.
