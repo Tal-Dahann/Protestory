@@ -130,7 +130,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                       child: SizedBox(),
                                     ),
                                     Flexible(
-                                      flex: 2,
+                                      flex: 3,
                                       child: Padding(
                                         padding: EdgeInsets.only(left: 25.0),
                                         child: Align(
@@ -144,7 +144,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                                         color: Colors.white,
                                                         fontSize: 50,
                                                         fontWeight:
-                                                            FontWeight.bold)),
+                                                        FontWeight.bold)),
                                               ),
                                             )),
                                       ),
@@ -156,7 +156,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                   ],
                                 )),
                             Flexible(
-                                flex: 6,
+                                flex: 7,
                                 child: Column(
                                   children: [
                                     CustomTextFormField(
@@ -164,7 +164,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                       hintText: 'Hadar Muhtar',
                                       errorText: _displayNameErrorMessage,
                                       autovalidateMode:
-                                          AutovalidateMode.onUserInteraction,
+                                      AutovalidateMode.onUserInteraction,
                                       textInputAction: TextInputAction.next,
                                       controller: _displayNameController,
                                       validator: (displayName) {
@@ -190,7 +190,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                           hintText: 'user@example.com',
                                           errorText: _emailErrorMessage,
                                           keyboardType:
-                                              TextInputType.emailAddress,
+                                          TextInputType.emailAddress,
                                           autovalidateMode: AutovalidateMode
                                               .onUserInteraction,
                                           textInputAction: TextInputAction.next,
@@ -241,7 +241,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                       label: 'Confirm password',
                                       hintText: 'Re-Enter Password',
                                       autovalidateMode:
-                                          AutovalidateMode.onUserInteraction,
+                                      AutovalidateMode.onUserInteraction,
                                       textInputAction: TextInputAction.done,
                                       validator: (confirm) {
                                         if (confirm !=
