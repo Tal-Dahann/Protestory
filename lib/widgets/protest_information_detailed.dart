@@ -66,16 +66,13 @@ class ProtestInformationDetailed extends StatelessWidget {
                       children: [
                         Icon(Icons.people, color: Colors.grey[800]),
                         addHorizontalSpace(width: 3),
-                        protest.participantsAmount != 0
-                            ? Expanded(
-                                child: Text(
-                                    '${protest.participantsAmount} people already joined!',
-                                    style: TextStyle(color: Colors.grey[800])),
-                              )
-                            : Expanded(
-                                child: Text('no participants yet',
-                                    style: TextStyle(color: Colors.grey[800])),
-                              )
+                        Expanded(
+                          child: Text(
+                              (protest.participantsAmount == 0)
+                                  ? 'no participants yet'
+                                  : '${protest.participantsAmount} ${protest.participantsAmount == 1 ? 'person' : 'people'} already joined!',
+                              style: TextStyle(color: Colors.grey[800])),
+                        )
                       ],
                     ),
                     Row(
