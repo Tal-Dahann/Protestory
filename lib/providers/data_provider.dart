@@ -338,4 +338,50 @@ class DataProvider {
     );
     await storyNewDocRef.set(newStory);
   }
+
+  Query<Story> queryStoriesOfProtest({required String protestId}) {
+    var protestRef = protestsCollectionRef.doc(protestId);
+
+    //print("getting stories");
+    // TODO:  check if the protest exists and that the sub collection exists, and is convertor needed??
+    return protestRef
+        .collection("stories")
+        .withConverter(
+          fromFirestore: Story.fromFirestore,
+          toFirestore: (Story story, _) => story.toFirestore(),
+        )
+        .orderBy("creation_time", descending: true);
+  }
 }
+
+////myself
+
+// Container(
+// height: 500,
+// child: PaginatorStories(
+// protestID: protest.id,
+// queryProvider: QueryChangeListener(context
+//     .read<DataProvider>()
+// .queryStoriesOfProtest(protestId: protest.id)),
+// header: SliverAppBar(
+// backgroundColor: white,
+// toolbarHeight: 5,
+// centerTitle: true,
+// floating: true,
+// title: Column(
+// children: [
+// addVerticalSpace(height: 15),
+// ],
+// ),
+// ),
+// onEmpty: const Center(
+// child: Padding(
+// padding: EdgeInsets.all(10.0),
+// child: Text(
+// 'No Stories yet',
+// style: TextStyle(color: darkGray),
+// ),
+// ),
+// ),
+// ),
+// )

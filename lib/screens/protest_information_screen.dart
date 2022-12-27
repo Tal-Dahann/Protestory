@@ -9,6 +9,8 @@ import 'package:protestory/screens/create_new_protest_screen.dart';
 import 'package:protestory/widgets/protest_information_detailed.dart';
 import 'package:provider/provider.dart';
 
+import '../widgets/protest_stories.dart';
+
 enum AttendingStatus { unKnown, attending, notAttending, joining, leaving }
 
 class ProtestHolder extends ChangeNotifier {
@@ -312,17 +314,10 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
               Expanded(
                 child: TabBarView(children: [
                   ProtestInformationDetailed(protest: protest),
-                  Center(
-                    child: TextButton(
-                      onPressed: () {
-                        context
-                            .read<DataProvider>()
-                            .addStory(protest, "content");
-                        print("added story");
-                      },
-                      child: const Text('addStory'),
-                    ),
-                  )
+                  ProtestStories(
+                    protest: protest,
+                    dataProvider: context.read<DataProvider>(),
+                  ),
                 ]),
               )
             ],
