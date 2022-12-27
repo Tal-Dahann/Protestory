@@ -10,6 +10,7 @@ import 'package:protestory/firebase/user.dart';
 import 'package:protestory/screens/protest_information_screen.dart';
 
 import '../firebase/attender.dart';
+import '../firebase/story.dart';
 import '../utils/exceptions.dart';
 
 class DataProvider {
@@ -313,4 +314,74 @@ class DataProvider {
         .orderBy('creation_time', descending: true)
         .where('user_id', isEqualTo: user.id);
   }
+
+  Future<void> addStory(Protest protestToAddTo, String content) async {
+    //assuming it not empty content
+
+    var protestRef = protestsCollectionRef.doc(protestToAddTo.id);
+
+    // TODO:  check if the protest exists
+
+    var storyNewDocRef = protestRef
+        .collection("stories")
+        .withConverter(
+          fromFirestore: Story.fromFirestore,
+          toFirestore: (Story story, _) => story.toFirestore(),
+        )
+        .doc();
+
+    Story newStory = Story(
+      docId: storyNewDocRef.id,
+      userID: user.id,
+      content: content,
+      creationTime: Timestamp.now(),
+    );
+    await storyNewDocRef.set(newStory);
+  }
+
+  Query<Story> queryStoriesOfProtest({required String protestId}) {
+    var protestRef = protestsCollectionRef.doc(protestId);
+
+    //print("getting stories");
+    // TODO:  check if the protest exists and that the sub collection exists, and is convertor needed??
+    return protestRef
+        .collection("stories")
+        .withConverter(
+          fromFirestore: Story.fromFirestore,
+          toFirestore: (Story story, _) => story.toFirestore(),
+        )
+        .orderBy("creation_time", descending: true);
+  }
 }
+
+////myself
+
+// Container(
+// height: 500,
+// child: PaginatorStories(
+// protestID: protest.id,
+// queryProvider: QueryChangeListener(context
+//     .read<DataProvider>()
+// .queryStoriesOfProtest(protestId: protest.id)),
+// header: SliverAppBar(
+// backgroundColor: white,
+// toolbarHeight: 5,
+// centerTitle: true,
+// floating: true,
+// title: Column(
+// children: [
+// addVerticalSpace(height: 15),
+// ],
+// ),
+// ),
+// onEmpty: const Center(
+// child: Padding(
+// padding: EdgeInsets.all(10.0),
+// child: Text(
+// 'No Stories yet',
+// style: TextStyle(color: darkGray),
+// ),
+// ),
+// ),
+// ),
+// )

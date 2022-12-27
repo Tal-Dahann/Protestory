@@ -4,6 +4,7 @@ abstract class ProtestoryException implements Exception {
   static showExceptionSnackBar(BuildContext context,
       {String message = 'Unknown error occurred. Try later'}) {
     final snackBar = SnackBar(
+      behavior: SnackBarBehavior.floating,
       content: Text(message),
       action: SnackBarAction(
         label: 'OK',

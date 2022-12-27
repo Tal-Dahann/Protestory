@@ -6,8 +6,11 @@ import 'package:protestory/providers/auth_provider.dart';
 import 'package:protestory/providers/data_provider.dart';
 import 'package:protestory/providers/navigation_provider.dart';
 import 'package:protestory/screens/create_new_protest_screen.dart';
+import 'package:protestory/screens/upload_story.dart';
 import 'package:protestory/widgets/protest_information_detailed.dart';
 import 'package:provider/provider.dart';
+
+import '../widgets/protest_stories.dart';
 
 enum AttendingStatus { unKnown, attending, notAttending, joining, leaving }
 
@@ -70,6 +73,8 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
       )
     ],
   );
+  var _selectedIndex = 0;
+  final TextEditingController _storyController = TextEditingController();
 
   @override
   void initState() {
@@ -77,6 +82,7 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
     widget.protestHolder.initIsAttending(context);
     super.initState();
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -89,60 +95,82 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        floatingActionButton: isCreator
-            ? null
-            : (widget.protestHolder.isAttending == AttendingStatus.unKnown)
-                ? const SizedBox()
-                : (widget.protestHolder.isAttending !=
-                        AttendingStatus.notAttending)
-                    ? Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: FloatingActionButton.extended(
-                          backgroundColor: purple,
-                          label: const Text('Leave'),
-                          icon: const Icon(Icons.person_remove),
-                          onPressed: widget.protestHolder.isAttending ==
-                                  AttendingStatus.attending
-                              ? () async {
-                                  widget.protestHolder.isAttending =
-                                      AttendingStatus.leaving;
-                                  await dataProvider.leaveProtest(
-                                      protest.id, widget.protestHolder);
-                                  widget.protestHolder.isAttending =
-                                      AttendingStatus.notAttending;
-                                  Future.delayed(
-                                      Duration.zero,
-                                      () => context
-                                          .read<NavigationProvider>()
-                                          .notifyScreens());
-                                }
-                              : () => {},
-                        ),
-                      )
-                    : Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: FloatingActionButton.extended(
-                          backgroundColor: purple,
-                          label: const Text('Join'),
-                          icon: const Icon(Icons.person_add),
-                          onPressed: widget.protestHolder.isAttending ==
-                                  AttendingStatus.notAttending
-                              ? () async {
-                                  widget.protestHolder.isAttending =
-                                      AttendingStatus.joining;
-                                  await dataProvider.joinToProtest(
-                                      protest.id, widget.protestHolder);
-                                  widget.protestHolder.isAttending =
-                                      AttendingStatus.attending;
-                                  Future.delayed(
-                                      Duration.zero,
-                                      () => context
-                                          .read<NavigationProvider>()
-                                          .notifyScreens());
-                                }
-                              : () => {},
-                        ),
-                      ),
+        floatingActionButton: _selectedIndex == 0
+            ? isCreator
+                ? null
+                : (widget.protestHolder.isAttending == AttendingStatus.unKnown)
+                    ? const SizedBox()
+                    : (widget.protestHolder.isAttending !=
+                            AttendingStatus.notAttending)
+                        ? Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: FloatingActionButton.extended(
+                              backgroundColor: purple,
+                              label: const Text('Leave'),
+                              icon: const Icon(Icons.person_remove),
+                              onPressed: widget.protestHolder.isAttending ==
+                                      AttendingStatus.attending
+                                  ? () async {
+                                      widget.protestHolder.isAttending =
+                                          AttendingStatus.leaving;
+                                      await dataProvider.leaveProtest(
+                                          protest.id, widget.protestHolder);
+                                      widget.protestHolder.isAttending =
+                                          AttendingStatus.notAttending;
+                                      Future.delayed(
+                                          Duration.zero,
+                                          () => context
+                                              .read<NavigationProvider>()
+                                              .notifyScreens());
+                                    }
+                                  : () => {},
+                            ),
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: FloatingActionButton.extended(
+                              backgroundColor: purple,
+                              label: const Text('Join'),
+                              icon: const Icon(Icons.person_add),
+                              onPressed: widget.protestHolder.isAttending ==
+                                      AttendingStatus.notAttending
+                                  ? () async {
+                                      widget.protestHolder.isAttending =
+                                          AttendingStatus.joining;
+                                      await dataProvider.joinToProtest(
+                                          protest.id, widget.protestHolder);
+                                      widget.protestHolder.isAttending =
+                                          AttendingStatus.attending;
+                                      Future.delayed(
+                                          Duration.zero,
+                                          () => context
+                                              .read<NavigationProvider>()
+                                              .notifyScreens());
+                                    }
+                                  : () => {},
+                            ),
+                          )
+            : Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: FloatingActionButton.extended(
+                  backgroundColor: purple,
+                  label: const Text('Add Story'),
+                  icon: const Icon(Icons.person_add),
+                  onPressed: () async {
+                    PersistentNavBarNavigator.pushNewScreen(context,
+                        screen: UploadStoryScreen(
+                            protest: protest,
+                            storyController: _storyController),
+                        pageTransitionAnimation:
+                            PageTransitionAnimation.slideRight,
+                        withNavBar: false);
+                    if (_storyController.text != '') {
+                      _storyController.text = '';
+                      setState(() {});
+                    }
+                  },
+                ),
+              ),
         body: NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return <Widget>[
@@ -284,13 +312,18 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
                     : null,
                 bottom: PreferredSize(
                   preferredSize: tabs.preferredSize,
-                  child: const ColoredBox(
+                  child: ColoredBox(
                       color: Colors.white,
                       child: TabBar(
+                        onTap: (val) {
+                          setState(() {
+                            _selectedIndex = val;
+                          });
+                        },
                         labelColor: purple,
                         unselectedLabelColor: blue,
                         indicatorColor: purple,
-                        tabs: [
+                        tabs: const [
                           Tab(
                             text: 'Details',
                           ),
@@ -312,7 +345,10 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
               Expanded(
                 child: TabBarView(children: [
                   ProtestInformationDetailed(protest: protest),
-                  const Center(child: Text('Stories here'))
+                  ProtestStories(
+                    protest: protest,
+                    dataProvider: context.read<DataProvider>(),
+                  ),
                 ]),
               )
             ],
