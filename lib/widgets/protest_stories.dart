@@ -24,14 +24,6 @@ class _ProtestStoriesState extends State<ProtestStories> {
     return Center(
       child: Column(
         children: [
-          TextButton(
-            onPressed: () {
-              widget.dataProvider.addStory(widget.protest, "content");
-              print("added story");
-              setState(() {});
-            },
-            child: const Text('addStory'),
-          ),
           Container(
             height: MediaQuery.of(context).size.height * 0.5,
             child: PaginatorStories(
