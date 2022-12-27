@@ -163,7 +163,7 @@ class _NewProtestFormState extends State<NewProtestForm> {
         currPageToDisplay = const Text('Error Occurred....');
     }
     Widget? scaffoldToDisplay = Scaffold(
-      resizeToAvoidBottomInset: false,
+      // resizeToAvoidBottomInset: false,
       appBar: AppBar(
         leading: const BackButton(
           color: blue,
@@ -254,7 +254,19 @@ class _NewProtestFormState extends State<NewProtestForm> {
                               }
                               break;
                             case 3:
-                              valid = formKey.currentState!.validate();
+                              valid = !context
+                                  .read<NewProtestFormNotifier>()
+                                  .descHasError;
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(const SnackBar(
+                                elevation: 3,
+                                backgroundColor: white,
+                                behavior: SnackBarBehavior.floating,
+                                content: Text(
+                                  'description can\'t be longer than 1000 characters!',
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                              ));
                               break;
                             case 4:
                               if (context
