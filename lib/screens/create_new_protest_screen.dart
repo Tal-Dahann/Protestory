@@ -254,19 +254,7 @@ class _NewProtestFormState extends State<NewProtestForm> {
                               }
                               break;
                             case 3:
-                              valid = !context
-                                  .read<NewProtestFormNotifier>()
-                                  .descHasError;
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(const SnackBar(
-                                elevation: 3,
-                                backgroundColor: white,
-                                behavior: SnackBarBehavior.floating,
-                                content: Text(
-                                  'description can\'t be longer than 1000 characters!',
-                                  style: TextStyle(color: Colors.red),
-                                ),
-                              ));
+                              valid = formKey.currentState!.validate();
                               break;
                             case 4:
                               if (context
