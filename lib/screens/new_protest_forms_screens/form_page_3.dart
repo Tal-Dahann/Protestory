@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:protestory/constants/colors.dart';
 import 'package:protestory/providers/new_protest_form_provider.dart';
 import 'package:protestory/utils/add_spaces.dart';
-import 'package:provider/provider.dart';
 import 'package:protestory/widgets/text_fields.dart';
+import 'package:provider/provider.dart';
 
 class FormPageThree extends StatefulWidget {
   const FormPageThree({Key? key}) : super(key: key);
@@ -79,9 +79,8 @@ class _FormPageThreeState extends State<FormPageThree> {
                 }
                 return null;
               },
-              controller: context
-                  .read<NewProtestFormNotifier>()
-                  .descriptionController,
+              controller:
+                  context.read<NewProtestFormNotifier>().descriptionController,
               height: MediaQuery.of(context).size.height * 0.4,
               keyboardType: TextInputType.multiline,
               maxLines: 12,

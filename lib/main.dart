@@ -2,8 +2,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-import 'package:protestory/firebase/auth_notifier.dart';
-import 'package:protestory/firebase/data_provider.dart';
+import 'package:protestory/providers/auth_provider.dart';
+import 'package:protestory/providers/data_provider.dart';
 import 'package:protestory/providers/search_provider.dart';
 import 'package:protestory/screens/login_screen.dart';
 import 'package:protestory/widgets/navigation.dart';
@@ -28,16 +28,16 @@ class App extends StatelessWidget {
       title: 'Protestory',
       theme: ThemeData(appBarTheme: const AppBarTheme(color: Colors.white)),
       debugShowCheckedModeBanner: false,
-      home: (context.watch<AuthNotifier>().isAuthenticated())
+      home: (context.watch<AuthProvider>().isAuthenticated())
           ? const MainNavigation()
           : const LoginPage(),
     );
-    if (context.read<AuthNotifier>().isReady()) {
+    if (context.read<AuthProvider>().isReady()) {
       FlutterNativeSplash.remove();
     }
-    if (context.read<AuthNotifier>().isAuthenticated()) {
-      return ProxyProvider<AuthNotifier, DataProvider>(
-        create: (ctx) => DataProvider(ctx.read<AuthNotifier>().user!),
+    if (context.read<AuthProvider>().isAuthenticated()) {
+      return ProxyProvider<AuthProvider, DataProvider>(
+        create: (ctx) => DataProvider(ctx.read<AuthProvider>().user!),
         update: (_, myAuthNotifier, myDataProvider) =>
             (myDataProvider?..updateUser(myAuthNotifier.user)) ??
             DataProvider(myAuthNotifier.user!),
@@ -69,11 +69,9 @@ class FirebaseInit extends StatelessWidget {
         }
         if (snapshot.connectionState == ConnectionState.done) {
           return ChangeNotifierProvider(
-              create: (_) => AuthNotifier(), child: const App());
+              create: (_) => AuthProvider(), child: const App());
         }
-
-        //TODO replace with splash screen
-        return Container();
+        return const SizedBox();
       },
     );
   }

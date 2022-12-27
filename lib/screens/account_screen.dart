@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:paginate_firestore/bloc/pagination_listeners.dart';
 import 'package:protestory/constants/colors.dart';
-import 'package:protestory/firebase/auth_notifier.dart';
-import 'package:protestory/firebase/data_provider.dart';
+import 'package:protestory/providers/auth_provider.dart';
+import 'package:protestory/providers/data_provider.dart';
 import 'package:protestory/widgets/paginator.dart';
 import 'package:provider/provider.dart';
 
@@ -51,7 +51,7 @@ class _AccountScreenState extends State<AccountScreen>
   @override
   Widget build(BuildContext context) {
     appbarHeight = MediaQuery.of(context).size.height * 0.6;
-    User? currUser = context.read<AuthNotifier>().user;
+    User? currUser = context.read<AuthProvider>().user;
     return Scaffold(
       appBar: AppBar(
         title: AnimatedBuilder(
@@ -62,8 +62,8 @@ class _AccountScreenState extends State<AccountScreen>
                       opacity: _animationController.value,
                       child: Container(
                           color: Colors.white,
-                          child:
-                              const Text('Create by me', style: navTitleStyle)),
+                          child: const Text('Created by me',
+                              style: navTitleStyle)),
                     ),
                     Opacity(
                       opacity: 1 - _animationController.value,
@@ -76,7 +76,7 @@ class _AccountScreenState extends State<AccountScreen>
         backgroundColor: white,
         actions: [
           IconButton(
-            onPressed: () => context.read<AuthNotifier>().signOut(),
+            onPressed: () => context.read<AuthProvider>().signOut(),
             icon: const Icon(Icons.exit_to_app_outlined),
             color: blue,
           )
@@ -107,7 +107,7 @@ class _AccountScreenState extends State<AccountScreen>
                   title: AnimatedBuilder(
                     animation: _colorTween,
                     builder: (context, child) => AutoSizeText(
-                      context.read<AuthNotifier>().user?.displayName ??
+                      context.read<AuthProvider>().user?.displayName ??
                           'Anonymous',
                       minFontSize: 36,
                       style: TextStyle(
@@ -129,12 +129,12 @@ class _AccountScreenState extends State<AccountScreen>
                                               0.25),
                                 ));
                       }
-                      return Container();
+                      return const SizedBox();
                     },
                   ),
                 ),
               ),
-              onEmpty: Container()),
+              onEmpty: const SizedBox()),
         ],
       ),
     );

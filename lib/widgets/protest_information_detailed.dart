@@ -4,8 +4,8 @@ import 'package:protestory/firebase/protest.dart';
 import 'package:protestory/utils/add_spaces.dart';
 import 'package:provider/provider.dart';
 
-import '../firebase/data_provider.dart';
 import '../firebase/user.dart';
+import '../providers/data_provider.dart';
 
 class ProtestInformationDetailed extends StatelessWidget {
   final Protest protest;
@@ -105,12 +105,12 @@ class ProtestInformationDetailed extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         creator.getAvatarWidget(radius: 35),
-                        const SizedBox(height: 5),
+                        addVerticalSpace(height: 5),
                         Text(creator.username),
                       ],
                     );
                   }
-                  return Container();
+                  return const SizedBox();
                 },
               )
             ],

@@ -5,7 +5,7 @@ import 'package:protestory/firebase/attender.dart';
 import 'package:protestory/widgets/protest_card.dart';
 import 'package:provider/provider.dart';
 
-import '../firebase/data_provider.dart';
+import '../providers/data_provider.dart';
 
 class PaginatorFavorites extends StatelessWidget {
   final Widget? header;
@@ -18,6 +18,7 @@ class PaginatorFavorites extends StatelessWidget {
       required this.header,
       required this.onEmpty})
       : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return PaginateFirestore(
@@ -39,7 +40,7 @@ class PaginatorFavorites extends StatelessWidget {
                   type: ProtestCardTypes.wholeScreen,
                 );
               }
-              return ListTile();
+              return const ListTile();
             });
       },
     );

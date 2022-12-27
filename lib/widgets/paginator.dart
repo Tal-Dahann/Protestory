@@ -18,6 +18,7 @@ class Paginator extends StatelessWidget {
       required this.onEmpty,
       this.scrollController})
       : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return PaginateFirestore(

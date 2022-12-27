@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:protestory/constants/colors.dart';
-import 'package:protestory/firebase/auth_notifier.dart';
-import 'package:protestory/firebase/data_provider.dart';
 import 'package:protestory/firebase/protest.dart';
+import 'package:protestory/providers/auth_provider.dart';
+import 'package:protestory/providers/data_provider.dart';
 import 'package:protestory/providers/navigation_provider.dart';
 import 'package:protestory/screens/create_new_protest_screen.dart';
 import 'package:protestory/widgets/protest_information_detailed.dart';
@@ -82,7 +82,7 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
   Widget build(BuildContext context) {
     DataProvider dataProvider = context.read<DataProvider>();
     Protest protest = widget.protestHolder.protest;
-    bool isCreator = context.read<AuthNotifier>().user?.uid == protest.creator;
+    bool isCreator = context.read<AuthProvider>().user?.uid == protest.creator;
     // final Future<bool> isAttending =
     //     dataProvider.isAlreadyAttending(protest.id);
 
@@ -92,7 +92,7 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
         floatingActionButton: isCreator
             ? null
             : (widget.protestHolder.isAttending == AttendingStatus.unKnown)
-                ? Container()
+                ? const SizedBox()
                 : (widget.protestHolder.isAttending !=
                         AttendingStatus.notAttending)
                     ? Padding(

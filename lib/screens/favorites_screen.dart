@@ -3,7 +3,7 @@ import 'package:paginate_firestore/bloc/pagination_listeners.dart';
 import 'package:provider/provider.dart';
 
 import '../constants/colors.dart';
-import '../firebase/data_provider.dart';
+import '../providers/data_provider.dart';
 import '../providers/navigation_provider.dart';
 import '../utils/add_spaces.dart';
 import '../widgets/navigation.dart';
@@ -38,7 +38,7 @@ class FavoritesScreen extends StatelessWidget {
             child: Padding(
               padding: EdgeInsets.all(10.0),
               child: Text(
-                "Not Attending any protests yet",
+                'Not Attending any protests yet',
                 style: TextStyle(color: darkGray),
               ),
             ),

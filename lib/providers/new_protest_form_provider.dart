@@ -11,7 +11,6 @@ class NewProtestFormNotifier extends ChangeNotifier {
   final descriptionController = TextEditingController();
   final locationController = TextEditingController();
   final formKey = GlobalKey<FormState>();
-  // final protestTags = <String>[];
   DateTime selectedTime = DateTime(0);
   List<String> selectedTags = <String>[];
   File? protestThumbnail;

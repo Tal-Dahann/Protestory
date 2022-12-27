@@ -87,6 +87,3 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
         ));
   }
 }
-
-//Icon(
-//                 widget.icon, size: widget.height * 0.4, color: blue,)

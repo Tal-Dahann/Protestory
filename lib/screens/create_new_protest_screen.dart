@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:protestory/constants/colors.dart';
-import 'package:protestory/firebase/auth_notifier.dart';
-import 'package:protestory/firebase/data_provider.dart';
 import 'package:protestory/firebase/protest.dart';
+import 'package:protestory/providers/auth_provider.dart';
+import 'package:protestory/providers/data_provider.dart';
 import 'package:protestory/providers/new_protest_form_provider.dart';
 import 'package:protestory/screens/new_protest_forms_screens//form_page_1.dart';
 import 'package:protestory/screens/new_protest_forms_screens/form_page_2.dart';
@@ -12,6 +12,7 @@ import 'package:protestory/screens/new_protest_forms_screens/form_page_3.dart';
 import 'package:protestory/screens/new_protest_forms_screens/form_page_4.dart';
 import 'package:protestory/screens/new_protest_forms_screens/uploading_protest_screen.dart';
 import 'package:protestory/screens/protest_information_screen.dart';
+import 'package:protestory/utils/exceptions.dart';
 import 'package:protestory/widgets/buttons.dart';
 import 'package:provider/provider.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
@@ -72,7 +73,7 @@ class _NewProtestFormState extends State<NewProtestForm> {
     Protest protest = await processDataAndUpload();
     Future.delayed(Duration.zero, () {
       //Function to navigate to protest page after successful upload!
-      Navigator.of(context).popUntil(ModalRoute.withName("/"));
+      Navigator.of(context).popUntil(ModalRoute.withName('/'));
       if (widget.formStatus == FormStatus.editing) {
         context.read<ProtestHolder>().protest = protest;
       } else {
@@ -91,7 +92,7 @@ class _NewProtestFormState extends State<NewProtestForm> {
         context.read<NewProtestFormNotifier>().locationController.text;
     LatLng locationLatLng =
         context.read<NewProtestFormNotifier>().locationLatLng!;
-    String? contactInfo = context.read<AuthNotifier>().user!.email;
+    String? contactInfo = context.read<AuthProvider>().user!.email;
     contactInfo ??= 'No contact info provided';
     if (widget.formStatus == FormStatus.editing) {
       return await context.read<DataProvider>().updateProtest(
@@ -257,19 +258,19 @@ class _NewProtestFormState extends State<NewProtestForm> {
                               valid = formKey.currentState!.validate();
                               break;
                             case 4:
-                              if (context
-                                      .read<NewProtestFormNotifier>()
-                                      .protestThumbnail !=
-                                  null) {
-                                valid = true;
+                              valid = context
+                                          .read<NewProtestFormNotifier>()
+                                          .protestThumbnail !=
+                                      null ||
+                                  context
+                                          .read<NewProtestFormNotifier>()
+                                          .existingProtestThumbnail !=
+                                      null;
+                              if (!valid) {
+                                ProtestoryException.showExceptionSnackBar(
+                                    context,
+                                    message: 'Protest has to have an image');
                               }
-                              if (context
-                                      .read<NewProtestFormNotifier>()
-                                      .existingProtestThumbnail !=
-                                  null) {
-                                valid = true;
-                              }
-                              break;
                           }
                           if (valid && currPageNum != 4) {
                             setState(() {
@@ -279,8 +280,6 @@ class _NewProtestFormState extends State<NewProtestForm> {
                             context
                                 .read<NewProtestFormNotifier>()
                                 .clickFinishButton();
-                          } else {
-                            //TODO: display validation error
                           }
                         }),
                   ),

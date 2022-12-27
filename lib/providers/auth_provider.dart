@@ -4,7 +4,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 enum AuthStatus { authenticated, unauthenticated, authenticating, initiation }
 
-class AuthNotifier extends ChangeNotifier {
+class AuthProvider extends ChangeNotifier {
   final _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   var _status = AuthStatus.initiation;
@@ -13,7 +13,7 @@ class AuthNotifier extends ChangeNotifier {
 
   bool _disposed = false;
 
-  AuthNotifier() {
+  AuthProvider() {
     _auth.userChanges().listen((User? firebaseUser) async {
       if (firebaseUser == null) {
         _user = null;

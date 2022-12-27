@@ -9,7 +9,7 @@ import 'package:protestory/widgets/protest_card.dart';
 import 'package:provider/provider.dart';
 
 import '../constants/colors.dart';
-import '../firebase/data_provider.dart';
+import '../providers/data_provider.dart';
 import 'loading.dart';
 
 class ProtestListHome extends StatelessWidget {
@@ -46,7 +46,7 @@ class ProtestListHome extends StatelessWidget {
                   context.read<NavigationProvider>().controller.jumpToTab(1);
                 },
                 child: const Text(
-                  "see all",
+                  'see all',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,

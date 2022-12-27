@@ -3,6 +3,7 @@ import 'package:protestory/constants/colors.dart';
 
 class DiscardChanges extends StatelessWidget {
   final Widget child;
+
   const DiscardChanges({Key? key, required this.child}) : super(key: key);
 
   @override
@@ -26,7 +27,7 @@ class DiscardChanges extends StatelessWidget {
                   ),
                   TextButton(
                     onPressed: () {
-                      Navigator.of(context).popUntil(ModalRoute.withName("/"));
+                      Navigator.of(context).popUntil(ModalRoute.withName('/'));
                     },
                     style: TextButton.styleFrom(foregroundColor: purple),
                     child: const Text('Yes'),

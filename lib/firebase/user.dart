@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:protestory/constants/colors.dart';
+import 'package:protestory/utils/exceptions.dart';
 import 'package:protestory/widgets/loading.dart';
 
 class PUser {
@@ -15,7 +16,7 @@ class PUser {
 
   PUser.fromFireAuth(User fireUser)
       : id = fireUser.uid,
-        username = fireUser.displayName ?? "Anonymous",
+        username = fireUser.displayName ?? 'Anonymous',
         photoURL = fireUser.photoURL;
 
   Widget getAvatarWidget({double? radius}) {
@@ -61,8 +62,7 @@ class PUser {
   ) {
     final data = snapshot.data();
     if (data == null) {
-      // TODO transform to exception
-      throw Exception("User doesn't exist");
+      throw UserNotFound();
     }
     return PUser(
         id: snapshot.id,
@@ -71,6 +71,6 @@ class PUser {
   }
 
   Map<String, dynamic> toFirestore() {
-    return {"username": username, if (photoURL != null) "photo_url": photoURL};
+    return {'username': username, if (photoURL != null) 'photo_url': photoURL};
   }
 }

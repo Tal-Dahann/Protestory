@@ -6,8 +6,8 @@ import 'package:protestory/providers/search_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../constants/tags.dart';
-import '../firebase/data_provider.dart';
 import '../firebase/protest.dart';
+import '../providers/data_provider.dart';
 import '../providers/navigation_provider.dart';
 import '../utils/add_spaces.dart';
 import '../widgets/navigation.dart';
@@ -20,19 +20,13 @@ enum SearchOptions {
   mostPopular('Most Popular');
 
   const SearchOptions(this.value);
+
   final String value;
 }
 
 Query<Protest> searchQuery(DataProvider dataProvider,
     SearchOptions searchOption, List<String> selectedTags,
     {String text = '', bool isSearchAvail = true}) {
-  ////test tags selection
-
-  // if (selectedTags.isNotEmpty) {
-  //   return dataProvider.getProtestCollectionRef
-  //       .orderBy("creation_time", descending: true)
-  //       .where("tags", arrayContainsAny: selectedTags);
-  // } else {
   Query<Protest> wantedQuery;
   if (isSearchAvail) {
     //search view
@@ -63,10 +57,8 @@ Query<Protest> searchQuery(DataProvider dataProvider,
     //tags view
     wantedQuery = dataProvider.getProtestCollectionRef
         .orderBy('creation_time', descending: true);
-    print("else");
     if (selectedTags.isNotEmpty) {
-      wantedQuery = wantedQuery.where("tags", arrayContainsAny: selectedTags);
-      print("selected query");
+      wantedQuery = wantedQuery.where('ags', arrayContainsAny: selectedTags);
     }
   }
   return wantedQuery;
@@ -82,6 +74,7 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   late final QueryChangeListener<Protest> queryProvider;
   String searchText = '';
+
   // List<String> selectedTagsList = [];
   bool isSearchView = true;
 
@@ -132,24 +125,21 @@ class _SearchScreenState extends State<SearchScreen> {
                     children: [
                       addVerticalSpace(height: 15),
                       CustomTextFormField(
+                        textInputAction: TextInputAction.search,
                         icon: IconButton(
                             onPressed: () {
                               isSearchView = false;
                               _updateQuery(isSearchAvail: isSearchView);
                               setState(() {});
                             },
-                            icon: Icon(Icons.filter_alt),
+                            icon: const Icon(Icons.filter_alt),
                             color: darkPurple),
-                        hintText: "Search...",
+                        hintText: 'Search...',
                         onChanged: (searchText) {
                           this.searchText = searchText;
                           _updateQuery();
                         },
                       ),
-                      // IconButton(
-                      //   onPressed: () {},
-                      //   icon: Icon(Icons.filter_alt),
-                      // ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
@@ -177,7 +167,7 @@ class _SearchScreenState extends State<SearchScreen> {
                               });
                             },
                           ),
-                          Padding(padding: EdgeInsets.all(10)),
+                          const Padding(padding: EdgeInsets.all(10)),
                         ],
                       ),
                       //  Padding(
@@ -190,7 +180,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 : Column(
                     children: [
                       ListTile(
-                        title: const Text("Choose Tags",
+                        title: const Text('Choose Tags',
                             style: TextStyle(color: lightGray, fontSize: 24)),
                         trailing: IconButton(
                             icon: const Icon(
@@ -205,7 +195,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       ),
                       addVerticalSpace(height: 10),
                       SingleChildScrollView(
-                        padding: EdgeInsets.only(left: 5),
+                        padding: const EdgeInsets.only(left: 5),
                         scrollDirection: Axis.horizontal,
                         child: Row(
                           children: [
@@ -268,7 +258,7 @@ class _SearchScreenState extends State<SearchScreen> {
             child: Padding(
               padding: EdgeInsets.all(10.0),
               child: Text(
-                "No protests match your search",
+                'No protests match your search',
                 style: TextStyle(color: darkGray),
               ),
             ),

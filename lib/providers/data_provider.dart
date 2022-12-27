@@ -4,18 +4,19 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:google_maps_flutter_platform_interface/src/types/location.dart';
+import 'package:place_picker/place_picker.dart';
 import 'package:protestory/firebase/protest.dart';
 import 'package:protestory/firebase/user.dart';
 import 'package:protestory/screens/protest_information_screen.dart';
 
-import 'attender.dart';
+import '../firebase/attender.dart';
+import '../utils/exceptions.dart';
 
 class DataProvider {
-  static const version = "1.0.0";
+  static const version = '1.0.0';
   static final firestore =
-      FirebaseFirestore.instance.collection("versions").doc("v$version");
-  static final firestorage = FirebaseStorage.instance.ref("v$version");
+      FirebaseFirestore.instance.collection('versions').doc('v$version');
+  static final firestorage = FirebaseStorage.instance.ref('v$version');
 
   late final CollectionReference<Protest> protestsCollectionRef;
   late final CollectionReference<PUser> usersCollectionRef;
@@ -24,16 +25,16 @@ class DataProvider {
   late PUser user;
 
   DataProvider(User fireUser) {
-    protestsCollectionRef = firestore.collection("protests").withConverter(
+    protestsCollectionRef = firestore.collection('protests').withConverter(
           fromFirestore: Protest.fromFirestore,
           toFirestore: (Protest protest, _) => protest.toFirestore(),
         );
-    usersCollectionRef = firestore.collection("users").withConverter(
+    usersCollectionRef = firestore.collection('users').withConverter(
         fromFirestore: PUser.fromFirestore,
         toFirestore: (PUser user, _) => user.toFirestore());
     syncUser(fireUser);
 
-    attendingCollectionRef = firestore.collection("attending").withConverter(
+    attendingCollectionRef = firestore.collection('attending').withConverter(
           fromFirestore: Attender.fromFirestore,
           toFirestore: (Attender att, _) => att.toFirestore(),
         );
@@ -106,7 +107,7 @@ class DataProvider {
           .child(protest.id)
           .putFile(image);
     }
-    await docRef.set(updatedProtest);
+    await docRef.set(updatedProtest, SetOptions(merge: true));
     return updatedProtest;
   }
 
@@ -132,7 +133,6 @@ class DataProvider {
       required String parameter,
       required bool isDescending}) async {
     List<Protest> protestList = [];
-    // print("entered getNprotests" + "\n");
     var query = await protestsCollectionRef
         .orderBy(parameter, descending: isDescending)
         .limit(n)
@@ -140,7 +140,6 @@ class DataProvider {
 
     for (var element in query.docs) {
       protestList.add(element.data());
-      // print("added protest :" + "${element.data().name}" + "\n");
     }
 
     return protestList;
@@ -149,36 +148,27 @@ class DataProvider {
   Future<List<Protest>> getMostRecentProtests({
     required int n,
   }) async {
-    return getNProtests(n: n, parameter: "creation_time", isDescending: true);
+    return getNProtests(n: n, parameter: 'creation_time', isDescending: true);
   }
 
   Future<List<Protest>> getMostPopularProtests({
     required int n,
   }) async {
     return getNProtests(
-        n: n, parameter: "participants_amount", isDescending: true);
+        n: n, parameter: 'participants_amount', isDescending: true);
   }
 
-  //TODO: exception handling
   Future<Protest> getProtestById({
     required String protestId,
   }) async {
     final docSnap = await protestsCollectionRef.doc(protestId).get();
 
     Protest? protest = docSnap.data(); // Convert to Protest object
-    if (protest != null) {
-      return protest;
-    } else {
-      throw Exception('getProtestById error- no protest with the requested id');
+    if (protest == null) {
+      throw ProtestNotFound();
     }
+    return protest;
   }
-
-  // Future<Protest> getNextProtestByIndex({
-  //   required int startIndex,
-  //   required CollectionReference<Protest> collectionRF
-  // }) async {
-  //
-  // }
 
   //UP to 10 tags!!
   Future<List<Protest>> get10ProtestsByTags(
@@ -190,11 +180,11 @@ class DataProvider {
     Iterable<String> tagsListCopy = tagsList.take(numOfElements);
 
     var query =
-        protestsCollectionRef.orderBy("creation_time", descending: true);
+        protestsCollectionRef.orderBy('creation_time', descending: true);
 
     //filtering for every tag
     for (String tag in tagsListCopy) {
-      query = query.where("tags", arrayContains: tag);
+      query = query.where('tags', arrayContains: tag);
     }
 
     //get 10 that match
@@ -264,7 +254,7 @@ class DataProvider {
     //updating the protest info
     await protestsCollectionRef
         .doc(protestId)
-        .update({"participants_amount": FieldValue.increment(1)});
+        .update({'participants_amount': FieldValue.increment(1)});
 
     //updating the attending collection
     var docRef = attendingCollectionRef.doc();
@@ -279,7 +269,6 @@ class DataProvider {
   }
 
   Future<bool> isAlreadyAttending(String protestId) async {
-    // TODO: can u do where on empty where
     var matchDocs = await attendingCollectionRef
         .where('user_id', isEqualTo: user.id)
         .where('protest_id', isEqualTo: protestId)
@@ -306,7 +295,7 @@ class DataProvider {
     //updating the protest info
     await protestsCollectionRef
         .doc(protestId)
-        .update({"participants_amount": FieldValue.increment(-1)});
+        .update({'participants_amount': FieldValue.increment(-1)});
 
     //deleting the attending collection
     var matchDocs = await attendingCollectionRef

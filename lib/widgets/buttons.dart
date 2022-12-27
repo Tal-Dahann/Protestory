@@ -26,21 +26,18 @@ class CustomButton extends StatefulWidget {
 class _LoginButtonState extends State<CustomButton> {
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: widget.width,
-      height: widget.height,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: widget.color ?? const Color(0xff4c5dd2),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        minimumSize: Size(widget.width, widget.height),
+        backgroundColor: widget.color ?? const Color(0xff4c5dd2),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
         ),
-        onPressed: widget.onPressed,
-        child: Text(widget.text,
-            style: TextStyle(
-                color: widget.textColor ?? Colors.white, fontSize: 23)),
       ),
+      onPressed: widget.onPressed,
+      child: Text(widget.text,
+          style:
+              TextStyle(color: widget.textColor ?? Colors.white, fontSize: 23)),
     );
   }
 }
@@ -77,27 +74,23 @@ class CustomButtonWithLogo extends StatefulWidget {
 class _CustomButtonWithLogoState extends State<CustomButtonWithLogo> {
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: widget.width,
-      height: widget.height,
-      child: ElevatedButton.icon(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: widget.color ?? const Color(0xff4c5dd2),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
+    return ElevatedButton.icon(
+      style: ElevatedButton.styleFrom(
+        minimumSize: Size(widget.width, widget.height),
+        backgroundColor: widget.color ?? const Color(0xff4c5dd2),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
         ),
-        onPressed: widget.onPressed,
-        icon: SvgPicture.asset(
-          widget.svgLogoPath,
-          width: widget.height * 0.7,
-          height: widget.height * 0.7,
-        ),
-        label: Text(
-          widget.text,
-          style:
-              TextStyle(color: widget.textColor ?? Colors.black, fontSize: 23),
-        ),
+      ),
+      onPressed: widget.onPressed,
+      icon: SvgPicture.asset(
+        widget.svgLogoPath,
+        width: widget.height * 0.7,
+        height: widget.height * 0.7,
+      ),
+      label: Text(
+        widget.text,
+        style: TextStyle(color: widget.textColor ?? Colors.black, fontSize: 23),
       ),
     );
   }

@@ -17,8 +17,7 @@ class _UploadingProtestScreenState extends State<UploadingProtestScreen> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         leading: null,
-        title: const Text('New Protest - Uploading...',
-            style: navTitleStyle),
+        title: const Text('New Protest - Uploading...', style: navTitleStyle),
         backgroundColor: white,
         centerTitle: true,
       ),

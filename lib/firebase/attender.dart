@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../utils/exceptions.dart';
+
 class Attender {
   String docId;
   final String userID;
@@ -23,27 +25,24 @@ class Attender {
   ) {
     final data = snapshot.data();
     if (data == null) {
-      // TODO transform to exception
-      throw Exception("Attender doesn't exist");
+      throw AttenderNotFound();
     }
-    //TODO check when data is null
     return Attender(
-      docId: snapshot.id,
-      userID: data['user_id'],
-      protestID: data['protest_id'],
-      creationTime: data['creation_time'],
-      username: data['username'],
-      protestName: data['protest_name']
-    );
+        docId: snapshot.id,
+        userID: data['user_id'],
+        protestID: data['protest_id'],
+        creationTime: data['creation_time'],
+        username: data['username'],
+        protestName: data['protest_name']);
   }
 
   Map<String, dynamic> toFirestore() {
     return {
-      "user_id": userID,
-      "protest_id": protestID,
-      "creation_time": creationTime,
+      'user_id': userID,
+      'protest_id': protestID,
+      'creation_time': creationTime,
       'username': username,
-      "protest_name": protestName
+      'protest_name': protestName
     };
   }
 }

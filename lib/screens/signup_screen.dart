@@ -1,18 +1,17 @@
-import 'dart:developer';
-
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:protestory/constants/colors.dart';
 import 'package:protestory/utils/add_spaces.dart';
+import 'package:protestory/utils/exceptions.dart';
 //import 'package:protestory/constants/colors.dart';
 import 'package:protestory/widgets/buttons.dart';
 import 'package:protestory/widgets/loading.dart';
 import 'package:protestory/widgets/text_fields.dart';
 import 'package:provider/provider.dart';
 
-import '../firebase/auth_notifier.dart';
+import '../providers/auth_provider.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({Key? key}) : super(key: key);
@@ -46,13 +45,9 @@ class _SignUpPageState extends State<SignUpPage> {
       setState(() {
         _loading = true;
       });
-      await context.read<AuthNotifier>().signInGoogle();
-    } on FirebaseAuthException catch (e) {
-      // TODO replace with snackbar?
-      log(e.message ?? "Unknown error");
-      setState(() {
-        _emailErrorMessage = 'Unknown error. Try later';
-      });
+      await context.read<AuthProvider>().signInGoogle();
+    } on FirebaseAuthException {
+      ProtestoryException.showExceptionSnackBar(context);
     } finally {
       setState(() {
         _loading = false;
@@ -66,7 +61,7 @@ class _SignUpPageState extends State<SignUpPage> {
       setState(() {
         _loading = true;
       });
-      await context.read<AuthNotifier>().signUp(_emailController.text,
+      await context.read<AuthProvider>().signUp(_emailController.text,
           _passwordController.text, _displayNameController.text);
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
@@ -91,11 +86,7 @@ class _SignUpPageState extends State<SignUpPage> {
           });
           break;
         default:
-          // TODO replace with snackbar?
-          log(e.message ?? "Unknown error");
-          setState(() {
-            _emailErrorMessage = 'Unknown error. Try later';
-          });
+          ProtestoryException.showExceptionSnackBar(context);
       }
     } finally {
       setState(() {
@@ -179,9 +170,9 @@ class _SignUpPageState extends State<SignUpPage> {
                                       validator: (displayName) {
                                         if (displayName == null ||
                                             displayName.isEmpty) {
-                                          return "Name is required";
+                                          return 'Name is required';
                                         } else if (displayName.length > 20) {
-                                          return "Name is too long";
+                                          return 'Name is too long';
                                         }
                                         return null;
                                       },
@@ -233,8 +224,8 @@ class _SignUpPageState extends State<SignUpPage> {
                                           controller: _passwordController,
                                           validator: (password) {
                                             if (password == null ||
-                                                password == "") {
-                                              return "Enter password";
+                                                password == '') {
+                                              return 'Enter password';
                                             }
                                             return null;
                                           },
@@ -268,7 +259,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             Flexible(
                               flex: 1,
                               child: Hero(
-                                tag: "signup_button",
+                                tag: 'signup_button',
                                 child: CustomButton(
                                     text: 'Sign Up',
                                     onPressed: () => _handleSignUp(context)),

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:protestory/utils/add_spaces.dart';
-import 'package:provider/provider.dart';
 import 'package:protestory/constants/colors.dart';
 import 'package:protestory/providers/new_protest_form_provider.dart';
+import 'package:protestory/utils/add_spaces.dart';
+import 'package:provider/provider.dart';
 
 class FormPageTwo extends StatefulWidget {
   const FormPageTwo({Key? key}) : super(key: key);
@@ -12,8 +12,6 @@ class FormPageTwo extends StatefulWidget {
 }
 
 class _FormPageTwoState extends State<FormPageTwo> {
-  //bool showError = false;
-
   final tags = [
     'Animals',
     'Business and Brands',
@@ -103,7 +101,10 @@ class _FormPageTwoState extends State<FormPageTwo> {
                                       .selectedTags
                                       .remove(tags[index]);
                               //log(selectedTags.toString());
-                              if (context.read<NewProtestFormNotifier>().selectedTags.isNotEmpty) {
+                              if (context
+                                  .read<NewProtestFormNotifier>()
+                                  .selectedTags
+                                  .isNotEmpty) {
                                 context
                                     .read<NewProtestFormNotifier>()
                                     .showTagsError = false;
@@ -122,17 +123,17 @@ class _FormPageTwoState extends State<FormPageTwo> {
               ),
               addVerticalSpace(height: 15),
               AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    curve: Curves.easeIn,
-                    height: !showError ? 0 : 18,
-                    child: const Text(
-                        'Please pick at least one tag for your protest.',
-                        style: TextStyle(
-                          color: Colors.red,
-                          fontSize: 14,
-                        ),
-                      ),
-                  )
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.easeIn,
+                height: !showError ? 0 : 18,
+                child: const Text(
+                  'Please pick at least one tag for your protest.',
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 14,
+                  ),
+                ),
+              )
             ],
           ),
         ],

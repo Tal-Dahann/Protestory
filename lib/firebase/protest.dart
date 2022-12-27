@@ -2,12 +2,13 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter_platform_interface/src/types/location.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:intl/intl.dart';
+import 'package:place_picker/place_picker.dart';
 
+import '../providers/data_provider.dart';
+import '../utils/exceptions.dart';
 import '../widgets/loading.dart';
-import 'data_provider.dart';
 
 class Protest {
   static const imageRatio = CropAspectRatio(ratioX: 16, ratioY: 9);
@@ -96,10 +97,8 @@ class Protest {
   ) {
     final data = snapshot.data();
     if (data == null) {
-      // TODO transform to exception
-      throw Exception("Protest doesn't exist");
+      throw ProtestNotFound();
     }
-    //TODO check when data is null
     return Protest(
       id: snapshot.id,
       name: data['name'],
@@ -118,19 +117,19 @@ class Protest {
   Map<String, dynamic> toFirestore() {
     List<String> pl = getAllPrefixes();
     return {
-      "name": name,
-      "date": date,
-      "creator": creator,
-      "creation_time": creationTime,
-      "participants_amount": participantsAmount,
-      "contact_info": contactInfo,
-      "description": description,
-      "location": location,
-      "latitude": locationLatLng.latitude,
-      "longitude": locationLatLng.longitude,
-      "tags": tags,
-      "lower_case_name": lowerCaseName,
-      "prefixes_name": pl,
+      'name': name,
+      'date': date,
+      'creator': creator,
+      'creation_time': creationTime,
+      'participants_amount': participantsAmount,
+      'contact_info': contactInfo,
+      'description': description,
+      'location': location,
+      'latitude': locationLatLng.latitude,
+      'longitude': locationLatLng.longitude,
+      'tags': tags,
+      'lower_case_name': lowerCaseName,
+      'prefixes_name': pl,
     };
   }
 

@@ -9,15 +9,6 @@ import 'package:protestory/widgets/text_fields.dart';
 import 'package:provider/provider.dart';
 
 class FormPageOne extends StatefulWidget {
-  // final TextEditingController currentFormPageController;
-  // final TextEditingController titleController;
-  // final TextEditingController locationController;
-  // final TextEditingController dateController;
-  // final TextEditingController timeController;
-  // final FocusNode locationFocusNode;
-  // final FocusNode dateFocusNode;
-  // final GlobalKey<FormState> titleFormKey;
-
   const FormPageOne({super.key});
 
   @override
@@ -142,7 +133,7 @@ class _FormPageOneState extends State<FormPageOne> {
                 LocationResult result =
                     await Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => PlacePicker(
-                              "AIzaSyCo-uZ1Sbqmdvi0qhYilL_yZ82CodRViEQ",
+                              'AIzaSyCo-uZ1Sbqmdvi0qhYilL_yZ82CodRViEQ',
                             )));
                 if (result.formattedAddress != null) {
                   notifier.locationController.text = result.formattedAddress!;

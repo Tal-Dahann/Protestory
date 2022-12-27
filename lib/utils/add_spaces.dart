@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 
 SizedBox addVerticalSpace({required double height}) {
@@ -7,5 +5,7 @@ SizedBox addVerticalSpace({required double height}) {
 }
 
 SizedBox addHorizontalSpace({required double width}) {
-  return SizedBox(width: width,);
+  return SizedBox(
+    width: width,
+  );
 }

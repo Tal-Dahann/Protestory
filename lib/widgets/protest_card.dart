@@ -33,6 +33,11 @@ class ProtestCard extends StatelessWidget {
       aspectRatio: cardRatio,
       child: InkWell(
         onTap: () {
+          FocusScopeNode currentFocus = FocusScope.of(context);
+
+          if (!currentFocus.hasPrimaryFocus) {
+            currentFocus.unfocus();
+          }
           //Navigator.push(context, MaterialPageRoute(builder: (ctx) => ProtestInformationScreen(protest: protest)));
           PersistentNavBarNavigator.pushNewScreen(context,
               screen: ProtestInformationScreen(protest: protest),
@@ -86,24 +91,28 @@ class ProtestCard extends StatelessWidget {
                             // Location:
                             Expanded(
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Icon(Icons.location_on, color: Colors.grey[800]),
+                                  Icon(Icons.location_on,
+                                      color: Colors.grey[800]),
                                   addHorizontalSpace(width: 4),
                                   Expanded(
                                     child: AutoSizeText(protest.location,
                                         minFontSize: 15.0,
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(color: Colors.grey[800])),
+                                        style:
+                                            TextStyle(color: Colors.grey[800])),
                                   )
                                 ],
                               ),
                             ),
                             Expanded(
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Icon(Icons.watch_later_outlined,
@@ -114,7 +123,8 @@ class ProtestCard extends StatelessWidget {
                                         minFontSize: 15.0,
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(color: Colors.grey[800])),
+                                        style:
+                                            TextStyle(color: Colors.grey[800])),
                                   )
                                 ],
                               ),
@@ -130,13 +140,13 @@ class ProtestCard extends StatelessWidget {
                                         color: Colors.grey,
                                       )),
                                   const Padding(
-                                    padding: EdgeInsets.only(left: 2.0, right: 8.0),
+                                    padding:
+                                        EdgeInsets.only(left: 2.0, right: 8.0),
                                     child: Icon(Icons.people),
                                   )
                                 ],
                               ),
                             ),
-
                           ],
                         ),
                       ),
