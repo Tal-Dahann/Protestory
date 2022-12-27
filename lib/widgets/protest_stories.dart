@@ -8,9 +8,9 @@ import '../firebase/protest.dart';
 import '../providers/data_provider.dart';
 
 class ProtestStories extends StatefulWidget {
-  Protest protest;
-  DataProvider dataProvider;
-  ProtestStories({required this.protest, required this.dataProvider, Key? key})
+  final Protest protest;
+  final DataProvider dataProvider;
+  const ProtestStories({required this.protest, required this.dataProvider, Key? key})
       : super(key: key);
 
   @override

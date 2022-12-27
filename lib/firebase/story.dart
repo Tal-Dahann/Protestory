@@ -21,8 +21,7 @@ class Story {
   ) {
     final data = snapshot.data();
     if (data == null) {
-      // TODO: fix the exception
-      throw AttenderNotFound();
+      throw StoryNotFound();
     }
     return Story(
       docId: snapshot.id,

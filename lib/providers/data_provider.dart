@@ -121,6 +121,15 @@ class DataProvider {
     for (var currDoc in query.docs) {
       currDoc.reference.delete();
     }
+
+    var snapshots = await protestsCollectionRef
+        .doc(protestToDelete.id)
+        .collection("stories")
+        .get();
+    for (var doc in snapshots.docs) {
+      await doc.reference.delete();
+    }
+
     return await protestsCollectionRef.doc(protestToDelete.id).delete();
   }
 
@@ -342,7 +351,6 @@ class DataProvider {
   Query<Story> queryStoriesOfProtest({required String protestId}) {
     var protestRef = protestsCollectionRef.doc(protestId);
 
-    //print("getting stories");
     // TODO:  check if the protest exists and that the sub collection exists, and is convertor needed??
     return protestRef
         .collection("stories")

@@ -25,6 +25,8 @@ class PaginatorStories extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PaginateFirestore(
+        padding:
+            EdgeInsets.only(bottom: MediaQuery.of(context).size.height * 0.1),
         header: header,
         onEmpty: onEmpty,
         queryProvider: queryProvider,
