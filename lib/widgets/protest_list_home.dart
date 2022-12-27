@@ -61,7 +61,7 @@ class ProtestListHome extends StatelessWidget {
           height: cardHeight,
           child: FutureBuilder<List<Protest>>(
             future: context.read<DataProvider>().processQuery(
-                searchQuery(context.read<DataProvider>(), searchOption)),
+                searchQuery(context.read<DataProvider>(), searchOption, [])),
             builder:
                 (BuildContext context, AsyncSnapshot<List<Protest>> snapshot) {
               if (snapshot.hasError) {

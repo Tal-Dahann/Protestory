@@ -5,6 +5,7 @@ import 'package:protestory/constants/colors.dart';
 import 'package:protestory/providers/search_provider.dart';
 import 'package:provider/provider.dart';
 
+import '../constants/tags.dart';
 import '../firebase/data_provider.dart';
 import '../firebase/protest.dart';
 import '../providers/navigation_provider.dart';
@@ -22,30 +23,53 @@ enum SearchOptions {
   final String value;
 }
 
-Query<Protest> searchQuery(
-    DataProvider dataProvider, SearchOptions searchOption,
-    {String text = ''}) {
-  switch (searchOption) {
-    case SearchOptions.mostRecent:
-      {
-        return dataProvider.getProtestCollectionRef
-            .orderBy('creation_time', descending: true)
-            .where('prefixes_name', arrayContains: text);
-      }
-    case SearchOptions.mostPopular:
-      {
-        return dataProvider.getProtestCollectionRef
-            .orderBy('participants_amount', descending: true)
-            .where('prefixes_name', arrayContains: text);
-      }
-    default:
-      {
-        //ALl- sorted by name
-        return dataProvider.getProtestCollectionRef
-            .orderBy('name', descending: false)
-            .where('prefixes_name', arrayContains: text);
-      }
+Query<Protest> searchQuery(DataProvider dataProvider,
+    SearchOptions searchOption, List<String> selectedTags,
+    {String text = '', bool isSearchAvail = true}) {
+  ////test tags selection
+
+  // if (selectedTags.isNotEmpty) {
+  //   return dataProvider.getProtestCollectionRef
+  //       .orderBy("creation_time", descending: true)
+  //       .where("tags", arrayContainsAny: selectedTags);
+  // } else {
+  Query<Protest> wantedQuery;
+  if (isSearchAvail) {
+    //search view
+    switch (searchOption) {
+      case SearchOptions.mostRecent:
+        {
+          wantedQuery = dataProvider.getProtestCollectionRef
+              .orderBy('creation_time', descending: true)
+              .where('prefixes_name', arrayContains: text);
+        }
+        break;
+      case SearchOptions.mostPopular:
+        {
+          wantedQuery = dataProvider.getProtestCollectionRef
+              .orderBy('participants_amount', descending: true)
+              .where('prefixes_name', arrayContains: text);
+        }
+        break;
+      default:
+        {
+          //ALl- sorted by name
+          wantedQuery = dataProvider.getProtestCollectionRef
+              .orderBy('name', descending: false)
+              .where('prefixes_name', arrayContains: text);
+        }
+    }
+  } else {
+    //tags view
+    wantedQuery = dataProvider.getProtestCollectionRef
+        .orderBy('creation_time', descending: true);
+    print("else");
+    if (selectedTags.isNotEmpty) {
+      wantedQuery = wantedQuery.where("tags", arrayContainsAny: selectedTags);
+      print("selected query");
+    }
   }
+  return wantedQuery;
 }
 
 class SearchScreen extends StatefulWidget {
@@ -58,13 +82,15 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   late final QueryChangeListener<Protest> queryProvider;
   String searchText = '';
+  // List<String> selectedTagsList = [];
+  bool isSearchView = true;
 
   @override
   void initState() {
     super.initState();
     queryProvider = QueryChangeListener(searchQuery(
         context.read<DataProvider>(),
-        context.read<SearchPresetsProvider>().searchOption));
+        context.read<SearchPresetsProvider>().searchOption, []));
     context.read<SearchPresetsProvider>().addListener(() {
       _updateQuery();
     });
@@ -76,10 +102,13 @@ class _SearchScreenState extends State<SearchScreen> {
     super.dispose();
   }
 
-  _updateQuery() {
-    queryProvider.query = searchQuery(context.read<DataProvider>(),
+  _updateQuery({bool isSearchAvail = true}) {
+    queryProvider.query = searchQuery(
+        context.read<DataProvider>(),
         context.read<SearchPresetsProvider>().searchOption,
-        text: searchText.toLowerCase());
+        context.read<SearchPresetsProvider>().selectedTagsList,
+        text: searchText.toLowerCase(),
+        isSearchAvail: isSearchAvail);
   }
 
   @override
@@ -93,43 +122,147 @@ class _SearchScreenState extends State<SearchScreen> {
         body: Paginator(
           queryProvider: queryProvider,
           header: SliverAppBar(
+            titleSpacing: 0,
+            centerTitle: true,
             backgroundColor: white,
             toolbarHeight: 150,
-            centerTitle: true,
             floating: true,
-            title: Column(
-              children: [
-                addVerticalSpace(height: 15),
-                CustomTextFormField(
-                  icon: const Icon(Icons.search),
-                  hintText: "Search...",
-                  onChanged: (searchText) {
-                    this.searchText = searchText;
-                    _updateQuery();
-                  },
-                ),
-                DropdownButton<SearchOptions>(
-                  // Initial Value
-                  value: context.watch<SearchPresetsProvider>().searchOption,
-                  elevation: 10,
-                  icon: const Icon(Icons.keyboard_arrow_down),
-                  items: SearchOptions.values.map((SearchOptions item) {
-                    return DropdownMenuItem(
-                      value: item,
-                      child: Text(item.value),
-                    );
-                  }).toList(),
-                  // After selecting the desired option,it will
-                  // change button value to selected value
-                  onChanged: (SearchOptions? newValue) {
-                    setState(() {
-                      context.read<SearchPresetsProvider>().searchOption =
-                          newValue!;
-                    });
-                  },
-                ),
-              ],
-            ),
+            title: isSearchView
+                ? Column(
+                    children: [
+                      addVerticalSpace(height: 15),
+                      CustomTextFormField(
+                        icon: IconButton(
+                            onPressed: () {
+                              isSearchView = false;
+                              _updateQuery(isSearchAvail: isSearchView);
+                              setState(() {});
+                            },
+                            icon: Icon(Icons.filter_alt),
+                            color: darkPurple),
+                        hintText: "Search...",
+                        onChanged: (searchText) {
+                          this.searchText = searchText;
+                          _updateQuery();
+                        },
+                      ),
+                      // IconButton(
+                      //   onPressed: () {},
+                      //   icon: Icon(Icons.filter_alt),
+                      // ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          DropdownButton<SearchOptions>(
+                            // Initial Value
+                            value: context
+                                .watch<SearchPresetsProvider>()
+                                .searchOption,
+                            elevation: 20,
+                            icon: const Icon(Icons.keyboard_arrow_down),
+                            items:
+                                SearchOptions.values.map((SearchOptions item) {
+                              return DropdownMenuItem(
+                                value: item,
+                                child: Text(item.value),
+                              );
+                            }).toList(),
+                            // After selecting the desired option,it will
+                            // change button value to selected value
+                            onChanged: (SearchOptions? newValue) {
+                              setState(() {
+                                context
+                                    .read<SearchPresetsProvider>()
+                                    .searchOption = newValue!;
+                              });
+                            },
+                          ),
+                          Padding(padding: EdgeInsets.all(10)),
+                        ],
+                      ),
+                      //  Padding(
+                      //padding: EdgeInsets.only(
+                      // left: MediaQuery.of(context).size.width * 0.1,
+                      // right: MediaQuery.of(context).size.width * 0.1),
+                      //child:
+                    ],
+                  )
+                : Column(
+                    children: [
+                      ListTile(
+                        title: const Text("Choose Tags",
+                            style: TextStyle(color: lightGray, fontSize: 24)),
+                        trailing: IconButton(
+                            icon: const Icon(
+                              Icons.search,
+                              color: darkPurple,
+                            ),
+                            onPressed: () {
+                              isSearchView = true;
+                              _updateQuery(isSearchAvail: isSearchView);
+                              setState(() {});
+                            }),
+                      ),
+                      addVerticalSpace(height: 10),
+                      SingleChildScrollView(
+                        padding: EdgeInsets.only(left: 5),
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            Wrap(
+                              spacing: 10,
+                              children: List<Widget>.generate(
+                                tags.length,
+                                (int index) {
+                                  bool currSelected = context
+                                      .read<SearchPresetsProvider>()
+                                      .selectedTagsList
+                                      .contains(tags[index]);
+                                  return Padding(
+                                    padding: const EdgeInsets.only(bottom: 5.0),
+                                    child: ChoiceChip(
+                                      // shape: const StadiumBorder(
+                                      //   side: BorderSide(),
+                                      // ),
+                                      side: BorderSide(
+                                          color: currSelected
+                                              ? darkPurple
+                                              : lightGray),
+                                      labelPadding: const EdgeInsets.all(5.0),
+                                      label: Text(
+                                        tags[index],
+                                        style: TextStyle(
+                                            color: currSelected
+                                                ? darkPurple
+                                                : black,
+                                            fontSize: 18),
+                                      ),
+                                      selected: currSelected,
+                                      selectedColor: transparentPurple,
+                                      backgroundColor:
+                                          currSelected ? purple : white,
+                                      elevation: 2,
+                                      onSelected: (bool selected) {
+                                        //  setState(() {
+                                        selected
+                                            ? context
+                                                .read<SearchPresetsProvider>()
+                                                .addTag(tags[index])
+                                            : context
+                                                .read<SearchPresetsProvider>()
+                                                .removeTag(tags[index]);
+                                        _updateQuery(isSearchAvail: false);
+                                      },
+                                    ),
+                                  );
+                                },
+                              ).toList(),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
           ),
           onEmpty: const Center(
             child: Padding(
