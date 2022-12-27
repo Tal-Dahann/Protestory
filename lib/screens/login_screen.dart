@@ -131,7 +131,7 @@ class _LoginPageState extends State<LoginPage> {
                               showAboutDialog(
                                   context: context,
                                   applicationName: 'Protestory',
-                                  applicationVersion: '1.0.0',
+                                  applicationVersion: '1.0.1',
                                   applicationLegalese:
                                       'Protestory is a convenient and user-friendly app for searching and creating protests around the world.');
                             }),
