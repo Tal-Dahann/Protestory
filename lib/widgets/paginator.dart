@@ -9,11 +9,14 @@ class Paginator extends StatelessWidget {
   final Widget? header;
   final Widget onEmpty;
   final QueryChangeListener<Protest> queryProvider;
+  final ScrollController? scrollController;
+
   const Paginator(
       {required this.queryProvider,
       Key? key,
       required this.header,
-      required this.onEmpty})
+      required this.onEmpty,
+      this.scrollController})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -22,6 +25,7 @@ class Paginator extends StatelessWidget {
       onEmpty: onEmpty,
       queryProvider: queryProvider,
       isLive: true,
+      scrollController: scrollController,
       itemBuilder: (context, documentSnapshots, index) {
         final data = documentSnapshots[index].data() as Protest;
 
