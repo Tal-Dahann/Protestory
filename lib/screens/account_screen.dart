@@ -74,6 +74,13 @@ class _AccountScreenState extends State<AccountScreen>
                   ],
                 )),
         backgroundColor: white,
+        actions: [
+          IconButton(
+            onPressed: () => context.read<AuthNotifier>().signOut(),
+            icon: const Icon(Icons.exit_to_app_outlined),
+            color: blue,
+          )
+        ],
       ),
       body: Stack(
         children: [
