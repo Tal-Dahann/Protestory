@@ -6,7 +6,6 @@ import '../constants/colors.dart';
 import '../providers/data_provider.dart';
 import '../providers/navigation_provider.dart';
 import '../utils/add_spaces.dart';
-import '../widgets/navigation.dart';
 import '../widgets/paginator_favorites.dart';
 
 class FavoritesScreen extends StatelessWidget {
@@ -17,7 +16,7 @@ class FavoritesScreen extends StatelessWidget {
     context.watch<NavigationProvider>();
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Joined Protests', style: navTitleStyle),
+          title: const Text('Joined Protests'),
           backgroundColor: white,
         ),
         body: PaginatorFavorites(

@@ -1,7 +1,12 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:protestory/constants/colors.dart';
 import 'package:protestory/firebase/protest.dart';
 import 'package:protestory/utils/add_spaces.dart';
+import 'package:protestory/utils/permissions_helper.dart';
 import 'package:provider/provider.dart';
 
 import '../firebase/user.dart';
@@ -12,6 +17,35 @@ class ProtestInformationDetailed extends StatelessWidget {
 
   const ProtestInformationDetailed({Key? key, required this.protest})
       : super(key: key);
+
+  Widget _getLocationMap(
+      {bool userControl = true, ArgumentCallback<LatLng>? onTap}) {
+    return GoogleMap(
+        compassEnabled: userControl,
+        mapToolbarEnabled: userControl,
+        rotateGesturesEnabled: userControl,
+        scrollGesturesEnabled: userControl,
+        zoomControlsEnabled: userControl,
+        zoomGesturesEnabled: userControl,
+        myLocationEnabled: userControl,
+        onTap: onTap,
+        initialCameraPosition:
+            CameraPosition(target: protest.locationLatLng, zoom: 11.0),
+        markers: {
+          Marker(
+              markerId: MarkerId(protest.name),
+              position: protest.locationLatLng,
+              consumeTapEvents: onTap != null,
+              onTap: () {
+                if (onTap != null) {
+                  onTap(protest.locationLatLng);
+                }
+              },
+              infoWindow: InfoWindow(
+                  title: protest.location,
+                  snippet: 'The protest will be right here!'))
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -146,6 +180,50 @@ class ProtestInformationDetailed extends StatelessWidget {
                 );
               },
             ).toList(),
+          ),
+          addVerticalSpace(height: 10),
+          const Divider(
+            thickness: 2,
+          ),
+          addVerticalSpace(height: 10),
+          const Text(
+            'Location',
+            style: TextStyle(
+              color: purple,
+              fontWeight: FontWeight.bold,
+              fontSize: 24,
+            ),
+          ),
+          addVerticalSpace(height: 10),
+          SizedBox(
+            height: min(200.0, MediaQuery.of(context).size.height * 0.2),
+            child: _getLocationMap(
+                userControl: false,
+                onTap: (_) {
+                  PersistentNavBarNavigator.pushDynamicScreen(
+                    context,
+                    withNavBar: false,
+                    screen: MaterialPageRoute(
+                      builder: (context) => Scaffold(
+                        appBar: AppBar(
+                          title: Text(
+                            '${protest.name} Location',
+                          ),
+                        ),
+                        body: FutureBuilder<void>(
+                          future: requestLocationPermission(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.done) {
+                              return _getLocationMap();
+                            }
+                            return const SizedBox();
+                          },
+                        ),
+                      ),
+                    ),
+                  );
+                }),
           ),
           addVerticalSpace(height: 10),
           const Divider(

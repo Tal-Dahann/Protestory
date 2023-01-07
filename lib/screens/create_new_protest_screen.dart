@@ -18,7 +18,6 @@ import 'package:provider/provider.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 
 import '../widgets/discard_changes.dart';
-import '../widgets/navigation.dart';
 
 enum FormStatus { creating, editing }
 
@@ -170,8 +169,10 @@ class _NewProtestFormState extends State<NewProtestForm> {
           color: blue,
         ),
         title: widget.formStatus == FormStatus.creating
-            ? const Text('New Protest', style: navTitleStyle)
-            : Text('Editing \'${widget.protest!.name}\'', style: navTitleStyle),
+            ? const Text('New Protest')
+            : Text(
+                'Editing \'${widget.protest!.name}\'',
+              ),
         backgroundColor: white,
       ),
       body: Column(

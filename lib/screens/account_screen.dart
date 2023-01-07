@@ -11,8 +11,6 @@ import 'package:protestory/providers/data_provider.dart';
 import 'package:protestory/widgets/paginator.dart';
 import 'package:provider/provider.dart';
 
-import '../widgets/navigation.dart';
-
 class AccountScreen extends StatefulWidget {
   const AccountScreen({Key? key}) : super(key: key);
 
@@ -62,14 +60,14 @@ class _AccountScreenState extends State<AccountScreen>
                       opacity: _animationController.value,
                       child: Container(
                           color: Colors.white,
-                          child: const Text('Created by me',
-                              style: navTitleStyle)),
+                          child: const Text(
+                            'Created by me',
+                          )),
                     ),
                     Opacity(
                       opacity: 1 - _animationController.value,
                       child: Container(
-                          color: Colors.white,
-                          child: const Text('Profile', style: navTitleStyle)),
+                          color: Colors.white, child: const Text('Profile')),
                     ),
                   ],
                 )),

@@ -135,7 +135,9 @@ class _FormPageOneState extends State<FormPageOne> {
                         builder: (context) => PlacePicker(
                               'AIzaSyCo-uZ1Sbqmdvi0qhYilL_yZ82CodRViEQ',
                             )));
-                if (result.formattedAddress != null) {
+                if (result.name != null) {
+                  notifier.locationController.text = result.name!;
+                } else if (result.formattedAddress != null) {
                   notifier.locationController.text = result.formattedAddress!;
                 }
                 notifier.locationLatLng = result.latLng;

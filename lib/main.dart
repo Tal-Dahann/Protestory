@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:protestory/constants/colors.dart';
 import 'package:protestory/providers/auth_provider.dart';
 import 'package:protestory/providers/data_provider.dart';
 import 'package:protestory/providers/search_provider.dart';
@@ -26,7 +27,11 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     var app = MaterialApp(
       title: 'Protestory',
-      theme: ThemeData(appBarTheme: const AppBarTheme(color: Colors.white)),
+      theme: ThemeData(
+          appBarTheme: const AppBarTheme(
+              foregroundColor: blue,
+              backgroundColor: Colors.white,
+              titleTextStyle: navTitleStyle)),
       debugShowCheckedModeBanner: false,
       home: (context.watch<AuthProvider>().isAuthenticated())
           ? const MainNavigation()

@@ -10,7 +10,6 @@ import '../firebase/protest.dart';
 import '../providers/data_provider.dart';
 import '../providers/navigation_provider.dart';
 import '../utils/add_spaces.dart';
-import '../widgets/navigation.dart';
 import '../widgets/paginator.dart';
 import '../widgets/text_fields.dart';
 
@@ -108,7 +107,7 @@ class _SearchScreenState extends State<SearchScreen> {
     context.watch<NavigationProvider>();
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Search', style: navTitleStyle),
+          title: const Text('Search'),
           backgroundColor: white,
         ),
         body: Paginator(

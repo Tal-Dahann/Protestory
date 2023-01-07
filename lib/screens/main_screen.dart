@@ -5,7 +5,6 @@ import 'package:protestory/screens/search_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../constants/colors.dart';
-import '../widgets/navigation.dart';
 import '../widgets/protest_list_home.dart';
 
 class MainScreen extends StatefulWidget {
@@ -28,7 +27,7 @@ class _MainScreenState extends State<MainScreen> {
       appBar: AppBar(
         title: Row(
           children: [
-            const Text('Protestory', style: navTitleStyle),
+            const Text('Protestory'),
             Padding(
               padding: const EdgeInsets.only(left: 5.0),
               child: SvgPicture.asset(
@@ -50,8 +49,10 @@ class _MainScreenState extends State<MainScreen> {
         },
         child: ListView.separated(
             padding: const EdgeInsets.only(bottom: 20.0, top: 10.0),
-            itemBuilder: (context, index) =>
-                ProtestListHome(searchOption: list[index], maxLengthList: 5,),
+            itemBuilder: (context, index) => ProtestListHome(
+                  searchOption: list[index],
+                  maxLengthList: 5,
+                ),
             separatorBuilder: (context, index) => const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 10.0),
                   child: Divider(
