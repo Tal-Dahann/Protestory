@@ -14,7 +14,7 @@ import '../firebase/story.dart';
 import '../utils/exceptions.dart';
 
 class DataProvider {
-  static const version = '1.0.0';
+  static const version = '1.0.0-develop';
   static final firestore =
       FirebaseFirestore.instance.collection('versions').doc('v$version');
   static final firestorage = FirebaseStorage.instance.ref('v$version');
