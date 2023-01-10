@@ -99,7 +99,7 @@ class ProtestCard extends StatelessWidget {
                                       color: Colors.grey[800]),
                                   addHorizontalSpace(width: 4),
                                   Expanded(
-                                    child: AutoSizeText(protest.location,
+                                    child: AutoSizeText(protest.locationName,
                                         minFontSize: 15.0,
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,

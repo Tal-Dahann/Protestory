@@ -58,6 +58,10 @@ dependencies:
   google_maps_flutter: ^2.2.2
   place_picker: ^0.10.0
   location: ^4.4.0
+  geoflutterfire:
+    git:
+      url: https://github.com/austinn0/GeoFlutterFire
+  geolocator: ^9.0.2
 
 dev_dependencies:
   flutter_launcher_icons: "^0.11.0"

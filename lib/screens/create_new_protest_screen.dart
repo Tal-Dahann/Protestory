@@ -119,7 +119,8 @@ class _NewProtestFormState extends State<NewProtestForm> {
 
   void initExistingFields(BuildContext context, Protest? p) async {
     context.read<NewProtestFormNotifier>().titleController.text = p!.name;
-    context.read<NewProtestFormNotifier>().locationController.text = p.location;
+    context.read<NewProtestFormNotifier>().locationController.text =
+        p.locationName;
     context.read<NewProtestFormNotifier>().locationLatLng = p.locationLatLng;
     context.read<NewProtestFormNotifier>().dateController.text =
         p.dateAndTime();

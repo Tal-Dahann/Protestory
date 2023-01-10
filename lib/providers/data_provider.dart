@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:place_picker/place_picker.dart';
 import 'package:protestory/firebase/protest.dart';
 import 'package:protestory/firebase/user.dart';
@@ -18,6 +19,7 @@ class DataProvider {
   static final firestore =
       FirebaseFirestore.instance.collection('versions').doc('v$version');
   static final firestorage = FirebaseStorage.instance.ref('v$version');
+  static final geostore = Geoflutterfire();
 
   late final CollectionReference<Protest> protestsCollectionRef;
   late final CollectionReference<PUser> usersCollectionRef;
@@ -67,7 +69,7 @@ class DataProvider {
       participantsAmount: 0,
       contactInfo: contactInfo,
       description: description,
-      location: location,
+      locationName: location,
       locationLatLng: locationLatLng,
       tags: tags,
     );
@@ -97,7 +99,7 @@ class DataProvider {
       participantsAmount: protest.participantsAmount,
       contactInfo: contactInfo,
       description: description,
-      location: location,
+      locationName: location,
       locationLatLng: locationLatLng,
       tags: tags,
     );

@@ -42,7 +42,7 @@ class ProtestInformationDetailed extends StatelessWidget {
                 }
               },
               infoWindow: InfoWindow(
-                  title: protest.location,
+                  title: protest.locationName,
                   snippet: 'The protest will be right here!'))
         });
   }
@@ -77,7 +77,7 @@ class ProtestInformationDetailed extends StatelessWidget {
                         Icon(Icons.location_on, color: Colors.grey[800]),
                         addHorizontalSpace(width: 3),
                         Expanded(
-                          child: Text(protest.location,
+                          child: Text(protest.locationName,
                               style: TextStyle(color: Colors.grey[800])),
                         )
                       ],

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:intl/intl.dart';
 import 'package:place_picker/place_picker.dart';
@@ -24,9 +25,10 @@ class Protest {
   int participantsAmount;
   final String contactInfo;
   final String description;
-  final String location;
+  final String locationName;
   final LatLng locationLatLng;
   final List<String> tags;
+  double? distanceFromUser;
   Completer<NetworkImage>? _imageCompleter;
   NetworkImage? _image;
 
@@ -39,7 +41,7 @@ class Protest {
     required this.participantsAmount,
     required this.contactInfo,
     required this.description,
-    required this.location,
+    required this.locationName,
     required this.locationLatLng,
     required this.tags,
   }) : lowerCaseName = name.toLowerCase();
@@ -108,7 +110,7 @@ class Protest {
       participantsAmount: data['participants_amount'],
       contactInfo: data['contact_info'],
       description: data['description'],
-      location: data['location'],
+      locationName: data['location'],
       locationLatLng: LatLng(data['latitude'] ?? 0.0, data['longitude'] ?? 0.0),
       tags: List.from(data['tags']),
     );
@@ -124,9 +126,11 @@ class Protest {
       'participants_amount': participantsAmount,
       'contact_info': contactInfo,
       'description': description,
-      'location': location,
+      'location': locationName,
       'latitude': locationLatLng.latitude,
       'longitude': locationLatLng.longitude,
+      'location_point':
+          GeoFirePoint(locationLatLng.latitude, locationLatLng.longitude).data,
       'tags': tags,
       'lower_case_name': lowerCaseName,
       'prefixes_name': pl,
