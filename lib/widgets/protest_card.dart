@@ -69,16 +69,35 @@ class ProtestCard extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.only(
                             left: 5.0, right: 5.0, top: 5.0),
-                        child: AutoSizeText(
-                          protest.name,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.start,
-                          style: const TextStyle(
-                            fontSize: 25.0,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            AutoSizeText(
+                              protest.name,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.start,
+                              style: const TextStyle(
+                                fontSize: 25.0,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                            protest.distanceFromUser == null
+                                ? const SizedBox()
+                                : Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Text('${protest.distanceFromUser!} km',
+                                          style: const TextStyle(
+                                            fontSize: 15.0,
+                                            color: Colors.grey,
+                                          )),
+                                    ],
+                                  ),
+                          ],
                         ),
                       ),
                     ),

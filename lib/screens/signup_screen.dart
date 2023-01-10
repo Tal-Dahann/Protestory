@@ -5,7 +5,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:protestory/constants/colors.dart';
 import 'package:protestory/utils/add_spaces.dart';
 import 'package:protestory/utils/exceptions.dart';
-//import 'package:protestory/constants/colors.dart';
 import 'package:protestory/widgets/buttons.dart';
 import 'package:protestory/widgets/loading.dart';
 import 'package:protestory/widgets/text_fields.dart';
@@ -144,7 +143,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                                         color: Colors.white,
                                                         fontSize: 50,
                                                         fontWeight:
-                                                        FontWeight.bold)),
+                                                            FontWeight.bold)),
                                               ),
                                             )),
                                       ),
@@ -164,7 +163,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                       hintText: 'Hadar Muhtar',
                                       errorText: _displayNameErrorMessage,
                                       autovalidateMode:
-                                      AutovalidateMode.onUserInteraction,
+                                          AutovalidateMode.onUserInteraction,
                                       textInputAction: TextInputAction.next,
                                       controller: _displayNameController,
                                       validator: (displayName) {
@@ -190,7 +189,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                           hintText: 'user@example.com',
                                           errorText: _emailErrorMessage,
                                           keyboardType:
-                                          TextInputType.emailAddress,
+                                              TextInputType.emailAddress,
                                           autovalidateMode: AutovalidateMode
                                               .onUserInteraction,
                                           textInputAction: TextInputAction.next,
@@ -241,7 +240,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                       label: 'Confirm password',
                                       hintText: 'Re-Enter Password',
                                       autovalidateMode:
-                                      AutovalidateMode.onUserInteraction,
+                                          AutovalidateMode.onUserInteraction,
                                       textInputAction: TextInputAction.done,
                                       validator: (confirm) {
                                         if (confirm !=
