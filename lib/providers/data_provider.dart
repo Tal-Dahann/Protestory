@@ -12,6 +12,7 @@ import 'package:protestory/screens/protest_information_screen.dart';
 
 import '../firebase/attender.dart';
 import '../firebase/story.dart';
+import '../firebase/update.dart';
 import '../utils/exceptions.dart';
 
 class DataProvider {
@@ -365,11 +366,19 @@ class DataProvider {
   }
 
   Future<void> deleteStory(String protestId, Story storyToDelete) async {
-    protestsCollectionRef.doc(protestId).collection('stories').doc(storyToDelete.docId).delete();
+    protestsCollectionRef
+        .doc(protestId)
+        .collection('stories')
+        .doc(storyToDelete.docId)
+        .delete();
   }
 
-  Future<void> likeStory(String userId, String protestId, Story storyToLike) async {
-    var storyRef = protestsCollectionRef.doc(protestId).collection('stories').doc(storyToLike.docId);
+  Future<void> likeStory(
+      String userId, String protestId, Story storyToLike) async {
+    var storyRef = protestsCollectionRef
+        .doc(protestId)
+        .collection('stories')
+        .doc(storyToLike.docId);
     var likedCollection = storyRef.collection('likes');
     var doc = await likedCollection.doc(userId).get();
     if (doc.exists) {
@@ -382,8 +391,13 @@ class DataProvider {
     return;
   }
 
-  Future<bool> isLiked(String userId, String protestId, Story storyToLike) async {
-    var likedCollection = protestsCollectionRef.doc(protestId).collection('stories').doc(storyToLike.docId).collection('likes');
+  Future<bool> isLiked(
+      String userId, String protestId, Story storyToLike) async {
+    var likedCollection = protestsCollectionRef
+        .doc(protestId)
+        .collection('stories')
+        .doc(storyToLike.docId)
+        .collection('likes');
     var doc = await likedCollection.doc(userId).get();
     if (doc.exists) {
       return Future.value(true);
@@ -391,6 +405,29 @@ class DataProvider {
     return Future.value(false);
   }
 
+  Future<void> addUpdate(Protest protestToAddTo, String content) async {
+    //assuming it not empty content
+
+    var protestRef = protestsCollectionRef.doc(protestToAddTo.id);
+
+    // TODO:  check if the protest exists
+
+    var updatesNewDocRef = protestRef
+        .collection("updates")
+        .withConverter(
+          fromFirestore: Update.fromFirestore,
+          toFirestore: (Update up, _) => up.toFirestore(),
+        )
+        .doc();
+
+    Update newUpdate = Update(
+      docId: updatesNewDocRef.id,
+      userID: user.id,
+      content: content,
+      creationTime: Timestamp.now(),
+    );
+    await updatesNewDocRef.set(newUpdate);
+  }
 
   // Future<void> unLikeStory(String userId, String protestId, Story storyToUnLike) async {
   //   var likedCollection = protestsCollectionRef.doc(protestId).collection('stories').doc(storyToUnLike.docId).collection('likes');

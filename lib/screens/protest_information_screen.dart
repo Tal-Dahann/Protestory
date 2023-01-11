@@ -11,6 +11,7 @@ import 'package:protestory/widgets/protest_information_detailed.dart';
 import 'package:provider/provider.dart';
 
 import '../widgets/protest_stories.dart';
+import '../widgets/protest_updates.dart';
 
 enum AttendingStatus { unKnown, attending, notAttending, joining, leaving }
 
@@ -357,7 +358,11 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
                       dataProvider: context.read<DataProvider>(),
                       isCreator: isCreator,
                     ),
-                    SizedBox(),
+                    ProtestUpdates(
+                      protest: protest,
+                      dataProvider: context.read<DataProvider>(),
+                      isCreator: isCreator,
+                    ),
                   ],
                 ),
               )
