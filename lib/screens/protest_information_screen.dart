@@ -349,6 +349,7 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
                     ProtestStories(
                       protest: protest,
                       dataProvider: context.read<DataProvider>(),
+                      isCreator: isCreator,
                     ),
                   ],
                 ),

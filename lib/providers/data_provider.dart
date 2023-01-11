@@ -362,36 +362,8 @@ class DataProvider {
         )
         .orderBy("creation_time", descending: true);
   }
+
+  Future<void> deleteStory(String protestId, Story storyToDelete) async {
+    protestsCollectionRef.doc(protestId).collection('stories').doc(storyToDelete.docId).delete();
+  }
 }
-
-////myself
-
-// Container(
-// height: 500,
-// child: PaginatorStories(
-// protestID: protest.id,
-// queryProvider: QueryChangeListener(context
-//     .read<DataProvider>()
-// .queryStoriesOfProtest(protestId: protest.id)),
-// header: SliverAppBar(
-// backgroundColor: white,
-// toolbarHeight: 5,
-// centerTitle: true,
-// floating: true,
-// title: Column(
-// children: [
-// addVerticalSpace(height: 15),
-// ],
-// ),
-// ),
-// onEmpty: const Center(
-// child: Padding(
-// padding: EdgeInsets.all(10.0),
-// child: Text(
-// 'No Stories yet',
-// style: TextStyle(color: darkGray),
-// ),
-// ),
-// ),
-// ),
-// )

@@ -10,7 +10,13 @@ import '../providers/data_provider.dart';
 class ProtestStories extends StatefulWidget {
   final Protest protest;
   final DataProvider dataProvider;
-  const ProtestStories({required this.protest, required this.dataProvider, Key? key})
+  final bool isCreator;
+
+  const ProtestStories(
+      {required this.protest,
+      required this.dataProvider,
+      Key? key,
+      required this.isCreator})
       : super(key: key);
 
   @override
@@ -25,6 +31,7 @@ class _ProtestStoriesState extends State<ProtestStories> {
         children: [
           Flexible(
             child: PaginatorStories(
+              isCreator: widget.isCreator,
               protestID: widget.protest.id,
               queryProvider: QueryChangeListener(context
                   .read<DataProvider>()
@@ -38,6 +45,7 @@ class _ProtestStoriesState extends State<ProtestStories> {
                   ),
                 ),
               ),
+              dataProvider: widget.dataProvider,
             ),
           )
         ],
