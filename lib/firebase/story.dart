@@ -7,8 +7,10 @@ class Story {
   final String userID;
   final String content;
   final Timestamp creationTime;
+  final int numOfLikes;
 
   Story({
+    required this.numOfLikes,
     required this.docId,
     required this.userID,
     required this.content,
@@ -24,6 +26,7 @@ class Story {
       throw StoryNotFound();
     }
     return Story(
+      numOfLikes: data['num_of_likes'],
       docId: snapshot.id,
       userID: data['user_id'],
       content: data['content'],
@@ -33,6 +36,7 @@ class Story {
 
   Map<String, dynamic> toFirestore() {
     return {
+      'num_of_likes': numOfLikes,
       'user_id': userID,
       'content': content,
       'creation_time': creationTime,

@@ -342,6 +342,7 @@ class DataProvider {
         .doc();
 
     Story newStory = Story(
+      numOfLikes: 0,
       docId: storyNewDocRef.id,
       userID: user.id,
       content: content,
@@ -366,4 +367,42 @@ class DataProvider {
   Future<void> deleteStory(String protestId, Story storyToDelete) async {
     protestsCollectionRef.doc(protestId).collection('stories').doc(storyToDelete.docId).delete();
   }
+
+  Future<void> likeStory(String userId, String protestId, Story storyToLike) async {
+    var storyRef = protestsCollectionRef.doc(protestId).collection('stories').doc(storyToLike.docId);
+    var likedCollection = storyRef.collection('likes');
+    var doc = await likedCollection.doc(userId).get();
+    if (doc.exists) {
+      likedCollection.doc(userId).delete();
+      storyRef.update({'num_of_likes': FieldValue.increment(-1)});
+      return;
+    }
+    likedCollection.doc(userId).set({'userId': userId});
+    storyRef.update({'num_of_likes': FieldValue.increment(1)});
+    return;
+  }
+
+  Future<bool> isLiked(String userId, String protestId, Story storyToLike) async {
+    var likedCollection = protestsCollectionRef.doc(protestId).collection('stories').doc(storyToLike.docId).collection('likes');
+    var doc = await likedCollection.doc(userId).get();
+    if (doc.exists) {
+      return Future.value(true);
+    }
+    return Future.value(false);
+  }
+
+
+  // Future<void> unLikeStory(String userId, String protestId, Story storyToUnLike) async {
+  //   var likedCollection = protestsCollectionRef.doc(protestId).collection('stories').doc(storyToUnLike.docId).collection('likes');
+  //   var doc = await likedCollection.doc(userId).get();
+  //   if (doc.exists) {
+  //     likedCollection.doc(userId).delete();
+  //     return;
+  //   }
+  // }
+  //
+  // Future<bool> checkIfLiked(String userId, String protestId, Story storyToUnLike) async {
+  //   return Future.value(true);
+  // }
+
 }
