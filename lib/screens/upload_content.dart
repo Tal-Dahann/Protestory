@@ -10,19 +10,25 @@ import '../constants/colors.dart';
 import '../firebase/protest.dart';
 import '../widgets/navigation.dart';
 
-class UploadStoryScreen extends StatefulWidget {
-  final TextEditingController storyController;
-  final Protest protest;
+enum UploadMode { story, update }
 
-  const UploadStoryScreen(
-      {Key? key, required this.storyController, required this.protest})
+class UploadContentScreen extends StatefulWidget {
+  final TextEditingController contentController;
+  final Protest protest;
+  final UploadMode uploadMode;
+
+  const UploadContentScreen(
+      {Key? key,
+      required this.contentController,
+      required this.protest,
+      required this.uploadMode})
       : super(key: key);
 
   @override
-  State<UploadStoryScreen> createState() => _UploadStoryScreenState();
+  State<UploadContentScreen> createState() => _UploadContentScreenState();
 }
 
-class _UploadStoryScreenState extends State<UploadStoryScreen> {
+class _UploadContentScreenState extends State<UploadContentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,8 +37,10 @@ class _UploadStoryScreenState extends State<UploadStoryScreen> {
           leading: const BackButton(
             color: blue,
           ),
-          title: const Text(
-            'Write A Story',
+          title: Text(
+            widget.uploadMode == UploadMode.story
+                ? 'Write A Story'
+                : 'Post An Update',
             style: navTitleStyle,
           ),
           backgroundColor: white,
@@ -42,8 +50,10 @@ class _UploadStoryScreenState extends State<UploadStoryScreen> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             addVerticalSpace(height: 20),
-            const Text('Explain why this protest is important to you.',
-                style: TextStyle(color: darkGray, fontSize: 16)),
+            widget.uploadMode == UploadMode.story
+                ? const Text('Explain why this protest is important to you.',
+                    style: TextStyle(color: darkGray, fontSize: 16))
+                : const SizedBox(),
             addVerticalSpace(height: 20),
             Expanded(
               child: Align(
@@ -53,8 +63,10 @@ class _UploadStoryScreenState extends State<UploadStoryScreen> {
                       left: 8.0, right: 8.0, bottom: 8.0, top: 15),
                   child: CustomTextFormField(
                     height: MediaQuery.of(context).size.height * 0.5,
-                    hintText: 'Write your story here',
-                    controller: widget.storyController,
+                    hintText: widget.uploadMode == UploadMode.story
+                        ? 'Write your story here'
+                        : 'Write the update here',
+                    controller: widget.contentController,
                     maxLines: 6,
                   ),
                 ),
@@ -65,15 +77,27 @@ class _UploadStoryScreenState extends State<UploadStoryScreen> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   CustomButton(
-                      text: 'Upload',
+                      text: widget.uploadMode == UploadMode.story
+                          ? 'Upload'
+                          : 'Post',
                       onPressed: () {
                         FocusManager.instance.primaryFocus?.unfocus();
-                        if (widget.storyController.text == '') {
-                          ProtestoryException.showExceptionSnackBar(context,
-                              message: 'Can\'t upload empty story.');
+                        if (widget.contentController.text == '') {
+                          if (widget.uploadMode == UploadMode.story) {
+                            ProtestoryException.showExceptionSnackBar(context,
+                                message: 'Can\'t upload an empty story.');
+                          } else {
+                            ProtestoryException.showExceptionSnackBar(context,
+                                message: 'Can\'t post an empty update.');
+                          }
                         } else {
-                          context.read<DataProvider>().addStory(
-                              widget.protest, widget.storyController.text);
+                          if (widget.uploadMode == UploadMode.story) {
+                            context.read<DataProvider>().addStory(
+                                widget.protest, widget.contentController.text);
+                          } else {
+                            context.read<DataProvider>().addUpdate(
+                                widget.protest, widget.contentController.text);
+                          }
                           Navigator.of(context).pop();
                         }
                       }),

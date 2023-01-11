@@ -6,7 +6,7 @@ import 'package:protestory/providers/auth_provider.dart';
 import 'package:protestory/providers/data_provider.dart';
 import 'package:protestory/providers/navigation_provider.dart';
 import 'package:protestory/screens/create_new_protest_screen.dart';
-import 'package:protestory/screens/upload_story.dart';
+import 'package:protestory/screens/upload_content.dart';
 import 'package:protestory/widgets/protest_information_detailed.dart';
 import 'package:provider/provider.dart';
 
@@ -78,7 +78,7 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
     ],
   );
   var _selectedIndex = 0;
-  final TextEditingController _storyController = TextEditingController();
+  final TextEditingController _contentController = TextEditingController();
 
   @override
   void initState() {
@@ -153,27 +153,56 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
                                   : () => {},
                             ),
                           )
-            : Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: FloatingActionButton.extended(
-                  backgroundColor: purple,
-                  label: const Text('Add Story'),
-                  icon: const Icon(Icons.person_add),
-                  onPressed: () async {
-                    PersistentNavBarNavigator.pushNewScreen(context,
-                        screen: UploadStoryScreen(
-                            protest: protest,
-                            storyController: _storyController),
-                        pageTransitionAnimation:
-                            PageTransitionAnimation.slideRight,
-                        withNavBar: false);
-                    if (_storyController.text != '') {
-                      _storyController.text = '';
-                      setState(() {});
-                    }
-                  },
-                ),
-              ),
+            : _selectedIndex == 1
+                ? Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: FloatingActionButton.extended(
+                      backgroundColor: purple,
+                      label: const Text('Add Story'),
+                      icon: const Icon(Icons.person_add),
+                      onPressed: () async {
+                        PersistentNavBarNavigator.pushNewScreen(context,
+                            screen: UploadContentScreen(
+                              protest: protest,
+                              contentController: _contentController,
+                              uploadMode: UploadMode.story,
+                            ),
+                            pageTransitionAnimation:
+                                PageTransitionAnimation.slideRight,
+                            withNavBar: false);
+                        if (_contentController.text != '') {
+                          _contentController.text = '';
+                          setState(() {});
+                        }
+                      },
+                    ),
+                  )
+                //TODO: CHANGE UPDATE FAB!!
+                : isCreator
+                    ? Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: FloatingActionButton.extended(
+                          backgroundColor: purple,
+                          label: const Text('Post Update'),
+                          icon: const Icon(Icons.person_add),
+                          onPressed: () async {
+                            PersistentNavBarNavigator.pushNewScreen(context,
+                                screen: UploadContentScreen(
+                                  protest: protest,
+                                  contentController: _contentController,
+                                  uploadMode: UploadMode.update,
+                                ),
+                                pageTransitionAnimation:
+                                    PageTransitionAnimation.slideRight,
+                                withNavBar: false);
+                            if (_contentController.text != '') {
+                              _contentController.text = '';
+                              setState(() {});
+                            }
+                          },
+                        ),
+                      )
+                    : null,
         body: NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return <Widget>[
