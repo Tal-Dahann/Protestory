@@ -429,6 +429,19 @@ class DataProvider {
     await updatesNewDocRef.set(newUpdate);
   }
 
+  Query<Update> queryUpdatesOfProtest({required String protestId}) {
+    var protestRef = protestsCollectionRef.doc(protestId);
+
+    // TODO:  check if the protest exists and that the sub collection exists, and is convertor needed??
+    return protestRef
+        .collection("updates")
+        .withConverter(
+          fromFirestore: Update.fromFirestore,
+          toFirestore: (Update up, _) => up.toFirestore(),
+        )
+        .orderBy("creation_time", descending: true);
+  }
+
   // Future<void> unLikeStory(String userId, String protestId, Story storyToUnLike) async {
   //   var likedCollection = protestsCollectionRef.doc(protestId).collection('stories').doc(storyToUnLike.docId).collection('likes');
   //   var doc = await likedCollection.doc(userId).get();

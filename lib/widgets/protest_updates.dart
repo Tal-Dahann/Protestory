@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:paginate_firestore/bloc/pagination_listeners.dart';
-import 'package:protestory/widgets/paginator_stories.dart';
+import 'package:protestory/widgets/paginator_updates.dart';
 import 'package:provider/provider.dart';
 
 import '../constants/colors.dart';
@@ -30,12 +30,11 @@ class _ProtestUpdatesState extends State<ProtestUpdates> {
       child: Column(
         children: [
           Flexible(
-            child: PaginatorStories(
-              isCreator: widget.isCreator,
+            child: PaginatorUpdates(
               protestID: widget.protest.id,
               queryProvider: QueryChangeListener(context
                   .read<DataProvider>()
-                  .queryStoriesOfProtest(protestId: widget.protest.id)),
+                  .queryUpdatesOfProtest(protestId: widget.protest.id)),
               onEmpty: const Center(
                 child: Padding(
                   padding: EdgeInsets.all(10.0),
@@ -45,7 +44,6 @@ class _ProtestUpdatesState extends State<ProtestUpdates> {
                   ),
                 ),
               ),
-              dataProvider: widget.dataProvider,
             ),
           )
         ],
