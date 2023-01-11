@@ -70,6 +70,9 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
       ),
       Tab(
         text: 'Stories',
+      ),
+      Tab(
+        text: 'Updates',
       )
     ],
   );
@@ -92,7 +95,7 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
     //     dataProvider.isAlreadyAttending(protest.id);
 
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         floatingActionButton: _selectedIndex == 0
             ? isCreator
@@ -328,6 +331,9 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
                           ),
                           Tab(
                             text: 'Stories',
+                          ),
+                          Tab(
+                            text: 'Updates',
                           )
                         ],
                       )),
@@ -351,6 +357,7 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
                       dataProvider: context.read<DataProvider>(),
                       isCreator: isCreator,
                     ),
+                    SizedBox(),
                   ],
                 ),
               )

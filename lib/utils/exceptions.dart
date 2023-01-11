@@ -24,3 +24,5 @@ class ProtestNotFound extends DataProviderException {}
 class AttenderNotFound extends DataProviderException {}
 
 class StoryNotFound extends DataProviderException {}
+
+class UpdateNotFound extends DataProviderException {}
