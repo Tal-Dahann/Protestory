@@ -380,14 +380,17 @@ class DataProvider {
         .collection('stories')
         .doc(storyToLike.docId);
     var likedCollection = storyRef.collection('likes');
-    var doc = await likedCollection.doc(userId).get();
-    if (doc.exists) {
-      likedCollection.doc(userId).delete();
-      storyRef.update({'num_of_likes': FieldValue.increment(-1)});
-      return;
-    }
-    likedCollection.doc(userId).set({'userId': userId});
-    storyRef.update({'num_of_likes': FieldValue.increment(1)});
+    FirebaseFirestore.instance.runTransaction((transaction) async {
+      var doc = await transaction.get(likedCollection.doc(userId));
+      if (doc.exists) {
+        transaction.delete(likedCollection.doc(userId));
+        transaction
+            .update(storyRef, {'num_of_likes': FieldValue.increment(-1)});
+        return;
+      }
+      transaction.set(likedCollection.doc(userId), {'userId': userId});
+      transaction.update(storyRef, {'num_of_likes': FieldValue.increment(1)});
+    });
     return;
   }
 
