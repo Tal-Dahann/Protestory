@@ -264,40 +264,45 @@ class DataProvider {
     updatedProtest.participantsAmount += 1;
     protestHolder.protest = updatedProtest;
 
-    //updating the protest info
-    await protestsCollectionRef
-        .doc(protestId)
-        .update({'participants_amount': FieldValue.increment(1)});
+    await FirebaseFirestore.instance.runTransaction((transaction) async {
+      //updating the protest info
+      transaction.update(protestsCollectionRef.doc(protestId),
+          {'participants_amount': FieldValue.increment(1)});
 
-    //updating the attending collection
-    var docRef = attendingCollectionRef.doc();
-    Attender newAttender = Attender(
-        docId: docRef.id,
-        userID: user.id,
-        protestID: protestId,
-        creationTime: Timestamp.now(),
-        username: user.username,
-        protestName: protestHolder.protest.name);
-    await docRef.set(newAttender);
+      //updating the attending collection
+      var docRef = attendingCollectionRef.doc();
+      Attender newAttender = Attender(
+          docId: docRef.id,
+          userID: user.id,
+          protestID: protestId,
+          creationTime: Timestamp.now(),
+          username: user.username,
+          protestName: protestHolder.protest.name);
+      transaction.set(docRef, newAttender);
+    });
   }
 
-  Future<bool> isAlreadyAttending(String protestId) async {
+  Future<DocumentReference<Attender>?> _attendingDoc(String protestId) async {
     var matchDocs = await attendingCollectionRef
         .where('user_id', isEqualTo: user.id)
         .where('protest_id', isEqualTo: protestId)
+        .limit(1)
         .get();
-
-    if (matchDocs.docs.isNotEmpty) {
-      return true;
+    if (matchDocs.docs.isEmpty) {
+      return null;
     }
+    return matchDocs.docs.first.reference;
+  }
 
-    return false;
+  Future<bool> isAlreadyAttending(String protestId) async {
+    return await _attendingDoc(protestId) != null;
   }
 
   Future<void> leaveProtest(
       String protestId, ProtestHolder protestHolder) async {
+    var attendingDocRef = await _attendingDoc(protestId);
     //check if not attending
-    if (await isAlreadyAttending(protestId) == false) {
+    if (attendingDocRef == null) {
       return;
     }
 
@@ -305,20 +310,18 @@ class DataProvider {
     updatedProtest.participantsAmount -= 1;
     protestHolder.protest = updatedProtest;
 
-    //updating the protest info
-    await protestsCollectionRef
-        .doc(protestId)
-        .update({'participants_amount': FieldValue.increment(-1)});
+    await FirebaseFirestore.instance.runTransaction((transaction) async {
+      //checking the attending collection
+      var attendingDoc = await transaction.get(attendingDocRef);
+      if (!attendingDoc.exists) {
+        return;
+      }
 
-    //deleting the attending collection
-    var matchDocs = await attendingCollectionRef
-        .where('user_id', isEqualTo: user.id)
-        .where('protest_id', isEqualTo: protestId)
-        .get();
-
-    for (var element in matchDocs.docs) {
-      element.reference.delete();
-    }
+      //updating the protest info
+      transaction.update(protestsCollectionRef.doc(protestId),
+          {'participants_amount': FieldValue.increment(-1)});
+      transaction.delete(attendingDocRef);
+    });
   }
 
   Query<Attender> getMyAttendings() {
@@ -380,7 +383,7 @@ class DataProvider {
         .collection('stories')
         .doc(storyToLike.docId);
     var likedCollection = storyRef.collection('likes');
-    FirebaseFirestore.instance.runTransaction((transaction) async {
+    await FirebaseFirestore.instance.runTransaction((transaction) async {
       var doc = await transaction.get(likedCollection.doc(userId));
       if (doc.exists) {
         transaction.delete(likedCollection.doc(userId));
@@ -391,7 +394,6 @@ class DataProvider {
       transaction.set(likedCollection.doc(userId), {'userId': userId});
       transaction.update(storyRef, {'num_of_likes': FieldValue.increment(1)});
     });
-    return;
   }
 
   Future<bool> isLiked(
@@ -445,17 +447,17 @@ class DataProvider {
         .orderBy("creation_time", descending: true);
   }
 
-  // Future<void> unLikeStory(String userId, String protestId, Story storyToUnLike) async {
-  //   var likedCollection = protestsCollectionRef.doc(protestId).collection('stories').doc(storyToUnLike.docId).collection('likes');
-  //   var doc = await likedCollection.doc(userId).get();
-  //   if (doc.exists) {
-  //     likedCollection.doc(userId).delete();
-  //     return;
-  //   }
-  // }
-  //
-  // Future<bool> checkIfLiked(String userId, String protestId, Story storyToUnLike) async {
-  //   return Future.value(true);
-  // }
+// Future<void> unLikeStory(String userId, String protestId, Story storyToUnLike) async {
+//   var likedCollection = protestsCollectionRef.doc(protestId).collection('stories').doc(storyToUnLike.docId).collection('likes');
+//   var doc = await likedCollection.doc(userId).get();
+//   if (doc.exists) {
+//     likedCollection.doc(userId).delete();
+//     return;
+//   }
+// }
+//
+// Future<bool> checkIfLiked(String userId, String protestId, Story storyToUnLike) async {
+//   return Future.value(true);
+// }
 
 }
