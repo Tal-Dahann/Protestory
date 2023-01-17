@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:favicon/favicon.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
@@ -7,7 +8,9 @@ import 'package:protestory/constants/colors.dart';
 import 'package:protestory/firebase/protest.dart';
 import 'package:protestory/utils/add_spaces.dart';
 import 'package:protestory/utils/permissions_helper.dart';
+import 'package:protestory/widgets/loading.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../firebase/user.dart';
 import '../providers/data_provider.dart';
@@ -45,6 +48,39 @@ class ProtestInformationDetailed extends StatelessWidget {
                   title: protest.locationName,
                   snippet: 'The protest will be right here!'))
         });
+  }
+
+  Widget _getExternalUrlsWidget() {
+    if (protest.urls.isEmpty) {
+      return const SizedBox();
+    }
+    var links = <Widget>[];
+    for (var url in protest.urls) {
+      links.add(Padding(
+        padding: const EdgeInsets.only(right: 6.0),
+        child: SizedBox(
+          width: 40,
+          height: 40,
+          child: FutureBuilder(
+              future: FaviconFinder.getBest(url),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return InkWell(
+                      onTap: () => launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication),
+                      child: SizedBox(
+                          child: Image.network(snapshot.requireData!.url)));
+                }
+                return const SizedBox();
+              }),
+        ),
+      ));
+    }
+    return Padding(
+      padding: const EdgeInsets.only(top: 10.0),
+      child: Row(
+        children: links,
+      ),
+    );
   }
 
   @override
@@ -121,6 +157,7 @@ class ProtestInformationDetailed extends StatelessWidget {
                         )
                       ],
                     ),
+                    _getExternalUrlsWidget()
                   ],
                 ),
               ),
