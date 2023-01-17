@@ -29,7 +29,7 @@ class Protest {
   final LatLng locationLatLng;
   final List<String> tags;
   double? distanceFromUser;
-  final List<String> urls;
+  List<String> links;
 
 
   Completer<NetworkImage>? _imageCompleter;
@@ -47,7 +47,7 @@ class Protest {
     required this.locationName,
     required this.locationLatLng,
     required this.tags,
-    this.urls = const []
+    this.links = const []
   }) : lowerCaseName = name.toLowerCase();
 
   Future<NetworkImage> get image async {
@@ -117,7 +117,7 @@ class Protest {
       locationName: data['location'],
       locationLatLng: LatLng(data['latitude'] ?? 0.0, data['longitude'] ?? 0.0),
       tags: List.from(data['tags']),
-      urls: List.from(data['external_urls'] ?? [])
+      links: List.from(data['external_urls'] ?? [])
     );
   }
 
@@ -139,7 +139,7 @@ class Protest {
       'tags': tags,
       'lower_case_name': lowerCaseName,
       'prefixes_name': pl,
-      'external_urls': urls,
+      'external_urls': links,
     };
   }
 

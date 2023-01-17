@@ -7,7 +7,9 @@ import 'package:protestory/providers/data_provider.dart';
 import 'package:protestory/providers/navigation_provider.dart';
 import 'package:protestory/screens/create_new_protest_screen.dart';
 import 'package:protestory/screens/upload_content.dart';
+import 'package:protestory/widgets/buttons.dart';
 import 'package:protestory/widgets/protest_information_detailed.dart';
+import 'package:protestory/widgets/text_fields.dart';
 import 'package:provider/provider.dart';
 
 import '../widgets/protest_stories.dart';
@@ -274,6 +276,61 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
                                             .notifyScreens());
                                         break;
                                       case 1:
+                                        final formKey = GlobalKey<FormState>();
+                                        final urlTextController = TextEditingController();
+                                        showModalBottomSheet<String>(
+                                          isScrollControlled: true,
+                                          context: context,
+                                          shape: const RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(30.0), topRight: Radius.circular(30.0)),
+                                          ),
+                                          builder: (BuildContext context) {
+                                            return Form(
+                                              key: formKey,
+                                              child: Padding(
+                                                padding: MediaQuery.of(context).viewInsets,
+                                                child: Container(
+                                                  padding: const EdgeInsets.all(16.0),
+                                                  child: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: <Widget>[
+                                                      CustomTextFormField(
+                                                        controller: urlTextController,
+                                                        keyboardType: TextInputType.url,
+                                                        hintText: 'https://www.google.com',
+                                                        label: 'Link',
+                                                        validator: (value) {
+                                                          if (value == null || !Uri.parse(value).isAbsolute) {
+                                                            return 'Please enter correct url';
+                                                          }
+                                                          return null;
+                                                        },
+                                                      ),
+                                                      Padding(
+                                                        padding: const EdgeInsets.all(16.0),
+                                                        child: CustomButton(
+                                                          onPressed: () {
+                                                            if (formKey.currentState!.validate()) {
+                                                              var result = urlTextController.text;
+                                                              Navigator.of(context).pop(result);
+                                                            }
+                                                          },
+                                                          text: 'Submit',
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ).then((value) {
+                                          dataProvider.addExternalLink(widget.protestHolder, value!);
+                                        });
+                                        break;
+                                      case 2:
                                         bool? confirmed =
                                             await showDialog<bool>(
                                           context: context,
@@ -327,6 +384,11 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
                                       ),
                                       PopupMenuItem(
                                         value: 1,
+                                        enabled: protest.links.length < 5,
+                                        child: const Text('Add Link'),
+                                      ),
+                                      PopupMenuItem(
+                                        value: 2,
                                         child: Text('Delete',
                                             style: TextStyle(
                                                 color: Colors.red[900])),

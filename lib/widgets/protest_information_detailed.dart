@@ -8,7 +8,6 @@ import 'package:protestory/constants/colors.dart';
 import 'package:protestory/firebase/protest.dart';
 import 'package:protestory/utils/add_spaces.dart';
 import 'package:protestory/utils/permissions_helper.dart';
-import 'package:protestory/widgets/loading.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -51,11 +50,11 @@ class ProtestInformationDetailed extends StatelessWidget {
   }
 
   Widget _getExternalUrlsWidget() {
-    if (protest.urls.isEmpty) {
+    if (protest.links.isEmpty) {
       return const SizedBox();
     }
     var links = <Widget>[];
-    for (var url in protest.urls) {
+    for (var url in protest.links) {
       links.add(Padding(
         padding: const EdgeInsets.only(right: 6.0),
         child: SizedBox(
