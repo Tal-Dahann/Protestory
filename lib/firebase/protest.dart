@@ -142,6 +142,9 @@ class Protest {
       'external_urls': links,
     };
   }
+  bool isCreator(String? userId) {
+    return userId == creator;
+  }
 
   String dateAndTime() {
     return dateFormatter.format(date.toDate());

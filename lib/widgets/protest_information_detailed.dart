@@ -6,6 +6,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:protestory/constants/colors.dart';
 import 'package:protestory/firebase/protest.dart';
+import 'package:protestory/screens/protest_information_screen.dart';
 import 'package:protestory/utils/add_spaces.dart';
 import 'package:protestory/utils/permissions_helper.dart';
 import 'package:provider/provider.dart';
@@ -16,8 +17,10 @@ import '../providers/data_provider.dart';
 
 class ProtestInformationDetailed extends StatelessWidget {
   final Protest protest;
+  final bool isCreator;
+  final ProtestHolder protestHolder;
 
-  const ProtestInformationDetailed({Key? key, required this.protest})
+  const ProtestInformationDetailed({Key? key, required this.protest, required this.isCreator, required this.protestHolder})
       : super(key: key);
 
   Widget _getLocationMap(
@@ -49,7 +52,7 @@ class ProtestInformationDetailed extends StatelessWidget {
         });
   }
 
-  Widget _getExternalUrlsWidget() {
+  Widget _getExternalUrlsWidget(DataProvider dataProvider) {
     if (protest.links.isEmpty) {
       return const SizedBox();
     }
@@ -66,6 +69,47 @@ class ProtestInformationDetailed extends StatelessWidget {
                 if (snapshot.hasData) {
                   return InkWell(
                       onTap: () => launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication),
+                      onLongPress: () async {
+                        if (!isCreator) {
+                          return;
+                        }
+                        bool? confirmed =
+                            await showDialog<bool>(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text(
+                                  'Are you sure you want to delete?'),
+                              actionsAlignment:
+                              MainAxisAlignment.end,
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(
+                                        context, false);
+                                  },
+                                  style: TextButton.styleFrom(
+                                      foregroundColor: purple),
+                                  child: const Text('No'),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(
+                                        context, true);
+                                  },
+                                  style: TextButton.styleFrom(
+                                      foregroundColor: purple),
+                                  child: const Text('Yes'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                        confirmed ??= false;
+                        if (confirmed) {
+                          dataProvider.removeExternalLink(protestHolder, url);
+                        }
+                      },
                       child: SizedBox(
                           child: Image.network(snapshot.requireData!.url)));
                 }
@@ -156,7 +200,7 @@ class ProtestInformationDetailed extends StatelessWidget {
                         )
                       ],
                     ),
-                    _getExternalUrlsWidget()
+                    _getExternalUrlsWidget(context.read<DataProvider>())
                   ],
                 ),
               ),

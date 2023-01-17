@@ -91,12 +91,9 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    DataProvider dataProvider = context.read<DataProvider>();
-    Protest protest = widget.protestHolder.protest;
-    bool isCreator = context.read<AuthProvider>().user?.uid == protest.creator;
-    // final Future<bool> isAttending =
-    //     dataProvider.isAlreadyAttending(protest.id);
-
+    var dataProvider = context.read<DataProvider>();
+    var protest = widget.protestHolder.protest;
+    var isCreator = protest.isCreator(context.read<AuthProvider>().user?.uid);
     return DefaultTabController(
       length: 3,
       child: Scaffold(
@@ -327,7 +324,10 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
                                             );
                                           },
                                         ).then((value) {
-                                          dataProvider.addExternalLink(widget.protestHolder, value!);
+                                          if (value != null) {
+                                            dataProvider.addExternalLink(
+                                                widget.protestHolder, value);
+                                          }
                                         });
                                         break;
                                       case 2:
@@ -443,7 +443,7 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
                 child: TabBarView(
                   physics: const NeverScrollableScrollPhysics(),
                   children: [
-                    ProtestInformationDetailed(protest: protest),
+                    ProtestInformationDetailed(protest: protest, isCreator: isCreator, protestHolder: widget.protestHolder,),
                     ProtestStories(
                       protest: protest,
                       dataProvider: context.read<DataProvider>(),

@@ -331,6 +331,13 @@ class DataProvider {
     await protestsCollectionRef.doc(protest.id).update({'external_urls': protest.links});
   }
 
+  Future<void> removeExternalLink(ProtestHolder holder, String link) async {
+    var protest = holder.protest;
+    protest.links.remove(link);
+    holder.protest = protest;
+    await protestsCollectionRef.doc(protest.id).update({'external_urls': protest.links});
+  }
+
   Query<Attender> getMyAttendings() {
     return attendingCollectionRef
         .orderBy('creation_time', descending: true)
