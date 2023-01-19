@@ -105,7 +105,7 @@ class FirebaseInit extends StatelessWidget {
             provisional: false,
             sound: true,
           );
-
+          FirebaseMessaging.onMessage.listen(_localNotificationHandler);
           return ChangeNotifierProvider(
               create: (_) => AuthProvider(), child: const App());
         }
