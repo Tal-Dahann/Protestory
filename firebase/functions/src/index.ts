@@ -48,10 +48,6 @@ export const notifyNewProtestUpdate = functions.firestore
           protest_id: context.params.protest_id,
           update_content: content,
         },
-        notification: {
-          title: "New Update",
-          body: content,
-        },
         topic: context.params.protest_id,
       };
 

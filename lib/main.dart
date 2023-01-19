@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:protestory/constants/colors.dart';
 import 'package:protestory/providers/auth_provider.dart';
@@ -13,8 +14,24 @@ import 'package:protestory/screens/login_screen.dart';
 import 'package:protestory/widgets/navigation.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+import 'firebase/protest.dart';
+
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+
+int numOfNotifications = 0;
+
+Future<void> main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+
+  const AndroidInitializationSettings initializationSettingsAndroid =
+      AndroidInitializationSettings('icon');
+  const InitializationSettings initializationSettings = InitializationSettings(
+    android: initializationSettingsAndroid,
+  );
+  await flutterLocalNotificationsPlugin.initialize(
+    initializationSettings,
+  );
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
@@ -78,7 +95,7 @@ class FirebaseInit extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.done) {
           //TODO: Added
           FirebaseMessaging.instance.getInitialMessage();
-          FirebaseMessaging.onBackgroundMessage(_backgroundHandler);
+          FirebaseMessaging.onBackgroundMessage(_localNotificationHandler);
           FirebaseMessaging.instance.requestPermission(
             alert: true,
             announcement: false,
@@ -98,7 +115,23 @@ class FirebaseInit extends StatelessWidget {
   }
 }
 
-Future<void> _backgroundHandler(RemoteMessage message) async {
+Future<void> _localNotificationHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   log('Handling a background msg: ${message.messageId}');
+
+  String protestId = message.data["protest_id"];
+
+  Protest protest = await DataProvider.getProtestById(protestId: protestId);
+
+  AndroidNotificationDetails androidNotificationDetails =
+      AndroidNotificationDetails(
+          "com.technion.android.protestory", "Protestory",
+          importance: Importance.max,
+          priority: Priority.high,
+          setAsGroupSummary: true,
+          groupKey: protestId);
+  NotificationDetails notificationDetails =
+      NotificationDetails(android: androidNotificationDetails);
+  await flutterLocalNotificationsPlugin.show(numOfNotifications++, protest.name,
+      'Update: ${message.data["update_content"]}', notificationDetails);
 }

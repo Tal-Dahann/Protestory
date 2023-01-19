@@ -22,17 +22,17 @@ class DataProvider {
   static final firestorage = FirebaseStorage.instance.ref('v$version');
   static final geostore = Geoflutterfire();
 
-  late final CollectionReference<Protest> protestsCollectionRef;
+  static final CollectionReference<Protest> protestsCollectionRef =
+      firestore.collection('protests').withConverter(
+            fromFirestore: Protest.fromFirestore,
+            toFirestore: (Protest protest, _) => protest.toFirestore(),
+          );
   late final CollectionReference<PUser> usersCollectionRef;
   late final CollectionReference<Attender> attendingCollectionRef;
 
   late PUser user;
 
   DataProvider(User fireUser) {
-    protestsCollectionRef = firestore.collection('protests').withConverter(
-          fromFirestore: Protest.fromFirestore,
-          toFirestore: (Protest protest, _) => protest.toFirestore(),
-        );
     usersCollectionRef = firestore.collection('users').withConverter(
         fromFirestore: PUser.fromFirestore,
         toFirestore: (PUser user, _) => user.toFirestore());
@@ -171,7 +171,7 @@ class DataProvider {
         n: n, parameter: 'participants_amount', isDescending: true);
   }
 
-  Future<Protest> getProtestById({
+  static Future<Protest> getProtestById({
     required String protestId,
   }) async {
     final docSnap = await protestsCollectionRef.doc(protestId).get();
