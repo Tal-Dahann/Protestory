@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
@@ -73,6 +76,19 @@ class FirebaseInit extends StatelessWidget {
                       textDirection: TextDirection.ltr)));
         }
         if (snapshot.connectionState == ConnectionState.done) {
+          //TODO: Added
+          FirebaseMessaging.instance.getInitialMessage();
+          FirebaseMessaging.onBackgroundMessage(_backgroundHandler);
+          FirebaseMessaging.instance.requestPermission(
+            alert: true,
+            announcement: false,
+            badge: true,
+            carPlay: false,
+            criticalAlert: false,
+            provisional: false,
+            sound: true,
+          );
+
           return ChangeNotifierProvider(
               create: (_) => AuthProvider(), child: const App());
         }
@@ -80,4 +96,9 @@ class FirebaseInit extends StatelessWidget {
       },
     );
   }
+}
+
+Future<void> _backgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  log('Handling a background msg: ${message.messageId}');
 }

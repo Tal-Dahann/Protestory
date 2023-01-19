@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:protestory/constants/colors.dart';
@@ -120,6 +121,11 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
                                           protest.id, widget.protestHolder);
                                       widget.protestHolder.isAttending =
                                           AttendingStatus.notAttending;
+                                      //Unsubscribe to the topic
+                                      FirebaseMessaging.instance
+                                          .unsubscribeFromTopic(widget
+                                              .protestHolder.protest.id
+                                              .toString());
                                       Future.delayed(
                                           Duration.zero,
                                           () => context
@@ -144,6 +150,11 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
                                           protest.id, widget.protestHolder);
                                       widget.protestHolder.isAttending =
                                           AttendingStatus.attending;
+                                      //subscribe to the topic
+                                      FirebaseMessaging.instance
+                                          .subscribeToTopic(widget
+                                              .protestHolder.protest.id
+                                              .toString());
                                       Future.delayed(
                                           Duration.zero,
                                           () => context

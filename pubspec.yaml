@@ -62,6 +62,7 @@ dependencies:
     git:
       url: https://github.com/austinn0/GeoFlutterFire
   geolocator: ^9.0.2
+  firebase_messaging: ^14.2.1
 
 dev_dependencies:
   flutter_launcher_icons: "^0.11.0"
