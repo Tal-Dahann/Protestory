@@ -22,56 +22,59 @@ enum SearchOptions {
   all('All'),
   mostRecent('Most Recent'),
   mostPopular('Most Popular'),
-  closest('Near you');
+  closest('Near You'),
+  tagged('By Tag');
 
-  const SearchOptions(this.value);
+  const SearchOptions(this.title);
 
-  final String value;
+  final String title;
 }
 
 Query<Protest> searchQuery(DataProvider dataProvider,
     SearchOptions searchOption, List<String> selectedTags,
-    {String text = '', bool isSearchAvail = true}) {
+    {String text = ''}) {
   Query<Protest> wantedQuery;
-  if (isSearchAvail) {
-    //search view
-    switch (searchOption) {
-      case SearchOptions.mostRecent:
-        {
-          wantedQuery = dataProvider.getProtestCollectionRef
-              .orderBy('creation_time', descending: true)
-              .where('prefixes_name', arrayContains: text);
+  //search view
+  switch (searchOption) {
+    case SearchOptions.mostRecent:
+      {
+        wantedQuery = dataProvider.getProtestCollectionRef
+            .orderBy('creation_time', descending: true)
+            .where('prefixes_name', arrayContains: text);
+      }
+      break;
+    case SearchOptions.mostPopular:
+      {
+        wantedQuery = dataProvider.getProtestCollectionRef
+            .orderBy('participants_amount', descending: true)
+            .where('prefixes_name', arrayContains: text);
+      }
+      break;
+    case SearchOptions.all:
+      {
+        wantedQuery = dataProvider.getProtestCollectionRef
+            .orderBy('name', descending: false)
+            .where('prefixes_name', arrayContains: text);
+      }
+      break;
+    case SearchOptions.closest:
+      {
+        wantedQuery = dataProvider.getProtestCollectionRef
+            .where('prefixes_name', arrayContains: text);
+      }
+      break;
+    case SearchOptions.tagged:
+      {
+        //tags view
+        wantedQuery = dataProvider.getProtestCollectionRef
+            .orderBy('name', descending: false);
+        if (selectedTags.isNotEmpty) {
+          wantedQuery =
+              wantedQuery.where('tags', arrayContainsAny: selectedTags);
         }
-        break;
-      case SearchOptions.mostPopular:
-        {
-          wantedQuery = dataProvider.getProtestCollectionRef
-              .orderBy('participants_amount', descending: true)
-              .where('prefixes_name', arrayContains: text);
-        }
-        break;
-      case SearchOptions.all:
-        {
-          wantedQuery = dataProvider.getProtestCollectionRef
-              .orderBy('name', descending: false)
-              .where('prefixes_name', arrayContains: text);
-        }
-        break;
-      case SearchOptions.closest:
-        {
-          wantedQuery = dataProvider.getProtestCollectionRef
-              .where('prefixes_name', arrayContains: text);
-        }
-        break;
-    }
-  } else {
-    //tags view
-    wantedQuery = dataProvider.getProtestCollectionRef
-        .orderBy('creation_time', descending: true);
-    if (selectedTags.isNotEmpty) {
-      wantedQuery = wantedQuery.where('tags', arrayContainsAny: selectedTags);
-    }
+      }
   }
+
   return wantedQuery;
 }
 
@@ -86,8 +89,6 @@ class _SearchScreenState extends State<SearchScreen> {
   late final QueryChangeListener<Protest> queryProvider;
   final TextEditingController searchTextController = TextEditingController();
   String searchText = '';
-
-  bool isSearchView = true;
 
   @override
   void initState() {
@@ -107,13 +108,12 @@ class _SearchScreenState extends State<SearchScreen> {
     super.dispose();
   }
 
-  _updateQuery({bool isSearchAvail = true}) {
+  _updateQuery() {
     queryProvider.query = searchQuery(
         context.read<DataProvider>(),
         context.read<SearchPresetsProvider>().searchOption,
         context.read<SearchPresetsProvider>().selectedTagsList,
-        text: searchText.toLowerCase(),
-        isSearchAvail: isSearchAvail);
+        text: searchText.toLowerCase());
     setState(() {});
   }
 
@@ -137,62 +137,9 @@ class _SearchScreenState extends State<SearchScreen> {
       backgroundColor: white,
       toolbarHeight: 150,
       floating: true,
-      title: isSearchView
+      title: context.watch<SearchPresetsProvider>().searchOption ==
+              SearchOptions.tagged
           ? Column(
-              children: [
-                addVerticalSpace(height: 15),
-                CustomTextFormField(
-                  controller: searchTextController,
-                  textInputAction: TextInputAction.search,
-                  icon: IconButton(
-                      onPressed: () {
-                        isSearchView = false;
-                        _updateQuery(isSearchAvail: isSearchView);
-                        setState(() {});
-                      },
-                      icon: const Icon(Icons.filter_alt),
-                      color: darkPurple),
-                  hintText: 'Search...',
-                  onChanged: (searchText) {
-                    this.searchText = searchText;
-                    _updateQuery();
-                  },
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    DropdownButton<SearchOptions>(
-                      // Initial Value
-                      value:
-                          context.watch<SearchPresetsProvider>().searchOption,
-                      elevation: 20,
-                      icon: const Icon(Icons.keyboard_arrow_down),
-                      items: SearchOptions.values.map((SearchOptions item) {
-                        return DropdownMenuItem(
-                          value: item,
-                          child: Text(item.value),
-                        );
-                      }).toList(),
-                      // After selecting the desired option,it will
-                      // change button value to selected value
-                      onChanged: (SearchOptions? newValue) {
-                        setState(() {
-                          context.read<SearchPresetsProvider>().searchOption =
-                              newValue!;
-                        });
-                      },
-                    ),
-                    const Padding(padding: EdgeInsets.all(10)),
-                  ],
-                ),
-                //  Padding(
-                //padding: EdgeInsets.only(
-                // left: MediaQuery.of(context).size.width * 0.1,
-                // right: MediaQuery.of(context).size.width * 0.1),
-                //child:
-              ],
-            )
-          : Column(
               children: [
                 ListTile(
                   title: const Text('Choose Tags',
@@ -203,9 +150,8 @@ class _SearchScreenState extends State<SearchScreen> {
                         color: darkPurple,
                       ),
                       onPressed: () {
-                        isSearchView = true;
-                        _updateQuery(isSearchAvail: isSearchView);
-                        setState(() {});
+                        context.read<SearchPresetsProvider>().searchOption =
+                            SearchOptions.all;
                       }),
                 ),
                 addVerticalSpace(height: 10),
@@ -252,7 +198,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                       : context
                                           .read<SearchPresetsProvider>()
                                           .removeTag(tags[index]);
-                                  _updateQuery(isSearchAvail: false);
+                                  _updateQuery();
                                 },
                               ),
                             );
@@ -262,6 +208,59 @@ class _SearchScreenState extends State<SearchScreen> {
                     ],
                   ),
                 ),
+              ],
+            )
+          : Column(
+              children: [
+                addVerticalSpace(height: 15),
+                CustomTextFormField(
+                  controller: searchTextController,
+                  textInputAction: TextInputAction.search,
+                  icon: IconButton(
+                      onPressed: () {
+                        context.read<SearchPresetsProvider>().searchOption =
+                            SearchOptions.tagged;
+                      },
+                      icon: const Icon(Icons.filter_alt),
+                      color: darkPurple),
+                  hintText: 'Search...',
+                  onChanged: (searchText) {
+                    this.searchText = searchText;
+                    _updateQuery();
+                  },
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    DropdownButton<SearchOptions>(
+                      // Initial Value
+                      value:
+                          context.watch<SearchPresetsProvider>().searchOption,
+                      elevation: 20,
+                      icon: const Icon(Icons.keyboard_arrow_down),
+                      items: SearchOptions.values.map((SearchOptions item) {
+                        return DropdownMenuItem(
+                          value: item,
+                          child: Text(item.title),
+                        );
+                      }).toList(),
+                      // After selecting the desired option,it will
+                      // change button value to selected value
+                      onChanged: (SearchOptions? newValue) {
+                        setState(() {
+                          context.read<SearchPresetsProvider>().searchOption =
+                              newValue!;
+                        });
+                      },
+                    ),
+                    const Padding(padding: EdgeInsets.all(10)),
+                  ],
+                ),
+                //  Padding(
+                //padding: EdgeInsets.only(
+                // left: MediaQuery.of(context).size.width * 0.1,
+                // right: MediaQuery.of(context).size.width * 0.1),
+                //child:
               ],
             ),
     );

@@ -164,9 +164,8 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen>
                                     widget.protestHolder.isAttending =
                                         AttendingStatus.attending;
                                     //subscribe to the topic
-                                    FirebaseMessaging.instance
-                                        .subscribeToTopic(widget
-                                            .protestHolder.protest.id
+                                    FirebaseMessaging.instance.subscribeToTopic(
+                                        widget.protestHolder.protest.id
                                             .toString());
                                     Future.delayed(
                                         Duration.zero,
@@ -291,8 +290,7 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen>
                                         ),
                                         withNavBar: false,
                                         pageTransitionAnimation:
-                                            PageTransitionAnimation
-                                                .slideRight,
+                                            PageTransitionAnimation.slideRight,
                                       ).then((value) => context
                                           .read<NavigationProvider>()
                                           .notifyScreens());
@@ -307,8 +305,7 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen>
                                         shape: const RoundedRectangleBorder(
                                           borderRadius: BorderRadius.only(
                                               topLeft: Radius.circular(30.0),
-                                              topRight:
-                                                  Radius.circular(30.0)),
+                                              topRight: Radius.circular(30.0)),
                                         ),
                                         builder: (BuildContext context) {
                                           return Form(
@@ -317,12 +314,11 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen>
                                               padding: MediaQuery.of(context)
                                                   .viewInsets,
                                               child: Container(
-                                                padding: const EdgeInsets.all(
-                                                    16.0),
+                                                padding:
+                                                    const EdgeInsets.all(16.0),
                                                 child: Column(
                                                   mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .center,
+                                                      MainAxisAlignment.center,
                                                   mainAxisSize:
                                                       MainAxisSize.min,
                                                   children: <Widget>[
@@ -342,11 +338,22 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen>
                                                         }
                                                         return null;
                                                       },
+                                                      onFieldSubmitted: (_) {
+                                                        if (formKey
+                                                            .currentState!
+                                                            .validate()) {
+                                                          var result =
+                                                              urlTextController
+                                                                  .text;
+                                                          Navigator.of(context)
+                                                              .pop(result);
+                                                        }
+                                                      },
                                                     ),
                                                     Padding(
                                                       padding:
-                                                          const EdgeInsets
-                                                              .all(16.0),
+                                                          const EdgeInsets.all(
+                                                              16.0),
                                                       child: CustomButton(
                                                         onPressed: () {
                                                           if (formKey
@@ -377,8 +384,7 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen>
                                       });
                                       break;
                                     case 2:
-                                      bool? confirmed =
-                                          await showDialog<bool>(
+                                      bool? confirmed = await showDialog<bool>(
                                         context: context,
                                         builder: (context) {
                                           return AlertDialog(
@@ -389,8 +395,7 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen>
                                             actions: [
                                               TextButton(
                                                 onPressed: () {
-                                                  Navigator.pop(
-                                                      context, false);
+                                                  Navigator.pop(context, false);
                                                 },
                                                 style: TextButton.styleFrom(
                                                     foregroundColor: purple),
@@ -398,8 +403,7 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen>
                                               ),
                                               TextButton(
                                                 onPressed: () {
-                                                  Navigator.pop(
-                                                      context, true);
+                                                  Navigator.pop(context, true);
                                                 },
                                                 style: TextButton.styleFrom(
                                                     foregroundColor: purple),
@@ -441,8 +445,7 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen>
                                     ),
                                   ];
                                 },
-                                icon:
-                                    const Icon(Icons.more_vert, color: blue),
+                                icon: const Icon(Icons.more_vert, color: blue),
                               ),
                             ),
                           ),
@@ -452,9 +455,7 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen>
                   : null,
               bottom: PreferredSize(
                 preferredSize: _tabs.preferredSize,
-                child: ColoredBox(
-                    color: Colors.white,
-                    child: _tabs),
+                child: ColoredBox(color: Colors.white, child: _tabs),
               ),
               backgroundColor: Colors.white,
               flexibleSpace: FlexibleSpaceBar(
