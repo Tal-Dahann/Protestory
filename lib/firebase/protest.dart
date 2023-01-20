@@ -150,6 +150,23 @@ class Protest {
     return dateFormatter.format(date.toDate());
   }
 
+  String readableDistance() {
+    if (distanceFromUser == null) {
+      return '';
+    }
+    var meters = (distanceFromUser! * 1000).ceil();
+    if (meters < 1000) {
+      meters -= meters % 10;
+      return '$meters m';
+    } else if (meters < 10 * 1000){
+      meters -= meters % 100;
+      return '${meters / 1000} km';
+    } else {
+      var kilometers = (meters / 1000).ceil();
+      return '$kilometers km';
+    }
+  }
+
   List<String> getAllPrefixes() {
     List<String> pl = [];
     int length = lowerCaseName.length;
