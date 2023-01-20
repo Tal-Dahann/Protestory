@@ -110,10 +110,9 @@ class ProtestInformationDetailed extends StatelessWidget {
                           dataProvider.removeExternalLink(protestHolder, url);
                         }
                       },
-                      child: SizedBox(
-                          child: Image.network(snapshot.requireData!.url)));
+                      child: Image.network(snapshot.requireData!.url));
                 }
-                return const SizedBox();
+                return const Icon(Icons.link);
               }),
         ),
       ));
