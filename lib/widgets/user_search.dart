@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:paginate_firestore/bloc/pagination_listeners.dart';
 import 'package:protestory/constants/colors.dart';
 import 'package:protestory/providers/search_provider.dart';
+import 'package:protestory/widgets/paginator_users.dart';
 import 'package:provider/provider.dart';
 
-import '../firebase/protest.dart';
+import '../firebase/user.dart';
 import '../providers/data_provider.dart';
 import '../providers/navigation_provider.dart';
 import '../utils/add_spaces.dart';
-import '../widgets/paginator.dart';
 import '../widgets/text_fields.dart';
 
 class UserSearch extends StatefulWidget {
@@ -19,7 +19,7 @@ class UserSearch extends StatefulWidget {
 }
 
 class _UserSearchState extends State<UserSearch> {
-  late final QueryChangeListener<Protest> queryProvider;
+  late final QueryChangeListener<PUser> queryProvider;
   final TextEditingController searchTextController = TextEditingController();
   String searchText = '';
 
@@ -28,8 +28,8 @@ class _UserSearchState extends State<UserSearch> {
     super.initState();
     queryProvider = QueryChangeListener(context
         .read<DataProvider>()
-        .getProtestCollectionRef
-        .where('username', arrayContains: ''));
+        .usersCollectionRef
+        .orderBy("username", descending: false));
     context.read<SearchPresetsProvider>().addListener(() {
       _updateQuery();
     });
@@ -42,13 +42,13 @@ class _UserSearchState extends State<UserSearch> {
     super.dispose();
   }
 
-  _updateQuery({bool isSearchAvail = true}) {
+  _updateQuery() {
     queryProvider.query = context
         .read<DataProvider>()
-        .getProtestCollectionRef
+        .usersCollectionRef
         .orderBy("username", descending: false)
-        .where("username", isLessThan: searchText.toLowerCase())
-        .where("username", isLessThan: '${searchText.toLowerCase()}+z');
+        .where("username", isGreaterThanOrEqualTo: searchText)
+        .where("username", isLessThan: '${searchText}z');
     setState(() {});
   }
 
@@ -78,13 +78,6 @@ class _UserSearchState extends State<UserSearch> {
             CustomTextFormField(
               controller: searchTextController,
               textInputAction: TextInputAction.search,
-              icon: IconButton(
-                  onPressed: () {
-                    _updateQuery(isSearchAvail: true);
-                    setState(() {});
-                  },
-                  icon: const Icon(Icons.filter_alt),
-                  color: darkPurple),
               hintText: 'Search User...',
               onChanged: (searchText) {
                 this.searchText = searchText;
@@ -94,10 +87,10 @@ class _UserSearchState extends State<UserSearch> {
           ],
         ));
     Widget body;
-    body = Paginator(
+    body = PaginatorUsers(
       queryProvider: queryProvider,
       header: appBar,
-      onEmpty: _textFiller('No protests match your search'),
+      onEmpty: _textFiller('No users match your search'),
     );
     return Scaffold(
         appBar: AppBar(

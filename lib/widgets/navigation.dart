@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:protestory/constants/colors.dart';
 import 'package:protestory/providers/navigation_provider.dart';
-import 'package:protestory/screens/search_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../screens/account_screen.dart';
 import '../screens/create_new_protest_screen.dart';
 import '../screens/favorites_screen.dart';
 import '../screens/main_screen.dart';
+import '../screens/search_screen.dart';
 
 const navTitleStyle =
     TextStyle(color: blue, fontWeight: FontWeight.bold, fontSize: 28);
@@ -24,6 +24,7 @@ class _MainNavigationState extends State<MainNavigation> {
   final screens = const [
     MainScreen(),
     SearchScreen(),
+    //UserSearch(),
     SizedBox(), // Add new protest filler
     FavoritesScreen(),
     AccountScreen(),
