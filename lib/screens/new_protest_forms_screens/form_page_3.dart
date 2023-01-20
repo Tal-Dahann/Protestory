@@ -85,6 +85,7 @@ class _FormPageThreeState extends State<FormPageThree> {
               autovalidateMode: AutovalidateMode.onUserInteraction,
               maxLength: 1000,
               maxLengthEnforcement: MaxLengthEnforcement.enforced,
+              autofocus: true,
             ),
           )
         ],

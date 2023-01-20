@@ -34,6 +34,63 @@ class _FormPageOneState extends State<FormPageOne> {
     );
   }
 
+  _fetchLocation(NewProtestFormNotifier notifier) async {
+    LocationResult result = await Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => PlacePicker(
+              'AIzaSyCo-uZ1Sbqmdvi0qhYilL_yZ82CodRViEQ',
+            )));
+    if (result.name != null) {
+      notifier.locationController.text = result.name!;
+    } else if (result.formattedAddress != null) {
+      notifier.locationController.text = result.formattedAddress!;
+    }
+    notifier.locationLatLng = result.latLng;
+  }
+
+  _fetchDate(NewProtestFormNotifier notifier) async {
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2100),
+      builder: themeBuilder,
+    );
+    if (!mounted) {
+      return;
+    }
+    if (pickedDate == null) {
+      FocusScope.of(context).unfocus();
+      notifier.dateController.clear();
+      return;
+    }
+    TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+      builder: themeBuilder,
+    );
+    if (!mounted) {
+      return;
+    }
+    if (pickedTime == null) {
+      FocusScope.of(context).unfocus();
+      notifier.timeController.clear();
+      notifier.dateController.clear();
+      return;
+    }
+    notifier.selectedTime = DateTime(pickedDate.year, pickedDate.month,
+        pickedDate.day, pickedTime.hour, pickedTime.minute);
+    //String formattedDate = DateFormat.yMMMEd().format(pickedDate);
+    //log('$formattedDate, ${pickedTime.format(context)}');
+    setState(
+      () {
+        notifier.timeController.text = pickedTime.format(context);
+        //dateController.text = '$formattedDate - ${pickedTime.format(context)}';
+        notifier.dateController.text = Protest.dateFormatter
+            .format(context.read<NewProtestFormNotifier>().selectedTime);
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final notifier = context.read<NewProtestFormNotifier>();
@@ -62,8 +119,7 @@ class _FormPageOneState extends State<FormPageOne> {
                 left: MediaQuery.of(context).size.width * 0.1,
                 right: MediaQuery.of(context).size.width * 0.1),
             child: CustomTextFormField(
-              controller:
-                  context.read<NewProtestFormNotifier>().titleController,
+              controller: notifier.titleController,
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'The title must be not empty';
@@ -76,11 +132,9 @@ class _FormPageOneState extends State<FormPageOne> {
               },
               onChanged: (_) {},
               autovalidateMode: AutovalidateMode.onUserInteraction,
-              onFieldSubmitted: (String value) {
-                context
-                    .read<NewProtestFormNotifier>()
-                    .locationFocusNode
-                    .requestFocus();
+              onFieldSubmitted: (_) async {
+                await _fetchLocation(notifier);
+                await _fetchDate(notifier);
               },
               label: 'Title',
               icon: const Icon(
@@ -89,6 +143,7 @@ class _FormPageOneState extends State<FormPageOne> {
               ),
               maxLength: 25,
               maxLengthEnforcement: MaxLengthEnforcement.enforced,
+              autofocus: true,
             ),
           ),
           addVerticalSpace(height: 30),
@@ -114,8 +169,6 @@ class _FormPageOneState extends State<FormPageOne> {
             child: CustomTextFormField(
               autovalidateMode: AutovalidateMode.onUserInteraction,
               controller: notifier.locationController,
-              focusNode:
-                  context.read<NewProtestFormNotifier>().locationFocusNode,
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please specify a location.';
@@ -123,8 +176,7 @@ class _FormPageOneState extends State<FormPageOne> {
                 return null;
               },
               onFieldSubmitted: (String value) {
-                FocusScope.of(context).requestFocus(
-                    context.read<NewProtestFormNotifier>().dateFocusNode);
+                FocusScope.of(context).requestFocus(notifier.dateFocusNode);
               },
               label: 'Location',
               icon: const Icon(
@@ -132,19 +184,7 @@ class _FormPageOneState extends State<FormPageOne> {
                 color: blue,
               ),
               readOnly: true,
-              onTap: () async {
-                LocationResult result =
-                    await Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => PlacePicker(
-                              'AIzaSyCo-uZ1Sbqmdvi0qhYilL_yZ82CodRViEQ',
-                            )));
-                if (result.name != null) {
-                  notifier.locationController.text = result.name!;
-                } else if (result.formattedAddress != null) {
-                  notifier.locationController.text = result.formattedAddress!;
-                }
-                notifier.locationLatLng = result.latLng;
-              },
+              onTap: () => _fetchLocation(notifier),
             ),
           ),
           addVerticalSpace(height: 30),
@@ -168,9 +208,9 @@ class _FormPageOneState extends State<FormPageOne> {
                 left: MediaQuery.of(context).size.width * 0.1,
                 right: MediaQuery.of(context).size.width * 0.1),
             child: CustomTextFormField(
-              controller: context.read<NewProtestFormNotifier>().dateController,
+              controller: notifier.dateController,
               label: 'Date',
-              focusNode: context.read<NewProtestFormNotifier>().dateFocusNode,
+              focusNode: notifier.dateFocusNode,
               icon: const Icon(
                 Icons.calendar_month,
                 color: blue,
@@ -183,56 +223,7 @@ class _FormPageOneState extends State<FormPageOne> {
                 return null;
               },
               autovalidateMode: AutovalidateMode.onUserInteraction,
-              onTap: () async {
-                DateTime? pickedDate = await showDatePicker(
-                  context: context,
-                  initialDate: DateTime.now(),
-                  firstDate: DateTime.now(),
-                  lastDate: DateTime(2100),
-                  builder: themeBuilder,
-                );
-                if (!mounted) {
-                  return;
-                }
-                if (pickedDate == null) {
-                  FocusScope.of(context).unfocus();
-                  context.read<NewProtestFormNotifier>().dateController.clear();
-                  return;
-                }
-                TimeOfDay? pickedTime = await showTimePicker(
-                  context: context,
-                  initialTime: TimeOfDay.now(),
-                  builder: themeBuilder,
-                );
-                if (!mounted) {
-                  return;
-                }
-                if (pickedTime == null) {
-                  FocusScope.of(context).unfocus();
-                  context.read<NewProtestFormNotifier>().timeController.clear();
-                  context.read<NewProtestFormNotifier>().dateController.clear();
-                  return;
-                }
-                context.read<NewProtestFormNotifier>().selectedTime = DateTime(
-                    pickedDate.year,
-                    pickedDate.month,
-                    pickedDate.day,
-                    pickedTime.hour,
-                    pickedTime.minute);
-                //String formattedDate = DateFormat.yMMMEd().format(pickedDate);
-                //log('$formattedDate, ${pickedTime.format(context)}');
-                setState(
-                  () {
-                    context.read<NewProtestFormNotifier>().timeController.text =
-                        pickedTime.format(context);
-                    //dateController.text = '$formattedDate - ${pickedTime.format(context)}';
-                    context.read<NewProtestFormNotifier>().dateController.text =
-                        Protest.dateFormatter.format(context
-                            .read<NewProtestFormNotifier>()
-                            .selectedTime);
-                  },
-                );
-              },
+              onTap: () => _fetchDate(notifier),
             ),
           ),
         ],

@@ -19,7 +19,6 @@ class NewProtestFormNotifier extends ChangeNotifier {
   LatLng? locationLatLng;
 
   bool finishButtonClicked = false;
-  late FocusNode locationFocusNode;
   late FocusNode dateFocusNode;
 
   NewProtestFormNotifier() {
@@ -27,7 +26,6 @@ class NewProtestFormNotifier extends ChangeNotifier {
     dateController.text = '';
     titleController.text = '';
     descriptionController.text = '';
-    locationFocusNode = FocusNode();
     dateFocusNode = FocusNode();
   }
 

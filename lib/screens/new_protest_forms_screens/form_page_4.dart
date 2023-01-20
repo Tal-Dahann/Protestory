@@ -17,6 +17,31 @@ class FormPageFour extends StatefulWidget {
 }
 
 class _FormPageFourState extends State<FormPageFour> {
+  _chooseImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    if (image == null) {
+      return;
+    }
+    final croppedImage = await ImageCropper().cropImage(
+        aspectRatio: Protest.imageRatio,
+        sourcePath: image.path,
+        compressQuality: 80,
+        uiSettings: [
+          AndroidUiSettings(
+              toolbarWidgetColor: blue,
+              activeControlsWidgetColor: purple,
+              hideBottomControls: true)
+        ]);
+    if (croppedImage == null) {
+      return;
+    }
+    setState(() {
+      context.read<NewProtestFormNotifier>().protestThumbnail =
+          File(croppedImage.path);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -49,31 +74,7 @@ class _FormPageFourState extends State<FormPageFour> {
                 aspectRatio:
                     Protest.imageRatio.ratioX / Protest.imageRatio.ratioY,
                 child: InkWell(
-                  onTap: () async {
-                    final ImagePicker picker = ImagePicker();
-                    final XFile? image =
-                        await picker.pickImage(source: ImageSource.gallery);
-                    if (image == null) {
-                      return;
-                    }
-                    final croppedImage = await ImageCropper().cropImage(
-                        aspectRatio: Protest.imageRatio,
-                        sourcePath: image.path,
-                        compressQuality: 80,
-                        uiSettings: [
-                          AndroidUiSettings(
-                              toolbarWidgetColor: blue,
-                              activeControlsWidgetColor: purple,
-                              hideBottomControls: true)
-                        ]);
-                    if (croppedImage == null) {
-                      return;
-                    }
-                    setState(() {
-                      context.read<NewProtestFormNotifier>().protestThumbnail =
-                          File(croppedImage.path);
-                    });
-                  },
+                  onTap: () => _chooseImage(),
                   child: (context
                                   .read<NewProtestFormNotifier>()
                                   .existingProtestThumbnail !=
@@ -98,6 +99,15 @@ class _FormPageFourState extends State<FormPageFour> {
                           ? Container(
                               color: lightGray,
                               width: MediaQuery.of(context).size.width * 0.8,
+                              child: const Center(
+                                child: Text(
+                                  'Tap To Upload',
+                                  style: TextStyle(
+                                      color: white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 32),
+                                ),
+                              ),
                             )
                           : Container(
                               color: lightGray,

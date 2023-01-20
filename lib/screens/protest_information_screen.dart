@@ -330,6 +330,7 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen>
                                                       hintText:
                                                           'https://www.google.com',
                                                       label: 'Link',
+                                                      autofocus: true,
                                                       validator: (value) {
                                                         if (value == null ||
                                                             !Uri.parse(value)

@@ -25,6 +25,7 @@ class CustomTextFormField extends StatefulWidget {
   final int? maxLines;
   final int? maxLength;
   final MaxLengthEnforcement? maxLengthEnforcement;
+  final bool autofocus;
 
   const CustomTextFormField({
     Key? key,
@@ -48,7 +49,8 @@ class CustomTextFormField extends StatefulWidget {
     this.focusNode,
     this.maxLines = 1,
     this.maxLength,
-    this.maxLengthEnforcement
+    this.maxLengthEnforcement,
+    this.autofocus = false
   }) : super(key: key);
 
   @override
@@ -77,6 +79,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           textCapitalization: TextCapitalization.sentences,
           maxLength: widget.maxLength,
           maxLengthEnforcement: widget.maxLengthEnforcement,
+          autofocus: widget.autofocus,
           decoration: InputDecoration(
               suffixIcon: widget.icon,
               suffixIconColor: widget.icon != null ? blue : null,

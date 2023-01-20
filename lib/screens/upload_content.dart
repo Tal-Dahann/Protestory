@@ -68,6 +68,7 @@ class _UploadContentScreenState extends State<UploadContentScreen> {
                         : 'Write the update here',
                     controller: widget.contentController,
                     maxLines: 6,
+                    autofocus: true,
                   ),
                 ),
               ),
