@@ -10,10 +10,10 @@ import 'package:protestory/screens/new_protest_forms_screens//form_page_1.dart';
 import 'package:protestory/screens/new_protest_forms_screens/form_page_2.dart';
 import 'package:protestory/screens/new_protest_forms_screens/form_page_3.dart';
 import 'package:protestory/screens/new_protest_forms_screens/form_page_4.dart';
-import 'package:protestory/screens/new_protest_forms_screens/uploading_protest_screen.dart';
 import 'package:protestory/screens/protest_information_screen.dart';
 import 'package:protestory/utils/exceptions.dart';
 import 'package:protestory/widgets/buttons.dart';
+import 'package:protestory/widgets/loading.dart';
 import 'package:provider/provider.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 
@@ -60,76 +60,126 @@ class NewProtestForm extends StatefulWidget {
 }
 
 class _NewProtestFormState extends State<NewProtestForm> {
-  void _handleFinishButton(BuildContext context) async {
-    Future.delayed(Duration.zero, () {
-      PersistentNavBarNavigator.pushNewScreen(context,
-          screen: const UploadingProtestScreen(),
-          pageTransitionAnimation: PageTransitionAnimation.slideRight);
-      // Navigator.of(context).push(MaterialPageRoute(
-      //    builder: (context) => const UploadingProtestScreen()));
+  late bool _loading = false;
+
+  void _handleFinishButton(BuildContext context) {
+    setState(() {
+      _loading = true;
     });
     //Upload Protest
-    Protest protest = await processDataAndUpload();
-    Future.delayed(Duration.zero, () {
+    processDataAndUpload().then((protest) {
       //Function to navigate to protest page after successful upload!
       Navigator.of(context).popUntil(ModalRoute.withName('/'));
       if (widget.formStatus == FormStatus.editing) {
-        context.read<ProtestHolder>().protest = protest;
+        context
+            .read<ProtestHolder>()
+            .protest = protest;
       } else {
         PersistentNavBarNavigator.pushNewScreen(context,
             screen: ProtestInformationScreen(protest: protest),
             pageTransitionAnimation: PageTransitionAnimation.slideUp);
       }
+    }).catchError((error, stackTrace) {
+      setState(() {
+        _loading = false;
+        ProtestoryException.showExceptionSnackBar(context);
+      });
     });
   }
 
   Future<Protest> processDataAndUpload() async {
-    String name = context.read<NewProtestFormNotifier>().titleController.text;
+    String name = context
+        .read<NewProtestFormNotifier>()
+        .titleController
+        .text;
     String description =
-        context.read<NewProtestFormNotifier>().descriptionController.text;
+        context
+            .read<NewProtestFormNotifier>()
+            .descriptionController
+            .text;
     String location =
-        context.read<NewProtestFormNotifier>().locationController.text;
+        context
+            .read<NewProtestFormNotifier>()
+            .locationController
+            .text;
     LatLng locationLatLng =
-        context.read<NewProtestFormNotifier>().locationLatLng!;
-    String? contactInfo = context.read<AuthProvider>().user!.email;
+    context
+        .read<NewProtestFormNotifier>()
+        .locationLatLng!;
+    String? contactInfo = context
+        .read<AuthProvider>()
+        .user!
+        .email;
     contactInfo ??= 'No contact info provided';
     if (widget.formStatus == FormStatus.editing) {
       return await context.read<DataProvider>().updateProtest(
-            protest: widget.protest!,
-            name: name,
-            date: context.read<NewProtestFormNotifier>().selectedTime,
-            contactInfo: contactInfo,
-            description: description,
-            location: location,
-            locationLatLng: locationLatLng,
-            tags: context.read<NewProtestFormNotifier>().selectedTags,
-            image: context.read<NewProtestFormNotifier>().protestThumbnail,
-          );
-    }
-    return await context.read<DataProvider>().addProtest(
+        protest: widget.protest!,
         name: name,
-        date: context.read<NewProtestFormNotifier>().selectedTime,
+        date: context
+            .read<NewProtestFormNotifier>()
+            .selectedTime,
         contactInfo: contactInfo,
         description: description,
         location: location,
         locationLatLng: locationLatLng,
-        tags: context.read<NewProtestFormNotifier>().selectedTags,
-        image: context.read<NewProtestFormNotifier>().protestThumbnail!);
+        tags: context
+            .read<NewProtestFormNotifier>()
+            .selectedTags,
+        image: context
+            .read<NewProtestFormNotifier>()
+            .protestThumbnail,
+      );
+    }
+    return await context.read<DataProvider>().addProtest(
+        name: name,
+        date: context
+            .read<NewProtestFormNotifier>()
+            .selectedTime,
+        contactInfo: contactInfo,
+        description: description,
+        location: location,
+        locationLatLng: locationLatLng,
+        tags: context
+            .read<NewProtestFormNotifier>()
+            .selectedTags,
+        image: context
+            .read<NewProtestFormNotifier>()
+            .protestThumbnail!);
   }
 
   void initExistingFields(BuildContext context, Protest? p) async {
-    context.read<NewProtestFormNotifier>().titleController.text = p!.name;
-    context.read<NewProtestFormNotifier>().locationController.text =
+    context
+        .read<NewProtestFormNotifier>()
+        .titleController
+        .text = p!.name;
+    context
+        .read<NewProtestFormNotifier>()
+        .locationController
+        .text =
         p.locationName;
-    context.read<NewProtestFormNotifier>().locationLatLng = p.locationLatLng;
-    context.read<NewProtestFormNotifier>().dateController.text =
+    context
+        .read<NewProtestFormNotifier>()
+        .locationLatLng = p.locationLatLng;
+    context
+        .read<NewProtestFormNotifier>()
+        .dateController
+        .text =
         p.dateAndTime();
-    context.read<NewProtestFormNotifier>().selectedTime = p.date.toDate();
-    context.read<NewProtestFormNotifier>().selectedTags = p.tags;
-    context.read<NewProtestFormNotifier>().descriptionController.text =
+    context
+        .read<NewProtestFormNotifier>()
+        .selectedTime = p.date.toDate();
+    context
+        .read<NewProtestFormNotifier>()
+        .selectedTags = p.tags;
+    context
+        .read<NewProtestFormNotifier>()
+        .descriptionController
+        .text =
         p.description;
-    context.read<NewProtestFormNotifier>().existingProtestThumbnail =
-        await p.image;
+    context
+        .read<NewProtestFormNotifier>()
+        .existingProtestThumbnail =
+    await p.image;
   }
 
   @override
@@ -142,10 +192,14 @@ class _NewProtestFormState extends State<NewProtestForm> {
 
   @override
   Widget build(BuildContext context) {
-    if (context.watch<NewProtestFormNotifier>().finishButtonClicked == true) {
+    if (context
+        .watch<NewProtestFormNotifier>()
+        .finishButtonClicked == true) {
       _handleFinishButton(context);
     }
-    int currPageNum = context.watch<NewProtestFormNotifier>().currentFormPage;
+    int currPageNum = context
+        .watch<NewProtestFormNotifier>()
+        .currentFormPage;
     Widget? currPageToDisplay;
     switch (currPageNum) {
       case 1:
@@ -172,124 +226,141 @@ class _NewProtestFormState extends State<NewProtestForm> {
         title: widget.formStatus == FormStatus.creating
             ? const Text('New Protest')
             : Text(
-                'Editing \'${widget.protest!.name}\'',
-              ),
+          'Editing \'${widget.protest!.name}\'',
+        ),
         backgroundColor: white,
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Flexible(
-            child: Column(
-              children: [
-                StepProgressIndicator(
-                  totalSteps: 4,
-                  selectedColor: purple,
-                  currentStep:
-                      context.read<NewProtestFormNotifier>().currentFormPage,
-                  size: 7,
-                ),
-                Flexible(
-                  child: Form(
-                      key: context.read<NewProtestFormNotifier>().formKey,
-                      child: currPageToDisplay),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: SingleChildScrollView(
-              physics: const NeverScrollableScrollPhysics(),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: BusyChildWidget(
+        loading: _loading,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Flexible(
+              child: Column(
                 children: [
-                  context.read<NewProtestFormNotifier>().currentFormPage > 1
-                      ? Align(
-                          alignment: Alignment.bottomLeft,
-                          child: CustomButton(
-                              text: 'Previous',
-                              textColor: purple,
-                              color: white,
-                              width: MediaQuery.of(context).size.width * 0.35,
-                              onPressed: () {
-                                bool showTagError = context
-                                    .read<NewProtestFormNotifier>()
-                                    .showTagsError;
-                                setState(() {
-                                  if (showTagError) {
-                                    context
-                                        .read<NewProtestFormNotifier>()
-                                        .hideTagsError();
-                                  }
-                                  context
-                                      .read<NewProtestFormNotifier>()
-                                      .prevPage();
-                                });
-                              }),
-                        )
-                      : const SizedBox(),
-                  Align(
-                    alignment: Alignment.bottomRight,
-                    child: CustomButton(
-                        text: currPageNum != 4 ? 'Continue' : 'Finish',
-                        color: darkPurple,
-                        width: MediaQuery.of(context).size.width * 0.4,
-                        onPressed: () async {
-                          FocusManager.instance.primaryFocus?.unfocus();
-                          GlobalKey<FormState> formKey =
-                              context.read<NewProtestFormNotifier>().formKey;
-                          bool valid = false;
-                          switch (currPageNum) {
-                            case 1:
-                              valid = formKey.currentState!.validate();
-                              break;
-                            case 2:
-                              if (context
-                                  .read<NewProtestFormNotifier>()
-                                  .selectedTags
-                                  .isNotEmpty) {
-                                valid = true;
-                              } else {
-                                context
-                                    .read<NewProtestFormNotifier>()
-                                    .displayTagsError();
-                              }
-                              break;
-                            case 3:
-                              valid = formKey.currentState!.validate();
-                              break;
-                            case 4:
-                              valid = context
-                                          .read<NewProtestFormNotifier>()
-                                          .protestThumbnail !=
-                                      null ||
-                                  context
-                                          .read<NewProtestFormNotifier>()
-                                          .existingProtestThumbnail !=
-                                      null;
-                              if (!valid) {
-                                ProtestoryException.showExceptionSnackBar(
-                                    context,
-                                    message: 'Protest has to have an image');
-                              }
-                          }
-                          if (valid && currPageNum != 4) {
-                            setState(() {
-                              context.read<NewProtestFormNotifier>().nextPage();
-                            });
-                          } else if (valid) {
-                            context
-                                .read<NewProtestFormNotifier>()
-                                .clickFinishButton();
-                          }
-                        }),
+                  StepProgressIndicator(
+                    totalSteps: 4,
+                    selectedColor: purple,
+                    currentStep:
+                    context
+                        .read<NewProtestFormNotifier>()
+                        .currentFormPage,
+                    size: 7,
+                  ),
+                  Flexible(
+                    child: Form(
+                        key: context
+                            .read<NewProtestFormNotifier>()
+                            .formKey,
+                        child: currPageToDisplay),
                   ),
                 ],
               ),
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: SingleChildScrollView(
+                physics: const NeverScrollableScrollPhysics(),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    context
+                        .read<NewProtestFormNotifier>()
+                        .currentFormPage > 1
+                        ? Align(
+                      alignment: Alignment.bottomLeft,
+                      child: CustomButton(
+                          text: 'Previous',
+                          textColor: purple,
+                          color: white,
+                          width: MediaQuery
+                              .of(context)
+                              .size
+                              .width * 0.35,
+                          onPressed: () {
+                            bool showTagError = context
+                                .read<NewProtestFormNotifier>()
+                                .showTagsError;
+                            setState(() {
+                              if (showTagError) {
+                                context
+                                    .read<NewProtestFormNotifier>()
+                                    .hideTagsError();
+                              }
+                              context
+                                  .read<NewProtestFormNotifier>()
+                                  .prevPage();
+                            });
+                          }),
+                    )
+                        : const SizedBox(),
+                    Align(
+                      alignment: Alignment.bottomRight,
+                      child: CustomButton(
+                          text: currPageNum != 4 ? 'Continue' : 'Finish',
+                          color: darkPurple,
+                          width: MediaQuery
+                              .of(context)
+                              .size
+                              .width * 0.4,
+                          onPressed: () async {
+                            FocusManager.instance.primaryFocus?.unfocus();
+                            GlobalKey<FormState> formKey =
+                                context
+                                    .read<NewProtestFormNotifier>()
+                                    .formKey;
+                            bool valid = false;
+                            switch (currPageNum) {
+                              case 1:
+                                valid = formKey.currentState!.validate();
+                                break;
+                              case 2:
+                                if (context
+                                    .read<NewProtestFormNotifier>()
+                                    .selectedTags
+                                    .isNotEmpty) {
+                                  valid = true;
+                                } else {
+                                  context
+                                      .read<NewProtestFormNotifier>()
+                                      .displayTagsError();
+                                }
+                                break;
+                              case 3:
+                                valid = formKey.currentState!.validate();
+                                break;
+                              case 4:
+                                valid = context
+                                    .read<NewProtestFormNotifier>()
+                                    .protestThumbnail !=
+                                    null ||
+                                    context
+                                        .read<NewProtestFormNotifier>()
+                                        .existingProtestThumbnail !=
+                                        null;
+                                if (!valid) {
+                                  ProtestoryException.showExceptionSnackBar(
+                                      context,
+                                      message: 'Protest has to have an image');
+                                }
+                            }
+                            if (valid && currPageNum != 4) {
+                              setState(() {
+                                context.read<NewProtestFormNotifier>().nextPage();
+                              });
+                            } else if (valid) {
+                              context
+                                  .read<NewProtestFormNotifier>()
+                                  .clickFinishButton();
+                            }
+                          }),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
 

@@ -131,9 +131,11 @@ class DataProvider {
         .collection("stories")
         .get();
     for (var doc in stories.docs) {
-      doc.reference.collection("likes").get().then((likes) => {
-            for (var like in likes.docs) {like.reference.delete()}
-          });
+      doc.reference.collection("likes").get().then((likes) {
+        for (var like in likes.docs) {
+          like.reference.delete();
+        }
+      });
       doc.reference.delete();
     }
 
