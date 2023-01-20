@@ -3,7 +3,6 @@ import 'package:paginate_firestore/bloc/pagination_listeners.dart';
 import 'package:paginate_firestore/paginate_firestore.dart';
 import 'package:protestory/firebase/attender.dart';
 import 'package:protestory/widgets/protest_card.dart';
-import 'package:provider/provider.dart';
 
 import '../providers/data_provider.dart';
 
@@ -30,9 +29,7 @@ class PaginatorFavorites extends StatelessWidget {
         final data = documentSnapshots[index].data() as Attender;
 
         return FutureBuilder(
-            future: context
-                .read<DataProvider>()
-                .getProtestById(protestId: data.protestID),
+            future: DataProvider.getProtestById(protestId: data.protestID),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 return ProtestCard(
