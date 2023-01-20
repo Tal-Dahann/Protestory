@@ -21,6 +21,7 @@ class PaginatorFavorites extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PaginateFirestore(
+      padding: const EdgeInsets.only(bottom: 15),
       header: header,
       onEmpty: onEmpty,
       queryProvider: queryProvider,

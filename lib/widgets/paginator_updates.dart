@@ -23,6 +23,7 @@ class PaginatorUpdates extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PaginateFirestore(
+      padding: const EdgeInsets.only(bottom: 15),
       onEmpty: onEmpty,
       queryProvider: queryProvider,
       isLive: true,
