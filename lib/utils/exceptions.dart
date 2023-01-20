@@ -15,6 +15,8 @@ abstract class ProtestoryException implements Exception {
   }
 }
 
+class NavigationNotInitialized extends ProtestoryException {}
+
 abstract class DataProviderException extends ProtestoryException {}
 
 class UserNotFound extends DataProviderException {}

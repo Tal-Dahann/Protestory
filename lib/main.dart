@@ -9,6 +9,7 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:protestory/constants/colors.dart';
 import 'package:protestory/providers/auth_provider.dart';
 import 'package:protestory/providers/data_provider.dart';
+import 'package:protestory/providers/navigation_provider.dart';
 import 'package:protestory/providers/search_provider.dart';
 import 'package:protestory/screens/login_screen.dart';
 import 'package:protestory/widgets/navigation.dart';
@@ -61,14 +62,20 @@ class App extends StatelessWidget {
       FlutterNativeSplash.remove();
     }
     if (context.read<AuthProvider>().isAuthenticated()) {
-      return ProxyProvider<AuthProvider, DataProvider>(
-        create: (ctx) => DataProvider(ctx.read<AuthProvider>().user!),
-        update: (_, myAuthNotifier, myDataProvider) =>
-            (myDataProvider?..updateUser(myAuthNotifier.user)) ??
-            DataProvider(myAuthNotifier.user!),
-        child: ChangeNotifierProvider<SearchPresetsProvider>(
-            create: (BuildContext context) => SearchPresetsProvider(),
-            child: app),
+      return MultiProvider(
+        providers: [
+          ProxyProvider<AuthProvider, DataProvider>(
+              create: (context) =>
+                  DataProvider(context.read<AuthProvider>().user!),
+              update: (_, myAuthNotifier, myDataProvider) =>
+                  (myDataProvider?..updateUser(myAuthNotifier.user)) ??
+                  DataProvider(myAuthNotifier.user!)),
+          ChangeNotifierProvider<SearchPresetsProvider>(
+              create: (context) => SearchPresetsProvider()),
+          ChangeNotifierProvider<NavigationProvider>(
+              create: (context) => NavigationProvider())
+        ],
+        child: app,
       );
     } else {
       return app;
