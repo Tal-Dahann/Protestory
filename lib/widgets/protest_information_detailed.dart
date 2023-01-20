@@ -327,7 +327,7 @@ class ProtestInformationDetailed extends StatelessWidget {
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
                     protest.description,
-                    style: const TextStyle(fontSize: 15),
+                    style: const TextStyle(fontSize: 18),
                   ),
                 ),
               )),

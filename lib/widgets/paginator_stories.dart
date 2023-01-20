@@ -123,7 +123,7 @@ class _PaginatorStoriesState extends State<PaginatorStories> {
                                 horizontal: 8.0),
                             child: ConstrainedBox(
                               constraints: const BoxConstraints(
-                                  minWidth: double.infinity, minHeight: 100),
+                                  minWidth: double.infinity, minHeight: 80),
                               child: Material(
                                 borderRadius: BorderRadius.circular(5),
                                 elevation: 5,
@@ -131,7 +131,7 @@ class _PaginatorStoriesState extends State<PaginatorStories> {
                                   padding: const EdgeInsets.all(8.0),
                                   child: AutoSizeText(
                                     data.content,
-                                    style: const TextStyle(fontSize: 20),
+                                    style: const TextStyle(fontSize: 18),
                                   ),
                                 ),
                               ),

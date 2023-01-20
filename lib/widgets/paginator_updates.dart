@@ -41,7 +41,7 @@ class PaginatorUpdates extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(
-                        minWidth: double.infinity, minHeight: 100),
+                        minWidth: double.infinity, minHeight: 80),
                     child: Material(
                       borderRadius: BorderRadius.circular(5),
                       elevation: 5,
@@ -53,14 +53,14 @@ class PaginatorUpdates extends StatelessWidget {
                           children: [
                             AutoSizeText(
                               data.content,
-                              style: const TextStyle(fontSize: 20),
+                              style: const TextStyle(fontSize: 18),
                             ),
                             AutoSizeText(
                               DateFormat('dd/MM/yyyy, kk:mm')
                                   .format(data.creationTime.toDate())
                                   .toString(),
                               style: const TextStyle(
-                                  fontSize: 20, color: lightGray),
+                                  fontSize: 14, color: lightGray),
                             )
                           ],
                         ),
