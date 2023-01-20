@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:protestory/constants/colors.dart';
 import 'package:protestory/providers/new_protest_form_provider.dart';
 import 'package:protestory/utils/add_spaces.dart';
@@ -71,10 +72,7 @@ class _FormPageThreeState extends State<FormPageThree> {
                 right: MediaQuery.of(context).size.width * 0.1),
             child: CustomTextFormField(
               validator: (value) {
-                if (value == null || value.length > 1000) {
-                  return 'Description must be up to 1000 characters.';
-                }
-                if (value.isEmpty) {
+                if (value == null || value.isEmpty) {
                   return 'Description can\'t be empty';
                 }
                 return null;
@@ -85,6 +83,8 @@ class _FormPageThreeState extends State<FormPageThree> {
               keyboardType: TextInputType.multiline,
               maxLines: 12,
               autovalidateMode: AutovalidateMode.onUserInteraction,
+              maxLength: 1000,
+              maxLengthEnforcement: MaxLengthEnforcement.enforced,
             ),
           )
         ],

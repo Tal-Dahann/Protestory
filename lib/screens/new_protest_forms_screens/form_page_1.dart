@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:place_picker/entities/location_result.dart';
 import 'package:place_picker/widgets/place_picker.dart';
 import 'package:protestory/constants/colors.dart';
@@ -64,8 +65,8 @@ class _FormPageOneState extends State<FormPageOne> {
               controller:
                   context.read<NewProtestFormNotifier>().titleController,
               validator: (value) {
-                if (value == null || value.length > 25 || value.isEmpty) {
-                  return 'The title must be 1-25 characters long.';
+                if (value == null || value.isEmpty) {
+                  return 'The title must be not empty';
                 }
                 if (value.contains(RegExp(r"^[a-zA-Z ']+$"))) {
                   return null;
@@ -86,6 +87,8 @@ class _FormPageOneState extends State<FormPageOne> {
                 Icons.edit,
                 color: blue,
               ),
+              maxLength: 25,
+              maxLengthEnforcement: MaxLengthEnforcement.enforced,
             ),
           ),
           addVerticalSpace(height: 30),

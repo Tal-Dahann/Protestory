@@ -59,6 +59,7 @@ class _FormPageFourState extends State<FormPageFour> {
                     final croppedImage = await ImageCropper().cropImage(
                         aspectRatio: Protest.imageRatio,
                         sourcePath: image.path,
+                        compressQuality: 80,
                         uiSettings: [
                           AndroidUiSettings(
                               toolbarWidgetColor: blue,
