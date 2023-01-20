@@ -1,4 +1,3 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:paginate_firestore/bloc/pagination_listeners.dart';
 import 'package:paginate_firestore/paginate_firestore.dart';
@@ -129,7 +128,7 @@ class _PaginatorStoriesState extends State<PaginatorStories> {
                                 elevation: 5,
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
-                                  child: AutoSizeText(
+                                  child: SelectableText(
                                     data.content,
                                     style: const TextStyle(fontSize: 18),
                                   ),

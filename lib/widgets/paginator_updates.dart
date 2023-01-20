@@ -1,4 +1,3 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:paginate_firestore/bloc/pagination_listeners.dart';
@@ -51,11 +50,11 @@ class PaginatorUpdates extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            AutoSizeText(
+                            SelectableText(
                               data.content,
                               style: const TextStyle(fontSize: 18),
                             ),
-                            AutoSizeText(
+                            SelectableText(
                               DateFormat('dd/MM/yyyy, kk:mm')
                                   .format(data.creationTime.toDate())
                                   .toString(),

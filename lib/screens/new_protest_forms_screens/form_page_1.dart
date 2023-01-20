@@ -68,10 +68,10 @@ class _FormPageOneState extends State<FormPageOne> {
                 if (value == null || value.isEmpty) {
                   return 'The title must be not empty';
                 }
-                if (value.contains(RegExp(r"^[a-zA-Z ']+$"))) {
+                if (value.contains(RegExp(r"^[a-zA-Z '\d]+$"))) {
                   return null;
                 } else {
-                  return 'The title can only contain letters';
+                  return 'The title can only contain letters and numbers';
                 }
               },
               onChanged: (_) {},

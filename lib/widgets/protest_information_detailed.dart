@@ -131,7 +131,7 @@ class ProtestInformationDetailed extends StatelessWidget {
       padding: const EdgeInsets.only(left: 20.0, right: 20.0),
       child: ListView(
         children: [
-          Text(
+          SelectableText(
             protest.name,
             style: const TextStyle(
               color: blue,
@@ -155,7 +155,7 @@ class ProtestInformationDetailed extends StatelessWidget {
                         Icon(Icons.location_on, color: Colors.grey[800]),
                         addHorizontalSpace(width: 3),
                         Expanded(
-                          child: Text(protest.locationName,
+                          child: SelectableText(protest.locationName,
                               style: TextStyle(color: Colors.grey[800])),
                         )
                       ],
@@ -167,7 +167,7 @@ class ProtestInformationDetailed extends StatelessWidget {
                         Icon(Icons.watch_later, color: Colors.grey[800]),
                         addHorizontalSpace(width: 3),
                         Expanded(
-                          child: Text(protest.dateAndTime(),
+                          child: SelectableText(protest.dateAndTime(),
                               style: TextStyle(color: Colors.grey[800])),
                         )
                       ],
@@ -194,7 +194,7 @@ class ProtestInformationDetailed extends StatelessWidget {
                         Icon(Icons.email, color: Colors.grey[800]),
                         addHorizontalSpace(width: 3),
                         Expanded(
-                          child: Text(protest.contactInfo,
+                          child: SelectableText(protest.contactInfo,
                               style: TextStyle(color: Colors.grey[800])),
                         )
                       ],
@@ -216,7 +216,7 @@ class ProtestInformationDetailed extends StatelessWidget {
                       children: [
                         creator.getAvatarWidget(radius: 35),
                         addVerticalSpace(height: 5),
-                        Text(creator.username),
+                        SelectableText(creator.username),
                       ],
                     );
                   }
@@ -249,7 +249,7 @@ class ProtestInformationDetailed extends StatelessWidget {
                   child: Chip(
                     side: const BorderSide(color: lightGray),
                     labelPadding: const EdgeInsets.all(3.0),
-                    label: Text(
+                    label: SelectableText(
                       protest.tags[index],
                       style: const TextStyle(color: black, fontSize: 14),
                     ),
@@ -325,7 +325,7 @@ class ProtestInformationDetailed extends StatelessWidget {
                 height: MediaQuery.of(context).size.height * 0.8,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(
+                  child: SelectableText(
                     protest.description,
                     style: const TextStyle(fontSize: 18),
                   ),
