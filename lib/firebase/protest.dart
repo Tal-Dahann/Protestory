@@ -47,7 +47,7 @@ class Protest {
     required this.locationName,
     required this.locationLatLng,
     required this.tags,
-    this.links = const []
+    required this.links
   }) : lowerCaseName = name.toLowerCase();
 
   Future<NetworkImage> get image async {

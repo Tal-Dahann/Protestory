@@ -268,8 +268,8 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen> {
                                         PersistentNavBarNavigator.pushNewScreen(
                                           context,
                                           screen: ChangeNotifierProvider<
-                                              ProtestHolder>(
-                                            create: (_) => widget.protestHolder,
+                                              ProtestHolder>.value(
+                                            value: widget.protestHolder,
                                             child: NewProtestScreen(
                                               formStatus: FormStatus.editing,
                                               protest: protest,
