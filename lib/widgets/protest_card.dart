@@ -83,20 +83,18 @@ class ProtestCard extends StatelessWidget {
                                 color: Colors.black,
                               ),
                             ),
-                            protest.distanceFromUser == null
-                                ? const SizedBox()
-                                : Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Text('${protest.distanceFromUser!} km',
-                                          style: const TextStyle(
-                                            fontSize: 15.0,
-                                            color: Colors.grey,
-                                          )),
-                                    ],
-                                  ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              crossAxisAlignment:
+                              CrossAxisAlignment.center,
+                              children: [
+                                Text(protest.readableDistance(),
+                                    style: const TextStyle(
+                                      fontSize: 15.0,
+                                      color: Colors.grey,
+                                    )),
+                              ],
+                            )
                           ],
                         ),
                       ),

@@ -72,7 +72,8 @@ class DataProvider {
       description: description,
       locationName: location,
       locationLatLng: locationLatLng,
-      tags: tags, links: [],
+      tags: tags,
+      links: [],
     );
     await firestorage.child('protests_images').child(docRef.id).putFile(image);
     await docRef.set(newProtest);
@@ -92,19 +93,18 @@ class DataProvider {
       required File? image}) async {
     var docRef = protestsCollectionRef.doc(protest.id);
     Protest updatedProtest = Protest(
-      id: protest.id,
-      name: name,
-      date: Timestamp.fromDate(date),
-      creator: protest.creator,
-      creationTime: protest.creationTime,
-      participantsAmount: protest.participantsAmount,
-      contactInfo: contactInfo,
-      description: description,
-      locationName: location,
-      locationLatLng: locationLatLng,
-      tags: tags,
-      links: protest.links
-    );
+        id: protest.id,
+        name: name,
+        date: Timestamp.fromDate(date),
+        creator: protest.creator,
+        creationTime: protest.creationTime,
+        participantsAmount: protest.participantsAmount,
+        contactInfo: contactInfo,
+        description: description,
+        locationName: location,
+        locationLatLng: locationLatLng,
+        tags: tags,
+        links: protest.links);
     if (image != null) {
       //if its null, we didnt update the image so we dont need to update firestorage
       await firestorage
@@ -126,11 +126,22 @@ class DataProvider {
       currDoc.reference.delete();
     }
 
-    var snapshots = await protestsCollectionRef
+    var stories = await protestsCollectionRef
         .doc(protestToDelete.id)
         .collection("stories")
         .get();
-    for (var doc in snapshots.docs) {
+    for (var doc in stories.docs) {
+      doc.reference.collection("likes").get().then((likes) => {
+            for (var like in likes.docs) {like.reference.delete()}
+          });
+      doc.reference.delete();
+    }
+
+    var updates = await protestsCollectionRef
+        .doc(protestToDelete.id)
+        .collection("updates")
+        .get();
+    for (var doc in updates.docs) {
       doc.reference.delete();
     }
 
@@ -329,14 +340,18 @@ class DataProvider {
     var protest = holder.protest;
     protest.links.add(link);
     holder.protest = protest;
-    await protestsCollectionRef.doc(protest.id).update({'external_urls': protest.links});
+    await protestsCollectionRef
+        .doc(protest.id)
+        .update({'external_urls': protest.links});
   }
 
   Future<void> removeExternalLink(ProtestHolder holder, String link) async {
     var protest = holder.protest;
     protest.links.remove(link);
     holder.protest = protest;
-    await protestsCollectionRef.doc(protest.id).update({'external_urls': protest.links});
+    await protestsCollectionRef
+        .doc(protest.id)
+        .update({'external_urls': protest.links});
   }
 
   Query<Attender> getMyAttendings() {

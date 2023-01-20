@@ -1,6 +1,7 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:protestory/constants/colors.dart';
 import 'package:protestory/utils/add_spaces.dart';
@@ -170,11 +171,11 @@ class _SignUpPageState extends State<SignUpPage> {
                                         if (displayName == null ||
                                             displayName.isEmpty) {
                                           return 'Name is required';
-                                        } else if (displayName.length > 20) {
-                                          return 'Name is too long';
                                         }
                                         return null;
                                       },
+                                      maxLength: 20,
+                                      maxLengthEnforcement: MaxLengthEnforcement.enforced,
                                       onChanged: (_) => setState(() {
                                         _displayNameErrorMessage = null;
                                       }),

@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -57,7 +56,7 @@ class _AccountScreenState extends State<AccountScreen>
             builder: (context, child) => Stack(
                   children: [
                     Opacity(
-                      opacity: _animationController.value,
+                      opacity: min(1, _animationController.value * 15),
                       child: Container(
                           color: Colors.white,
                           child: const Text(
@@ -65,7 +64,7 @@ class _AccountScreenState extends State<AccountScreen>
                           )),
                     ),
                     Opacity(
-                      opacity: 1 - _animationController.value,
+                      opacity: max(0, 1 - _animationController.value * 15),
                       child: Container(
                           color: Colors.white, child: const Text('Profile')),
                     ),
@@ -100,15 +99,16 @@ class _AccountScreenState extends State<AccountScreen>
                 backgroundColor: Colors.transparent,
                 expandedHeight: appbarHeight,
                 flexibleSpace: FlexibleSpaceBar(
+                  expandedTitleScale: 1.0,
                   collapseMode: CollapseMode.pin,
                   centerTitle: true,
                   title: AnimatedBuilder(
                     animation: _colorTween,
-                    builder: (context, child) => AutoSizeText(
-                      context.read<AuthProvider>().user?.displayName ??
-                          'Anonymous',
-                      minFontSize: 36,
+                    builder: (context, child) => Text(
+                      context.read<AuthProvider>().user?.displayName ?? 'Anonymous',
+                      textAlign: TextAlign.center,
                       style: TextStyle(
+                          fontSize: 48,
                           color: _colorTween.value,
                           fontWeight: FontWeight.bold),
                     ),

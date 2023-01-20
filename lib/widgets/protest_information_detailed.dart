@@ -20,7 +20,11 @@ class ProtestInformationDetailed extends StatelessWidget {
   final bool isCreator;
   final ProtestHolder protestHolder;
 
-  const ProtestInformationDetailed({Key? key, required this.protest, required this.isCreator, required this.protestHolder})
+  const ProtestInformationDetailed(
+      {Key? key,
+      required this.protest,
+      required this.isCreator,
+      required this.protestHolder})
       : super(key: key);
 
   Widget _getLocationMap(
@@ -52,70 +56,66 @@ class ProtestInformationDetailed extends StatelessWidget {
         });
   }
 
-  Widget _getExternalUrlsWidget(DataProvider dataProvider) {
+  Widget _getExternalUrlsWidget(
+      DataProvider dataProvider, BuildContext context) {
     if (protest.links.isEmpty) {
       return const SizedBox();
     }
     var links = <Widget>[];
     for (var url in protest.links) {
       links.add(Padding(
-        padding: const EdgeInsets.only(right: 6.0),
-        child: SizedBox(
-          width: 40,
-          height: 40,
-          child: FutureBuilder(
-              future: FaviconFinder.getBest(url),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return InkWell(
-                      onTap: () => launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication),
-                      onLongPress: () async {
-                        if (!isCreator) {
-                          return;
-                        }
-                        bool? confirmed =
-                            await showDialog<bool>(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: const Text(
-                                  'Are you sure you want to delete?'),
-                              actionsAlignment:
-                              MainAxisAlignment.end,
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(
-                                        context, false);
-                                  },
-                                  style: TextButton.styleFrom(
-                                      foregroundColor: purple),
-                                  child: const Text('No'),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(
-                                        context, true);
-                                  },
-                                  style: TextButton.styleFrom(
-                                      foregroundColor: purple),
-                                  child: const Text('Yes'),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                        confirmed ??= false;
-                        if (confirmed) {
-                          dataProvider.removeExternalLink(protestHolder, url);
-                        }
-                      },
-                      child: Image.network(snapshot.requireData!.url));
-                }
-                return const Icon(Icons.link);
-              }),
-        ),
-      ));
+          padding: const EdgeInsets.only(right: 6.0),
+          child: SizedBox(
+              width: 40,
+              height: 40,
+              child: InkWell(
+                onTap: () => launchUrl(Uri.parse(url),
+                    mode: LaunchMode.externalApplication),
+                onLongPress: () async {
+                  if (!isCreator) {
+                    return;
+                  }
+                  bool? confirmed = await showDialog<bool>(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text('Are you sure you want to delete?'),
+                        actionsAlignment: MainAxisAlignment.end,
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context, false);
+                            },
+                            style:
+                                TextButton.styleFrom(foregroundColor: purple),
+                            child: const Text('No'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context, true);
+                            },
+                            style:
+                                TextButton.styleFrom(foregroundColor: purple),
+                            child: const Text('Yes'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                  confirmed ??= false;
+                  if (confirmed) {
+                    dataProvider.removeExternalLink(protestHolder, url);
+                  }
+                },
+                child: FutureBuilder(
+                    future: FaviconFinder.getBest(url),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return Image.network(snapshot.requireData!.url);
+                      }
+                      return const Icon(Icons.link);
+                    }),
+              ))));
     }
     return Padding(
       padding: const EdgeInsets.only(top: 10.0),
@@ -131,7 +131,7 @@ class ProtestInformationDetailed extends StatelessWidget {
       padding: const EdgeInsets.only(left: 20.0, right: 20.0),
       child: ListView(
         children: [
-          Text(
+          SelectableText(
             protest.name,
             style: const TextStyle(
               color: blue,
@@ -155,7 +155,7 @@ class ProtestInformationDetailed extends StatelessWidget {
                         Icon(Icons.location_on, color: Colors.grey[800]),
                         addHorizontalSpace(width: 3),
                         Expanded(
-                          child: Text(protest.locationName,
+                          child: SelectableText(protest.locationName,
                               style: TextStyle(color: Colors.grey[800])),
                         )
                       ],
@@ -167,7 +167,7 @@ class ProtestInformationDetailed extends StatelessWidget {
                         Icon(Icons.watch_later, color: Colors.grey[800]),
                         addHorizontalSpace(width: 3),
                         Expanded(
-                          child: Text(protest.dateAndTime(),
+                          child: SelectableText(protest.dateAndTime(),
                               style: TextStyle(color: Colors.grey[800])),
                         )
                       ],
@@ -194,12 +194,13 @@ class ProtestInformationDetailed extends StatelessWidget {
                         Icon(Icons.email, color: Colors.grey[800]),
                         addHorizontalSpace(width: 3),
                         Expanded(
-                          child: Text(protest.contactInfo,
+                          child: SelectableText(protest.contactInfo,
                               style: TextStyle(color: Colors.grey[800])),
                         )
                       ],
                     ),
-                    _getExternalUrlsWidget(context.read<DataProvider>())
+                    _getExternalUrlsWidget(
+                        context.read<DataProvider>(), context)
                   ],
                 ),
               ),
@@ -216,7 +217,7 @@ class ProtestInformationDetailed extends StatelessWidget {
                       children: [
                         creator.getAvatarWidget(radius: 35),
                         addVerticalSpace(height: 5),
-                        Text(creator.username),
+                        SelectableText(creator.username),
                       ],
                     );
                   }
@@ -249,7 +250,7 @@ class ProtestInformationDetailed extends StatelessWidget {
                   child: Chip(
                     side: const BorderSide(color: lightGray),
                     labelPadding: const EdgeInsets.all(3.0),
-                    label: Text(
+                    label: SelectableText(
                       protest.tags[index],
                       style: const TextStyle(color: black, fontSize: 14),
                     ),
@@ -325,9 +326,9 @@ class ProtestInformationDetailed extends StatelessWidget {
                 height: MediaQuery.of(context).size.height * 0.8,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(
+                  child: SelectableText(
                     protest.description,
-                    style: const TextStyle(fontSize: 15),
+                    style: const TextStyle(fontSize: 18),
                   ),
                 ),
               )),

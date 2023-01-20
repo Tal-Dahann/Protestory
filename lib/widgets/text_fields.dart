@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:protestory/constants/colors.dart';
 
 class CustomTextFormField extends StatefulWidget {
@@ -22,6 +23,8 @@ class CustomTextFormField extends StatefulWidget {
   final AsyncValueGetter? onTap;
   final FocusNode? focusNode;
   final int? maxLines;
+  final int? maxLength;
+  final MaxLengthEnforcement? maxLengthEnforcement;
 
   const CustomTextFormField({
     Key? key,
@@ -44,6 +47,8 @@ class CustomTextFormField extends StatefulWidget {
     this.onTap,
     this.focusNode,
     this.maxLines = 1,
+    this.maxLength,
+    this.maxLengthEnforcement
   }) : super(key: key);
 
   @override
@@ -69,6 +74,9 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           textInputAction: widget.textInputAction,
           onChanged: widget.onChanged,
           onFieldSubmitted: widget.onFieldSubmitted,
+          textCapitalization: TextCapitalization.sentences,
+          maxLength: widget.maxLength,
+          maxLengthEnforcement: widget.maxLengthEnforcement,
           decoration: InputDecoration(
               suffixIcon: widget.icon,
               suffixIconColor: widget.icon != null ? blue : null,
