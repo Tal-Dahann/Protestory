@@ -38,17 +38,9 @@ class ProtestCard extends StatelessWidget {
           if (!currentFocus.hasPrimaryFocus) {
             currentFocus.unfocus();
           }
-          //Navigator.push(context, MaterialPageRoute(builder: (ctx) => ProtestInformationScreen(protest: protest)));
           PersistentNavBarNavigator.pushNewScreen(context,
               screen: ProtestInformationScreen(protest: protest),
               pageTransitionAnimation: PageTransitionAnimation.slideUp);
-          // p.push(
-          //   PageTransition(
-          //       type: PageTransitionType.fade,
-          //       duration: const Duration(milliseconds: 400),
-          //       reverseDuration: const Duration(milliseconds: 300),
-          //       child: ProtestInformationScreen(protest: protest)),
-          // );
         },
         child: Padding(
           padding: const EdgeInsets.all(5.0),
@@ -69,40 +61,23 @@ class ProtestCard extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.only(
                             left: 5.0, right: 5.0, top: 5.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            AutoSizeText(
-                              protest.name,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              textAlign: TextAlign.start,
-                              style: const TextStyle(
-                                fontSize: 25.0,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              crossAxisAlignment:
-                              CrossAxisAlignment.center,
-                              children: [
-                                Text(protest.readableDistance(),
-                                    style: const TextStyle(
-                                      fontSize: 15.0,
-                                      color: Colors.grey,
-                                    )),
-                              ],
-                            )
-                          ],
+                        child: AutoSizeText(
+                          protest.name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.start,
+                          style: const TextStyle(
+                            fontSize: 25.0,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
                         ),
                       ),
                     ),
                     Flexible(
                       flex: 5,
                       child: Padding(
-                        padding: const EdgeInsets.only(left: 5.0),
+                        padding: const EdgeInsets.only(left: 8.0),
                         child: Column(
                           children: [
                             // Location:
@@ -116,7 +91,8 @@ class ProtestCard extends StatelessWidget {
                                       color: Colors.grey[800]),
                                   addHorizontalSpace(width: 4),
                                   Expanded(
-                                    child: AutoSizeText(protest.locationName,
+                                    child: AutoSizeText(
+                                        '${protest.locationName} ${protest.readableDistance()}',
                                         minFontSize: 15.0,
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
@@ -148,18 +124,29 @@ class ProtestCard extends StatelessWidget {
                             ),
                             Expanded(
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Text(protest.participantsAmount.toString(),
+                                  Text(protest.readableDistance(),
                                       style: const TextStyle(
                                         fontSize: 15.0,
                                         color: Colors.grey,
                                       )),
-                                  const Padding(
-                                    padding:
-                                        EdgeInsets.only(left: 2.0, right: 8.0),
-                                    child: Icon(Icons.people),
+                                  Row(
+                                    children: [
+                                      Text(
+                                          protest.participantsAmount.toString(),
+                                          style: const TextStyle(
+                                            fontSize: 15.0,
+                                            color: Colors.grey,
+                                          )),
+                                      const Padding(
+                                        padding: EdgeInsets.only(
+                                            left: 2.0, right: 8.0),
+                                        child: Icon(Icons.people),
+                                      )
+                                    ],
                                   )
                                 ],
                               ),
