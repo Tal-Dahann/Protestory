@@ -148,6 +148,24 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     context.watch<NavigationProvider>();
+
+    Widget themeBuilder(BuildContext context, Widget? child) {
+      return Theme(
+        data: Theme.of(context).copyWith(
+          colorScheme: const ColorScheme.light(
+            primary: blue,
+            onPrimary: white,
+            onSurface: darkBlue,
+          ),
+          textButtonTheme: TextButtonThemeData(
+            style: TextButton.styleFrom(
+                backgroundColor: lightBlue, foregroundColor: white),
+          ),
+        ),
+        child: child!,
+      );
+    }
+
     Widget appBar = SliverAppBar(
       titleSpacing: 0,
       centerTitle: true,
@@ -244,7 +262,8 @@ class _SearchScreenState extends State<SearchScreen> {
                                 await showDateRangePicker(
                                     context: context,
                                     firstDate: DateTime.now(),
-                                    lastDate: DateTime(2100));
+                                    lastDate: DateTime(2100),
+                                    builder: themeBuilder);
                             //initialDate: DateTime.now(),
 
                             if (pickedDate != null) {
