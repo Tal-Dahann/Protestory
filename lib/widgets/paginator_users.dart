@@ -60,8 +60,19 @@ class _PaginatorUsersState extends State<PaginatorUsers> {
               InkWell(
                 onTap: () {
                   if (currUserIsEditor) {
-                    context.read<EditorsProvider>().editorsArray.remove(data.id);
+                    context
+                        .read<EditorsProvider>()
+                        .editorsArray
+                        .remove(data.id);
                   } else {
+                    if (editorsArray.length == 5) {
+                      SnackBar snackBar = SnackBar(
+                        content: Text('Can only add up to 5 editors.'),
+                        behavior: SnackBarBehavior.floating,
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      return;
+                    }
                     context.read<EditorsProvider>().editorsArray.add(data.id);
                   }
                   setState(() {
@@ -70,7 +81,9 @@ class _PaginatorUsersState extends State<PaginatorUsers> {
                 },
                 child: Row(
                   children: [
-                    Icon(currUserIsEditor ? Icons.check_box_outlined : Icons.check_box_outline_blank),
+                    Icon(currUserIsEditor
+                        ? Icons.check_box_outlined
+                        : Icons.check_box_outline_blank),
                     addHorizontalSpace(width: 5),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -82,7 +95,8 @@ class _PaginatorUsersState extends State<PaginatorUsers> {
                                 .getUserById(userId: data.id),
                             builder: (context, snapshot) {
                               if (snapshot.hasData) {
-                                return snapshot.requireData.getAvatarWidget(radius: 20);
+                                return snapshot.requireData
+                                    .getAvatarWidget(radius: 20);
                               }
                               return PUser.getAvatarLoadingWidget(radius: 20);
                             }),
