@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +35,7 @@ class _PaginatorUsersState extends State<PaginatorUsers> {
   Widget build(BuildContext context) {
     var editorsArray = context.read<EditorsProvider>().editorsArray;
     var creator = context.read<EditorsProvider>().creator;
-    log(editorsArray.toString());
+    //log(editorsArray.toString());
     return PaginateFirestore(
       header: widget.header,
       onEmpty: widget.onEmpty,

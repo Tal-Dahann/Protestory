@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -124,7 +123,7 @@ class FirebaseInit extends StatelessWidget {
 
 Future<void> _localNotificationHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
-  log('Handling a background msg: ${message.messageId}');
+  //log('Handling a background msg: ${message.messageId}');
 
   String protestId = message.data["protest_id"];
 
