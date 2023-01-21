@@ -118,7 +118,7 @@ class _NewProtestFormState extends State<NewProtestForm> {
         date: context
             .read<NewProtestFormNotifier>()
             .selectedTime,
-        contactInfo: contactInfo,
+        contactInfo: widget.protest!.contactInfo,
         description: description,
         location: location,
         locationLatLng: locationLatLng,

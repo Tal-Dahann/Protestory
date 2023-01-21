@@ -116,6 +116,7 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen>
         .read<AuthProvider>()
         .user
         ?.uid);
+    var isEditor = protest.isEditor(context.read<AuthProvider>().user?.uid);
     return Scaffold(
       floatingActionButton: _tabController.index == 0
           ? isCreator
@@ -207,7 +208,7 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen>
           },
         ),
       )
-          : isCreator
+          : (isCreator || isEditor)
           ? Padding(
         padding: const EdgeInsets.all(10.0),
         child: FloatingActionButton.extended(
@@ -274,7 +275,7 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen>
                   ),
                 ],
               ),
-              actions: isCreator
+              actions: (isCreator || isEditor)
                   ? [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -462,27 +463,41 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen>
                             }
                           },
                           itemBuilder: (BuildContext context) {
-                            return [
-                              const PopupMenuItem(
-                                value: 0,
-                                child: Text('Edit Protest'),
-                              ),
-                              const PopupMenuItem(
-                                value: 3,
-                                child: Text('Add Organizers'),
-                              ),
-                              PopupMenuItem(
-                                value: 1,
-                                enabled: protest.links.length < 5,
-                                child: const Text('Add Link'),
-                              ),
-                              PopupMenuItem(
-                                value: 2,
-                                child: Text('Delete',
-                                    style: TextStyle(
-                                        color: Colors.red[900])),
-                              ),
-                            ];
+                            if (isCreator) {
+                              return [
+                                const PopupMenuItem(
+                                  value: 0,
+                                  child: Text('Edit Protest'),
+                                ),
+                                const PopupMenuItem(
+                                  value: 3,
+                                  child: Text('Add Organizers'),
+                                ),
+                                PopupMenuItem(
+                                  value: 1,
+                                  enabled: protest.links.length < 5,
+                                  child: const Text('Add Link'),
+                                ),
+                                PopupMenuItem(
+                                  value: 2,
+                                  child: Text('Delete',
+                                      style: TextStyle(
+                                          color: Colors.red[900])),
+                                ),
+                              ];
+                            } else {
+                              return [
+                                const PopupMenuItem(
+                                  value: 0,
+                                  child: Text('Edit Protest'),
+                                ),
+                                PopupMenuItem(
+                                  value: 1,
+                                  enabled: protest.links.length < 5,
+                                  child: const Text('Add Link'),
+                                ),
+                              ];
+                            }
                           },
                           icon: const Icon(Icons.more_vert, color: blue),
                         ),

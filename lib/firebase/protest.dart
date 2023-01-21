@@ -150,6 +150,10 @@ class Protest {
     return userId == creator;
   }
 
+  bool isEditor(String? userId) {
+    return editors.contains(userId);
+  }
+
   String dateAndTime() {
     return dateFormatter.format(date.toDate());
   }
