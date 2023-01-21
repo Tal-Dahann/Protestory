@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:paginate_firestore/bloc/pagination_listeners.dart';
 import 'package:protestory/constants/colors.dart';
@@ -78,6 +79,10 @@ class _UserSearchState extends State<UserSearch> {
         floating: true,
         title: Column(
           children: [
+            const AutoSizeText('Add up to 5 users as organizers.',
+                maxFontSize: 14,
+                style:
+                    TextStyle(color: darkGray, fontWeight: FontWeight.normal)),
             addVerticalSpace(height: 15),
             CustomTextFormField(
               controller: searchTextController,
