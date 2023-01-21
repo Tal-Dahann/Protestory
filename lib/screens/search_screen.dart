@@ -23,7 +23,8 @@ enum SearchOptions {
   mostRecent('Most Recent'),
   mostPopular('Most Popular'),
   closest('Near You'),
-  tagged('By Tag');
+  tagged('By Tag'),
+  dateRange('Date Range');
 
   const SearchOptions(this.title);
 
@@ -32,7 +33,7 @@ enum SearchOptions {
 
 Query<Protest> searchQuery(DataProvider dataProvider,
     SearchOptions searchOption, List<String> selectedTags,
-    {String text = ''}) {
+    {String text = '', DateTime? start = null, DateTime? end = null}) {
   Query<Protest> wantedQuery;
   //search view
   switch (searchOption) {
@@ -73,6 +74,20 @@ Query<Protest> searchQuery(DataProvider dataProvider,
               wantedQuery.where('tags', arrayContainsAny: selectedTags);
         }
       }
+      break;
+    case SearchOptions.dateRange:
+      {
+        wantedQuery = dataProvider.getProtestCollectionRef
+            .orderBy('date', descending: false)
+            .where("date", isGreaterThanOrEqualTo: start)
+            .where("date", isLessThanOrEqualTo: end);
+      }
+      break;
+    default:
+      {
+        wantedQuery = dataProvider.getProtestCollectionRef
+            .orderBy('name', descending: false);
+      }
   }
 
   return wantedQuery;
@@ -108,12 +123,14 @@ class _SearchScreenState extends State<SearchScreen> {
     super.dispose();
   }
 
-  _updateQuery() {
+  _updateQuery({DateTime? start = null, DateTime? end = null}) {
     queryProvider.query = searchQuery(
         context.read<DataProvider>(),
         context.read<SearchPresetsProvider>().searchOption,
         context.read<SearchPresetsProvider>().selectedTagsList,
-        text: searchText.toLowerCase());
+        text: searchText.toLowerCase(),
+        start: start,
+        end: end);
     setState(() {});
   }
 
@@ -210,59 +227,103 @@ class _SearchScreenState extends State<SearchScreen> {
                 ),
               ],
             )
-          : Column(
-              children: [
-                addVerticalSpace(height: 15),
-                CustomTextFormField(
-                  controller: searchTextController,
-                  textInputAction: TextInputAction.search,
-                  icon: IconButton(
-                      onPressed: () {
-                        context.read<SearchPresetsProvider>().searchOption =
-                            SearchOptions.tagged;
-                      },
-                      icon: const Icon(Icons.filter_alt),
-                      color: darkPurple),
-                  hintText: 'Search...',
-                  onChanged: (searchText) {
-                    this.searchText = searchText;
-                    _updateQuery();
-                  },
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+          : context.watch<SearchPresetsProvider>().searchOption ==
+                  SearchOptions.dateRange
+              ? Column(children: [
+                  Row(
+                    children: [
+                      const Text('Choose Date Range',
+                          style: TextStyle(color: lightGray, fontSize: 24)),
+                      IconButton(
+                          icon: const Icon(
+                            Icons.date_range,
+                            color: darkPurple,
+                          ),
+                          onPressed: () async {
+                            DateTimeRange? pickedDate =
+                                await showDateRangePicker(
+                                    context: context,
+                                    firstDate: DateTime.now(),
+                                    lastDate: DateTime(2100));
+                            //initialDate: DateTime.now(),
+
+                            if (pickedDate != null) {
+                              DateTime start = pickedDate.start;
+                              DateTime end = pickedDate.end;
+
+                              _updateQuery(start: start, end: end);
+
+                              //context.read<SearchPresetsProvider>().searchOption =
+                              //  SearchOptions.all;
+                            }
+                          }),
+                      IconButton(
+                          icon: const Icon(
+                            Icons.search,
+                            color: darkPurple,
+                          ),
+                          onPressed: () {
+                            context.read<SearchPresetsProvider>().searchOption =
+                                SearchOptions.all;
+                          })
+                    ],
+                  )
+                ])
+              : Column(
                   children: [
-                    DropdownButton<SearchOptions>(
-                      // Initial Value
-                      value:
-                          context.watch<SearchPresetsProvider>().searchOption,
-                      elevation: 20,
-                      icon: const Icon(Icons.keyboard_arrow_down),
-                      items: SearchOptions.values.map((SearchOptions item) {
-                        return DropdownMenuItem(
-                          value: item,
-                          child: Text(item.title),
-                        );
-                      }).toList(),
-                      // After selecting the desired option,it will
-                      // change button value to selected value
-                      onChanged: (SearchOptions? newValue) {
-                        setState(() {
-                          context.read<SearchPresetsProvider>().searchOption =
-                              newValue!;
-                        });
+                    addVerticalSpace(height: 15),
+                    CustomTextFormField(
+                      controller: searchTextController,
+                      textInputAction: TextInputAction.search,
+                      icon: IconButton(
+                          onPressed: () {
+                            context.read<SearchPresetsProvider>().searchOption =
+                                SearchOptions.tagged;
+                          },
+                          icon: const Icon(Icons.filter_alt),
+                          color: darkPurple),
+                      hintText: 'Search...',
+                      onChanged: (searchText) {
+                        this.searchText = searchText;
+                        _updateQuery();
                       },
                     ),
-                    const Padding(padding: EdgeInsets.all(10)),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        DropdownButton<SearchOptions>(
+                          // Initial Value
+                          value: context
+                              .watch<SearchPresetsProvider>()
+                              .searchOption,
+                          elevation: 20,
+                          icon: const Icon(Icons.keyboard_arrow_down),
+                          items: SearchOptions.values.map((SearchOptions item) {
+                            return DropdownMenuItem(
+                              value: item,
+                              child: Text(item.title),
+                            );
+                          }).toList(),
+                          // After selecting the desired option,it will
+                          // change button value to selected value
+                          onChanged: (SearchOptions? newValue) {
+                            setState(() {
+                              context
+                                  .read<SearchPresetsProvider>()
+                                  .searchOption = newValue!;
+                            });
+                          },
+                        ),
+                        const Padding(padding: EdgeInsets.all(10)),
+                      ],
+                    ),
+                    //  Padding(
+                    //padding: EdgeInsets.only(
+                    // left: MediaQuery.of(context).size.width * 0.1,
+                    // right: MediaQuery.of(context).size.width * 0.1),
+                    //child:
                   ],
                 ),
-                //  Padding(
-                //padding: EdgeInsets.only(
-                // left: MediaQuery.of(context).size.width * 0.1,
-                // right: MediaQuery.of(context).size.width * 0.1),
-                //child:
-              ],
-            ),
     );
     Widget body;
     if (context.read<SearchPresetsProvider>().searchOption ==
