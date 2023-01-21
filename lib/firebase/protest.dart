@@ -30,6 +30,7 @@ class Protest {
   final List<String> tags;
   double? distanceFromUser;
   List<String> links;
+  List<String> editors;
 
 
   Completer<NetworkImage>? _imageCompleter;
@@ -47,7 +48,8 @@ class Protest {
     required this.locationName,
     required this.locationLatLng,
     required this.tags,
-    required this.links
+    required this.links,
+    required this.editors,
   }) : lowerCaseName = name.toLowerCase();
 
   Future<NetworkImage> get image async {
@@ -117,7 +119,8 @@ class Protest {
       locationName: data['location'],
       locationLatLng: LatLng(data['latitude'] ?? 0.0, data['longitude'] ?? 0.0),
       tags: List.from(data['tags']),
-      links: List.from(data['external_urls'] ?? [])
+      links: List.from(data['external_urls'] ?? []),
+      editors: List.from(data['protest_editors'] ?? [])
     );
   }
 
@@ -140,6 +143,7 @@ class Protest {
       'lower_case_name': lowerCaseName,
       'prefixes_name': pl,
       'external_urls': links,
+      'protest_editors': editors,
     };
   }
   bool isCreator(String? userId) {

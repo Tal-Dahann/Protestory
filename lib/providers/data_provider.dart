@@ -74,6 +74,7 @@ class DataProvider {
       locationLatLng: locationLatLng,
       tags: tags,
       links: [],
+      editors: [],
     );
     await firestorage.child('protests_images').child(docRef.id).putFile(image);
     await docRef.set(newProtest);
@@ -104,7 +105,9 @@ class DataProvider {
         locationName: location,
         locationLatLng: locationLatLng,
         tags: tags,
-        links: protest.links);
+        links: protest.links,
+        editors: protest.editors,
+    );
     if (image != null) {
       //if its null, we didnt update the image so we dont need to update firestorage
       await firestorage
@@ -114,6 +117,12 @@ class DataProvider {
     }
     await docRef.set(updatedProtest, SetOptions(merge: true));
     return updatedProtest;
+  }
+
+  Future<void> updateEditors(String protestIdToUpdate, List<String> newEditorsArray) {
+    final editorsField = {'protest_editors': newEditorsArray};
+    var docRef = protestsCollectionRef.doc(protestIdToUpdate);
+    return docRef.update(editorsField);
   }
 
   Future<void> deleteProtest(Protest protestToDelete) async {

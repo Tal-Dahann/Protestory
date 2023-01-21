@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:paginate_firestore/bloc/pagination_listeners.dart';
 import 'package:protestory/constants/colors.dart';
+import 'package:protestory/providers/editors_provider.dart';
 import 'package:protestory/providers/search_provider.dart';
 import 'package:protestory/widgets/paginator_users.dart';
 import 'package:provider/provider.dart';
@@ -12,7 +13,9 @@ import '../utils/add_spaces.dart';
 import '../widgets/text_fields.dart';
 
 class UserSearch extends StatefulWidget {
-  const UserSearch({Key? key}) : super(key: key);
+  final DataProvider dataProvider;
+
+  const UserSearch({Key? key, required this.dataProvider}) : super(key: key);
 
   @override
   State<UserSearch> createState() => _UserSearchState();
@@ -67,6 +70,7 @@ class _UserSearchState extends State<UserSearch> {
   Widget build(BuildContext context) {
     context.watch<NavigationProvider>();
     Widget appBar = SliverAppBar(
+        automaticallyImplyLeading: false,
         titleSpacing: 0,
         centerTitle: true,
         backgroundColor: white,
@@ -88,16 +92,35 @@ class _UserSearchState extends State<UserSearch> {
         ));
     Widget body;
     body = PaginatorUsers(
+      dataProvider: widget.dataProvider,
       queryProvider: queryProvider,
       header: appBar,
       onEmpty: _textFiller('No users match your search'),
     );
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Search User'),
-          backgroundColor: white,
+      appBar: AppBar(
+        leading: BackButton(
+          onPressed: () {
+            EditorsProvider provider = context.read<EditorsProvider>();
+            widget.dataProvider
+                .updateEditors(provider.protestId, provider.editorsArray);
+            Navigator.of(context).pop();
+          },
         ),
-        body: body);
+        title: const Text('Add Organizers'),
+        backgroundColor: white,
+      ),
+      body: WillPopScope(
+        onWillPop: () async {
+          EditorsProvider provider = context.read<EditorsProvider>();
+          await widget.dataProvider
+              .updateEditors(provider.protestId, provider.editorsArray);
+          Navigator.of(context).pop();
+          return false;
+        },
+        child: body,
+      ),
+    );
     //onFieldSubmitted: ;
   }
 }
