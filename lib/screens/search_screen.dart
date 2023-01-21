@@ -250,6 +250,7 @@ class _SearchScreenState extends State<SearchScreen> {
               ? Column(children: [
                   Row(
                     children: [
+                      const Padding(padding: EdgeInsets.only(left: 10.0)),
                       const Text('Choose Date Range',
                           style: TextStyle(color: lightGray, fontSize: 24)),
                       IconButton(
@@ -276,6 +277,7 @@ class _SearchScreenState extends State<SearchScreen> {
                               //  SearchOptions.all;
                             }
                           }),
+                      const Spacer(),
                       IconButton(
                           icon: const Icon(
                             Icons.search,
