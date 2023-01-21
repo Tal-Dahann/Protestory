@@ -190,7 +190,7 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen>
         child: FloatingActionButton.extended(
           backgroundColor: purple,
           label: const Text('Add Story'),
-          icon: const Icon(Icons.person_add),
+          icon: const Icon(Icons.add_box),
           onPressed: () async {
             PersistentNavBarNavigator.pushNewScreen(context,
                 screen: UploadContentScreen(
@@ -214,7 +214,7 @@ class _ProtestInformationScreenState extends State<ProtestInformationScreen>
         child: FloatingActionButton.extended(
           backgroundColor: purple,
           label: const Text('Post Update'),
-          icon: const Icon(Icons.person_add),
+          icon: const Icon(Icons.upload),
           onPressed: () async {
             PersistentNavBarNavigator.pushNewScreen(context,
                 screen: UploadContentScreen(
