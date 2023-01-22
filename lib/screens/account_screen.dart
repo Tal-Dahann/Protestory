@@ -10,6 +10,8 @@ import 'package:protestory/providers/data_provider.dart';
 import 'package:protestory/widgets/paginator.dart';
 import 'package:provider/provider.dart';
 
+import '../utils/calendar_helper.dart';
+
 class AccountScreen extends StatefulWidget {
   const AccountScreen({Key? key}) : super(key: key);
 
@@ -73,11 +75,12 @@ class _AccountScreenState extends State<AccountScreen>
         backgroundColor: white,
         actions: [
           IconButton(onPressed: () async {
+            bool alreadySyncing = await isSyncingEnabled();
             bool? confirmed = await showDialog<bool>(
               context: context,
               builder: (context) {
                 return AlertDialog(
-                  title: const Text('Do you want to sync followed protests in a phone calendar?'),
+                  title: Text('Do you want to ${alreadySyncing ? 'stop syncing' : 'sync'} followed protests in a phone calendar?'),
                   actionsAlignment: MainAxisAlignment.end,
                   actions: [
                     TextButton(
@@ -102,7 +105,8 @@ class _AccountScreenState extends State<AccountScreen>
             );
             confirmed ??= false;
             if (confirmed) {
-              context.read<DataProvider>().syncProtestsInCalendar();
+              await setSyncing(!alreadySyncing);
+              Future.delayed(Duration.zero, () => context.read<DataProvider>().syncProtestsInCalendar());
             }
           }, icon: const Icon(Icons.calendar_month), color: blue,),
           IconButton(

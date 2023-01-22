@@ -120,7 +120,7 @@ class _UserSearchState extends State<UserSearch> {
           EditorsProvider provider = context.read<EditorsProvider>();
           await widget.dataProvider
               .updateEditors(provider.protestId, provider.editorsArray);
-          Navigator.of(context).pop();
+          Future.delayed(Duration.zero, () => Navigator.of(context).pop());
           return false;
         },
         child: body,

@@ -19,14 +19,14 @@ Future<bool> syncCalendar(List<Protest> protests) async {
   final prefs = await SharedPreferences.getInstance();
   final timezone = await FlutterNativeTimezone.getLocalTimezone();
 
-  if (prefs.getBool(calendarSyncKey) ?? false) {
+  if (!await isSyncingEnabled()) {
     return false;
   }
 
   try {
     await requestCalendarPermission();
   } catch(e) {
-    prefs.setBool(calendarSyncKey, false);
+    setSyncing(false);
     return false;
   }
 
@@ -71,4 +71,14 @@ Future<bool> syncCalendar(List<Protest> protests) async {
   prefs.setStringList(calendarPairsKey,
       newPairs.entries.map((e) => "${e.key}::${e.value}").toList());
   return true;
+}
+
+Future<bool> isSyncingEnabled() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getBool(calendarSyncKey) ?? false;
+}
+
+Future<void> setSyncing(bool enabled) async {
+  final prefs = await SharedPreferences.getInstance();
+  prefs.setBool(calendarSyncKey, enabled);
 }

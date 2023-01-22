@@ -10,7 +10,6 @@ import 'package:place_picker/place_picker.dart';
 import 'package:protestory/firebase/protest.dart';
 import 'package:protestory/firebase/user.dart';
 import 'package:protestory/screens/protest_information_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../firebase/attender.dart';
 import '../firebase/story.dart';
@@ -503,8 +502,7 @@ class DataProvider {
   }
 
   Future<void> syncProtestsInCalendar() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (prefs.getBool(calendarSyncKey) ?? false) {
+    if (!await isSyncingEnabled()) {
       return;
     }
 
