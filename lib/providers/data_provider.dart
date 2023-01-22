@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
@@ -9,10 +10,12 @@ import 'package:place_picker/place_picker.dart';
 import 'package:protestory/firebase/protest.dart';
 import 'package:protestory/firebase/user.dart';
 import 'package:protestory/screens/protest_information_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../firebase/attender.dart';
 import '../firebase/story.dart';
 import '../firebase/update.dart';
+import '../utils/calendar_helper.dart';
 import '../utils/exceptions.dart';
 
 class DataProvider {
@@ -42,6 +45,7 @@ class DataProvider {
           fromFirestore: Attender.fromFirestore,
           toFirestore: (Attender att, _) => att.toFirestore(),
         );
+    syncProtestsInCalendar();
   }
 
   CollectionReference<Protest> get getProtestCollectionRef =>
@@ -79,6 +83,8 @@ class DataProvider {
     await firestorage.child('protests_images').child(docRef.id).putFile(image);
     await docRef.set(newProtest);
 
+    syncProtestsInCalendar();
+
     return newProtest;
   }
 
@@ -94,19 +100,19 @@ class DataProvider {
       required File? image}) async {
     var docRef = protestsCollectionRef.doc(protest.id);
     Protest updatedProtest = Protest(
-        id: protest.id,
-        name: name,
-        date: Timestamp.fromDate(date),
-        creator: protest.creator,
-        creationTime: protest.creationTime,
-        participantsAmount: protest.participantsAmount,
-        contactInfo: contactInfo,
-        description: description,
-        locationName: location,
-        locationLatLng: locationLatLng,
-        tags: tags,
-        links: protest.links,
-        editors: protest.editors,
+      id: protest.id,
+      name: name,
+      date: Timestamp.fromDate(date),
+      creator: protest.creator,
+      creationTime: protest.creationTime,
+      participantsAmount: protest.participantsAmount,
+      contactInfo: contactInfo,
+      description: description,
+      locationName: location,
+      locationLatLng: locationLatLng,
+      tags: tags,
+      links: protest.links,
+      editors: protest.editors,
     );
     if (image != null) {
       //if its null, we didnt update the image so we dont need to update firestorage
@@ -116,10 +122,14 @@ class DataProvider {
           .putFile(image);
     }
     await docRef.set(updatedProtest, SetOptions(merge: true));
+
+    syncProtestsInCalendar();
+
     return updatedProtest;
   }
 
-  Future<void> updateEditors(String protestIdToUpdate, List<String> newEditorsArray) {
+  Future<void> updateEditors(
+      String protestIdToUpdate, List<String> newEditorsArray) {
     final editorsField = {'protest_editors': newEditorsArray};
     var docRef = protestsCollectionRef.doc(protestIdToUpdate);
     return docRef.update(editorsField);
@@ -156,7 +166,9 @@ class DataProvider {
       doc.reference.delete();
     }
 
-    return await protestsCollectionRef.doc(protestToDelete.id).delete();
+    await protestsCollectionRef.doc(protestToDelete.id).delete();
+
+    syncProtestsInCalendar();
   }
 
   Query<Attender> getProtestAttenders(String protestId) {
@@ -253,15 +265,15 @@ class DataProvider {
         .where('creator', isEqualTo: user.id);
   }
 
-  Future<List<Protest>> processQuery(Query<Protest> query) async {
-    List<Protest> protestList = [];
+  Future<List<T>> processQuery<T>(Query<T> query) async {
+    List<T> resultList = [];
     var data = await query.get();
 
     for (var element in data.docs) {
-      protestList.add(element.data());
+      resultList.add(element.data());
     }
 
-    return protestList;
+    return resultList;
   }
 
   Future<PUser> getUserById({
@@ -303,6 +315,7 @@ class DataProvider {
           protestName: protestHolder.protest.name);
       transaction.set(docRef, newAttender);
     });
+    syncProtestsInCalendar();
   }
 
   Future<DocumentReference<Attender>?> _attendingDoc(String protestId) async {
@@ -345,6 +358,7 @@ class DataProvider {
           {'participants_amount': FieldValue.increment(-1)});
       transaction.delete(attendingDocRef);
     });
+    syncProtestsInCalendar();
   }
 
   Future<void> addExternalLink(ProtestHolder holder, String link) async {
@@ -488,17 +502,17 @@ class DataProvider {
         .orderBy("creation_time", descending: true);
   }
 
-// Future<void> unLikeStory(String userId, String protestId, Story storyToUnLike) async {
-//   var likedCollection = protestsCollectionRef.doc(protestId).collection('stories').doc(storyToUnLike.docId).collection('likes');
-//   var doc = await likedCollection.doc(userId).get();
-//   if (doc.exists) {
-//     likedCollection.doc(userId).delete();
-//     return;
-//   }
-// }
-//
-// Future<bool> checkIfLiked(String userId, String protestId, Story storyToUnLike) async {
-//   return Future.value(true);
-// }
+  Future<void> syncProtestsInCalendar() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool(calendarSyncKey) ?? false) {
+      return;
+    }
 
+    var protests = await processQuery(getMyProtests());
+    var attends = await processQuery(getMyAttendings());
+    for (var attend in attends) {
+      protests.add(await getProtestById(protestId: attend.protestID));
+    }
+    syncCalendar(protests);
+  }
 }

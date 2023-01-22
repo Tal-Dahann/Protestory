@@ -45,7 +45,7 @@ class _PaginatorUsersState extends State<PaginatorUsers> {
       itemBuilder: (context, documentSnapshots, index) {
         final data = documentSnapshots[index].data() as PUser;
         if (creator == data.id) {
-          return SizedBox();
+          return const SizedBox();
         }
         bool currUserIsEditor = false;
         if (editorsArray.contains(data.id)) {
@@ -65,7 +65,7 @@ class _PaginatorUsersState extends State<PaginatorUsers> {
                         .remove(data.id);
                   } else {
                     if (editorsArray.length == 5) {
-                      SnackBar snackBar = SnackBar(
+                      SnackBar snackBar = const SnackBar(
                         content: Text('Can only add up to 5 editors.'),
                         behavior: SnackBarBehavior.floating,
                       );

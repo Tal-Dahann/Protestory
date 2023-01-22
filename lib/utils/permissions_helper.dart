@@ -1,4 +1,6 @@
 import 'package:location/location.dart';
+import 'package:device_calendar/device_calendar.dart' hide Location;
+
 
 Future<void> requestLocationPermission() async {
   var location = Location();
@@ -18,5 +20,24 @@ Future<void> requestLocationPermission() async {
     }
   } else if (permissionGranted == PermissionStatus.deniedForever) {
     return Future.error('Location permissions are permanently denied.');
+  }
+}
+
+
+Future<void> requestCalendarPermission() async {
+  var calendarPlugin = DeviceCalendarPlugin();
+  // Test if location services are enabled.
+  var permissionGranted = await calendarPlugin.hasPermissions();
+  if (!permissionGranted.isSuccess) {
+    return Future.error('Try later');
+  }
+  if (!permissionGranted.data!) {
+    permissionGranted = await calendarPlugin.requestPermissions();
+    if (!permissionGranted.isSuccess) {
+      return Future.error('Try later');
+    }
+    if (!permissionGranted.data!) {
+      return Future.error('Calendar permissions are denied');
+    }
   }
 }

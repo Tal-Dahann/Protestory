@@ -33,7 +33,7 @@ enum SearchOptions {
 
 Query<Protest> searchQuery(DataProvider dataProvider,
     SearchOptions searchOption, List<String> selectedTags,
-    {String text = '', DateTime? start = null, DateTime? end = null}) {
+    {String text = '', DateTime? start, DateTime? end}) {
   Query<Protest> wantedQuery;
   //search view
   switch (searchOption) {
@@ -123,7 +123,7 @@ class _SearchScreenState extends State<SearchScreen> {
     super.dispose();
   }
 
-  _updateQuery({DateTime? start = null, DateTime? end = null}) {
+  _updateQuery({DateTime? start, DateTime? end}) {
     queryProvider.query = searchQuery(
         context.read<DataProvider>(),
         context.read<SearchPresetsProvider>().searchOption,

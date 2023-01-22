@@ -72,6 +72,39 @@ class _AccountScreenState extends State<AccountScreen>
                 )),
         backgroundColor: white,
         actions: [
+          IconButton(onPressed: () async {
+            bool? confirmed = await showDialog<bool>(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: const Text('Do you want to sync followed protests in a phone calendar?'),
+                  actionsAlignment: MainAxisAlignment.end,
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context, false);
+                      },
+                      style:
+                      TextButton.styleFrom(foregroundColor: purple),
+                      child: const Text('No'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context, true);
+                      },
+                      style:
+                      TextButton.styleFrom(foregroundColor: purple),
+                      child: const Text('Yes'),
+                    ),
+                  ],
+                );
+              },
+            );
+            confirmed ??= false;
+            if (confirmed) {
+              context.read<DataProvider>().syncProtestsInCalendar();
+            }
+          }, icon: const Icon(Icons.calendar_month), color: blue,),
           IconButton(
             onPressed: () => context.read<AuthProvider>().signOut(),
             icon: const Icon(Icons.exit_to_app_outlined),
