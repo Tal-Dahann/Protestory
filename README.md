@@ -22,13 +22,13 @@
 
 * [X] Signup and login via Google.
 * [X] Signup and login via Facebook.
-* [ ] Send and get notifications about followed protests.
+* [X] Send and get notifications about followed protests.
 * [X] Filter and sort protests by popularity and keywords.
-* [ ] Filter and sort protests by distance.
+* [X] Filter and sort protests by distance.
 * [X] Posting your reasons to join the protest - *aka stories* - to be seen by others.
-* [ ] View the upcoming protests on a calendar.
-* [ ] Share your protest on other platforms.
-* [ ] Invite another organisers to help you with a protest.
+* [X] View the upcoming protests on a calendar.
+* [X] Share links to external resources.
+* [X] Invite another organisers to help you with a protest.
 
 ## App Pictures
 

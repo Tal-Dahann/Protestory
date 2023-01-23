@@ -26,7 +26,7 @@ class Story {
       throw StoryNotFound();
     }
     return Story(
-      numOfLikes: data['num_of_likes'],
+      numOfLikes: data['num_of_likes'] ?? 0,
       docId: snapshot.id,
       userID: data['user_id'],
       content: data['content'],
