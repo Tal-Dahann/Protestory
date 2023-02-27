@@ -1,4 +1,4 @@
-![repo_banner](https://github.com/Technion236272/2023a-Protestory/blob/docs/assets/docs-images/repo_banner.png)
+![repo_banner](https://github.com/Tal-Dahann/Protestory/blob/master/assets/docs-images/repo_banner.png)
 
 # Protestory
 
